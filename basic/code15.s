@@ -1,4 +1,3 @@
-.pag 'code15'
 	sta index1
 	stx index1+1
 svar	cpx arytab+1
@@ -155,4 +154,4 @@ movins	ldy #0
 	lda (strng1)y
 	pha
 	iny
-.end
+

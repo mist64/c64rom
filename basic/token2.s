@@ -1,4 +1,3 @@
-.pag 'token2'
 	.byt 'TAB',$a8
 tabtk	=@243
 	.byt 'T',$cf
@@ -56,7 +55,7 @@ lasnum	=@307
 	.byt 'G',$cf
 gotk	=@313
 	.byt 0
-.pag 'error messages'
+
 err01	.byt 'TOO MANY FILE',$d3
 err02	.byt 'FILE OPE',$ce
 err03	.byt 'FILE NOT OPE',$ce
@@ -107,7 +106,7 @@ err28	.byt 'VERIF',$d9
 ervfy	=28
 err29	.byt 'LOA',$c4
 erload	=29
-.pag 'error messages'
+
 ; table to translate error message #
 ; to address of string containing message
 ;
@@ -141,7 +140,7 @@ errtab	.wor err01
 	.wor err28
 	.wor err29
 	.wor err30
-.ski 5
+
 okmsg	.byt $d,'OK',$d,$0
 err	.byt $20,' ERROR',0 ;add a space for vic-40 screen
 intxt	.byt ' IN ',0
@@ -149,7 +148,7 @@ reddy	.byt $d,$a,'READY.',$d,$a,0
 erbrk	=30
 brktxt	.byt $d,$a
 err30	.byt 'BREAK',0,$a0 ;shifted space
-.pag
+
 forsiz	=@22
 fndfor	tsx
 	inx
@@ -249,4 +248,4 @@ reasto	pla
 	cmp fretop
 	bcs omerr
 rearts	rts
-.end
+

@@ -1,4 +1,3 @@
-.page 'initialization'
 ; start - system reset
 ; will goto rom at $8000...
 ; if locs $8004-$8008
@@ -26,7 +25,7 @@ start1	stx vicreg+22   ;set up refresh (.x=<5)
 	jsr pcint       ;go initilize screen newxxx
 	cli             ;interrupts okay now
 	jmp ($a000)     ;go to basic system
-.ski 4
+
 ; a0int - test for an $8000 rom
 ;  returns z - $8000 in
 ;
@@ -40,7 +39,7 @@ a0in2	rts
 ;
 tbla0r	.byt $c3,$c2,$cd,'80' ;..cbm80..
 tbla0e
-.ski 4
+
 ; restor - set kernal indirects and vectors (system)
 ;
 restor	ldx #<vectss
@@ -68,7 +67,7 @@ vectss	.wor key,timb,nnmi
 	.wor nclall,timb ;goto break on a usrcmd jmp
 	.wor nload,nsave
 vectse
-.page 'initilize code'
+
 ; ramtas - memory size check and set
 ;
 ramtas	lda #0          ;zero low memory
@@ -120,9 +119,9 @@ size	tya             ;set top of memory
 	lda #$04        ;screen always at $400
 	sta hibase      ;set base of screen
 	rts
-.ski 3
+
 bsit	.wor wrtz,wrtn,key,read ;table of indirects for cassette irq's
-.pag 'initilize code'
+
 ; ioinit - initilize io devices
 ;
 ioinit	lda #$7f        ;kill interrupts
@@ -178,17 +177,17 @@ i0020	sta d1t1h
 ;
 sixty	= 17045         ; ntsc
 sixtyp	= 16421         ; pal
-.page 'init - sys subs'
+
 setnam	sta fnlen
 	stx fnadr
 	sty fnadr+1
 	rts
-.ski 5
+
 setlfs	sta la
 	stx fa
 	sty sa
 	rts
-.ski 5
+
 readss	lda fa          ;see which devices' to read
 	cmp #2          ;is it rs-232?
 	bne readst      ;no...read serial/cass
@@ -203,10 +202,10 @@ readst	lda status
 udst	ora status
 	sta status
 	rts
-.ski 5
+
 settmo	sta timout
 	rts
-.ski 5
+
 memtop	bcc settop
 ;
 ;carry set--read top of memory
@@ -219,7 +218,7 @@ gettop	ldx memsiz
 settop	stx memsiz
 	sty memsiz+1
 	rts
-.ski 5
+
 ;manage bottom of memory
 ;
 membot	bcc setbot
@@ -234,7 +233,7 @@ membot	bcc setbot
 setbot	stx memstr
 	sty memstr+1
 	rts
-.end
+
 ; rsr 8/5/80 change io structure
 ; rsr 8/15/80 add memory test
 ; rsr 8/21/80 change i/o for mod

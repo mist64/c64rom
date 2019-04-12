@@ -1,4 +1,3 @@
-.pag 'rs-232 receiver'
 ; rsrcvr - nmi routine to collect
 ;  data into bytes
 ;
@@ -36,7 +35,7 @@ rsrcvr	ldx rinone      ;check for start bit
 ; exit
 ;
 rsrext	rts
-.pag 'rs-232 receiver'
+
 ; have stop bit, so store in buffer
 ;
 rsr018	dec bitci       ;no parity, dec so check works
@@ -59,7 +58,7 @@ rsrabl	lda #$90        ;enable flag for next byte
 ;
 rsrsxt	lda #$02        ;disable t2
 	jmp oenabl      ;flip-off enabl***************
-.ski 2
+
 ; reciever start bit check
 ;
 rsrtrt	lda inbit       ;check if space
@@ -67,7 +66,7 @@ rsrtrt	lda inbit       ;check if space
 	jmp prtyp       ;go to parity patch 901227-03
 ; sta rinone ;good...disable flag
 ; rts ;and exit
-.ski 4
+
 ;
 ; put data in buffer (at parity time)
 ;
@@ -122,7 +121,7 @@ err232	ora rsstat
 rsr060	lda ridata      ;expecting stop...
 	bne framee      ;frame error
 	beq breake      ;could be a break
-.end
+
 ; rsr -  8/21/80 add mods
 ; rsr -  8/24/80 fix errors
 ; rsr -  8/27/80 fix major errors

@@ -1,4 +1,3 @@
-.pag 'code20'
 movfr	lda resho
 	sta facho
 	lda resmoh
@@ -141,4 +140,4 @@ fcompc	lda facsgn
 	bcc fcompd
 	eor #@377
 fcompd	jmp fcomps
-.end
+

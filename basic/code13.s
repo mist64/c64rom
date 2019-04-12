@@ -1,4 +1,3 @@
-.pag 'code13'
 	ldy curtol
 	beq deccur
 zerita	dey
@@ -150,4 +149,4 @@ def	jsr getfnm
 	lda varpnt
 	pha
 	lda txtptr+1
-.end
+

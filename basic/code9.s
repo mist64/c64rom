@@ -1,4 +1,3 @@
-.pag 'code9'
 	bmi docstr
 	bcs chkerr
 chkok	rts
@@ -128,7 +127,7 @@ pulstk	pla
 	sta arisgn
 qoprts	lda facexp
 unprts	rts
-.ski 5
+
 eval	jmp (ieval)
 neval	lda #0
 	sta valtyp
@@ -198,4 +197,4 @@ domin	ldy #21
 gonprc	pla
 	pla
 	jmp negprc
-.end
+

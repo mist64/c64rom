@@ -1,4 +1,3 @@
-.pag 'code4'
 newstt	jsr iscntc
 	lda txtptr
 	ldy txtptr+1
@@ -140,4 +139,4 @@ lukall	jsr fndlnc
 	bcc userr
 	lda lowtr
 	sbc #1
-.end
+

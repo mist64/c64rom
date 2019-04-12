@@ -1,4 +1,3 @@
-.pag 'messages'
 ms1	.byt $d,'I/O ERROR ',$a3
 ms5	.byt $d,'SEARCHING',$a0
 ms6	.byt 'FOR',$a0
@@ -11,7 +10,7 @@ ms17	.byt $d,'FOUND',$a0
 ms18	.byt $d,'OK',$8d
 ; ms34 .byt $d,'MONITOR',$8d
 ; ms36 .byt $d,'BREA',$cb
-.ski 5
+
 ;print message to screen only if
 ;output enabled
 ;
@@ -26,4 +25,4 @@ msg	lda ms1,y
 	bpl msg
 msg10	clc
 	rts
-.end
+

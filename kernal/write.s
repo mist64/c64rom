@@ -1,4 +1,3 @@
-.pag 'tape write'
 ; cassette info - fsblk is block counter for record
 ;       fsblk = 2 -first header
 ;             = 1 -first data
@@ -171,7 +170,7 @@ tnof	lda r6510       ;turn off cassette motor
 	ora #$20        ;
 	sta r6510
 	rts
-.ski 3
+
 ;compare start and end load/save
 ;addresses.  subroutine called by
 ;tape read, save, tape write
@@ -182,14 +181,14 @@ cmpste	sec
 	lda sah
 	sbc eah
 	rts
-.ski 3
+
 ;increment address pointer sal
 ;
 incsal	inc sal
 	bne incr
 	inc sah
 incr	rts
-.end
+
 ; rsr 7/28/80 add comments
 ; rsr 8/4/80 changed i/o for vixen
 ; rsr 8/21/80 changed i/o for vixen mod

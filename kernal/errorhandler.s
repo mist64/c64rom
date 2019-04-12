@@ -1,4 +1,3 @@
-.pag 'error handler'
 ;***************************************
 ;* stop -- check stop key flag and     *
 ;* return z flag set if flag true.     *
@@ -15,7 +14,7 @@ nstop	lda stkey       ;value of last row
 	sta ndx         ;flush queue
 	plp
 stop2	rts
-.ski 5
+
 ;************************************
 ;*                                  *
 ;* error handler                    *
@@ -60,4 +59,4 @@ error9	lda #9          ;bad device #
 erexit	pla
 	sec
 	rts
-.end
+

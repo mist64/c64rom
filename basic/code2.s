@@ -1,4 +1,3 @@
-.pag 'code2'
 bufofs	=@1000
 crunch	jmp (icrnch)
 ncrnch	ldx txtptr
@@ -157,4 +156,4 @@ stxtpt	clc
 	adc #255
 	sta txtptr+1
 	rts
-.end
+

@@ -1,4 +1,3 @@
-.pag 'code3'
 list	bcc golst
 	beq golst
 	cmp #minutk
@@ -136,4 +135,4 @@ oneon	jsr sign
 	pha
 	lda #fortk
 	pha
-.end
+

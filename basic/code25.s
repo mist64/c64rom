@@ -1,6 +1,5 @@
-.pag 'code25'
 	*=$e000         ;start of vic-40 kernal rom
-.ski 2
+
 ; continuation of exponent routine
 ;
 stold	sta oldov
@@ -120,4 +119,4 @@ strnex	lda #0
 	ldx #<rndx
 	ldy #>rndx
 gmovmf	jmp movmf
-.end
+

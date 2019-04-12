@@ -1,4 +1,3 @@
-.pag 'tape files'
 ;fah -- find any header
 ;
 ;reads tape device until one of following
@@ -55,7 +54,7 @@ fah45	clc             ;success flag
 	dey             ;make nonzero for okay return
 ;
 fah40	rts
-.ski 5
+
 ;tapeh--write tape header
 ;error if tape buffer de-allocated
 ;carry clear if o.k.
@@ -152,7 +151,7 @@ th30	jsr ldad1
 	tya             ;restore error code for return
 ;
 th40	rts
-.ski 5
+
 ;function to return tape buffer
 ;address in tape1
 ;
@@ -162,7 +161,7 @@ zzz	ldx tape1       ;assume tape1
 ;...[tape1+1]=0 or 1 means deallocated
 ;...c clr => deallocated
 	rts
-.ski 5
+
 ldad1	jsr zzz         ;get ptr to cassette
 	txa
 	sta stal        ;save start low
@@ -174,7 +173,7 @@ ldad1	jsr zzz         ;get ptr to cassette
 	adc #0          ;compute pointer to end
 	sta eah         ;save end high
 	rts
-.ski 5
+
 faf	jsr fah         ;find any header
 	bcs faf40       ;failed
 ;
@@ -198,5 +197,5 @@ faf20	cpy fnlen       ;compare this many
 ;
 faf30	clc             ;success flag
 faf40	rts
-.end
+
 ; rsr  4/10/82 add key down test in fah...

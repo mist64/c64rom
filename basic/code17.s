@@ -1,4 +1,3 @@
-.pag 'code17'
 getbyt	jsr frmnum
 conint	jsr posint
 	ldx facmo
@@ -158,4 +157,4 @@ norm3	ldx facho
 	ldx facho+1
 	stx facho
 	ldx facmoh+1
-.end
+

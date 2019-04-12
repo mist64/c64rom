@@ -1,4 +1,3 @@
-.pag 'editor.2'
 ;screen scroll routine
 ;
 scrol	lda sal
@@ -78,7 +77,7 @@ pulind	pla             ;restore old indirects
 	pla
 	sta sal
 	rts
-.page
+
 newlin
 	ldx tblx
 bmt1	inx
@@ -189,7 +188,7 @@ clr10	jsr cpatch      ;reversed order from 901227-02
 	bpl clr10
 	rts
 	nop
-.ski 5
+
 ;
 ;put a char on the screen
 ;
@@ -203,7 +202,7 @@ dspp2	ldy pntr        ;get column
 	txa
 	sta (user)y     ;color to screen
 	rts
-.ski 5
+
 scolor	lda pnt         ;generate color ptr
 	sta user
 	lda pnt+1
@@ -211,7 +210,7 @@ scolor	lda pnt         ;generate color ptr
 	ora #>viccol    ;vic color ram
 	sta user+1
 	rts
-.pag
+
 key	jsr $ffea       ;update jiffy clock
 	lda blnsw       ;blinking crsr ?
 	bne key4        ;no
@@ -265,7 +264,7 @@ kprend	lda d1icr       ;clear interupt flags
 	tax
 	pla
 	rti             ;exit from irq routines
-.ski 3
+
 ; ****** general keyboard scan ******
 ;
 scnkey	lda #$00
@@ -365,7 +364,7 @@ putque
 scnrts	lda #$7f        ;setup pb7 for stop key sense
 	sta colm
 	rts
-.pag
+
 ;
 ; shift logic
 ;
@@ -377,12 +376,12 @@ shflog
 	beq scnrts      ;branch if so
 	lda mode
 	bmi shfout      ;dont shift if its minus
-.ski
+
 switch	lda vicreg+24   ;**********************************:
 	eor #$02        ;turn on other case
 	sta vicreg+24   ;point the vic there
 	jmp shfout
-.ski
+
 ;
 keylg2
 	asl a
@@ -399,7 +398,7 @@ notkat
 	sta keytab+1
 shfout
 	jmp rekey
-.end
+
 ; rsr 12/08/81 modify for vic-40
 ; rsr  2/18/82 modify for 6526 input pad sense
 ; rsr  3/11/82 fix keyboard debounce, repair file

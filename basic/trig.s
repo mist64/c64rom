@@ -1,4 +1,3 @@
-.pag 'trig functions'
 cos	lda #<pi2
 	ldy #>pi2
 	jsr fadd
@@ -99,4 +98,4 @@ atncon	.byt @13,@166,@263,@203
 	.byt @176,@114,@314,@221,@307
 	.byt @177,@252,@252,@252,@23
 	.byt @201,0,0,0,0
-.end
+

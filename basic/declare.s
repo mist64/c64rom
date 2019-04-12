@@ -1,4 +1,3 @@
-.pag 'declarations'
 addprc	=1
 romloc	=$a000          ;vic-40 basic rom
 linlen	=40             ;vic screen size ?why?
@@ -141,4 +140,4 @@ syreg	*=*+1           ;.y reg
 spreg	*=*+1           ;.p reg
 usrpok	*=*+3           ;user function dispatch
 	*=$0300+20      ;system indirects follow
-.end
+

@@ -1,4 +1,3 @@
-.page 'rs-232 transmitt'
 ; rstrab - entry for nmi continue routine
 ; rstbgn - entry for start transmitter
 ;
@@ -41,7 +40,7 @@ rstext	txa             ;calc bit whole to send
 	and #$04        ;goes out d2pa2
 	sta nxtbit
 	rts
-.page 'rs-232 transmitt'
+
 ; calculate parity
 ;  nxtbit =0 upon entry
 ;
@@ -72,14 +71,14 @@ rst030	lda roprty      ;even parity
 ;
 rst040	bvs rspext      ;wanted space
 	bvc rswext      ; wanted mark
-.ski 3
+
 ; stop bits
 ;
 rst050	inc bitts       ;stop bit count towards zero
 	ldx #$ff        ;send stop bit
 	bne rstext      ;jump to exit
 ;
-.pag 'rs-232 transmitt'
+
 ; rstbgn - entry to start byte trans
 ;
 rstbgn	lda m51cdr      ;check for 3/x line
@@ -105,7 +104,7 @@ rst080	ldy rodbs       ;check buffer pointers
 	sta rodata      ;...into byte buffer
 	inc rodbs       ;move pointer to next
 	rts
-.ski 3
+
 ; set errors
 ;
 dsrerr	lda #$40        ;dsr gone error
@@ -124,7 +123,7 @@ oenabl	sta d2icr       ;toss bad/old nmi
 	sta enabl
 	sta d2icr
 	rts
-.ski 3
+
 ; bitcnt - cal # of bits to be sent
 ;   returns #of bits+1
 ;
@@ -137,7 +136,7 @@ bit010	bvc bit020
 	dex             ;bit 6 high is a 6 or 5
 	dex
 bit020	rts
-.end
+
 ; rsr  8/24/80 correct some mistakes
 ; rsr  8/27/80 change bitnum base to #bits+1
 ; rsr 12/11/81 modify for vic-40

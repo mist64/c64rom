@@ -1,9 +1,8 @@
-.pag 'serial routines'
 ;command serial bus device to talk
 ;
 talk	ora #$40        ;make a talk adr
 	.byt $2c        ;skip two bytes
-.ski 3
+
 ;command serial bus device to listen
 ;
 listn	ora #$20        ;make a listen adr
@@ -37,12 +36,12 @@ list5	lda d2pra       ;assert attention
 	ora #$08
 	sta d2pra
 ;
-.ski 3
+
 isoura	sei
 	jsr clklo       ;set clock line low
 	jsr datahi
 	jsr w1ms        ;delay 1 ms
-.ski 3
+
 isour	sei             ;no irq's allowed
 	jsr datahi      ;make sure data is released
 	jsr debpia      ;data should be low
@@ -112,24 +111,24 @@ csberr	jsr udst        ;commodore serial buss error entry
 	clc             ;make sure no kernal error returned
 	bcc dlabye      ;turn atn off ,release all lines
 ;
-.ski 3
+
 ;send secondary address after listen
 ;
 secnd	sta bsour       ;buffer character
 	jsr isoura      ;send it
-.ski 3
+
 ;release attention after listen
 ;
 scatn	lda d2pra
 	and #$ff-$08
 	sta d2pra       ;release attention
 	rts
-.ski 3
+
 ;talk second address
 ;
 tksa	sta bsour       ;buffer character
 	jsr isoura      ;send second addr
-.ski 3
+
 tkatn	;shift over to listener
 	sei             ;no irq's here
 	jsr datalo      ;data line low
@@ -139,7 +138,7 @@ tkatn1	jsr debpia      ;wait for clock to go low
 	bmi tkatn1
 	cli             ;irq's okay now
 	rts
-.ski 3
+
 ;buffered output to serial bus
 ;
 ciout	bit c3p0        ;buffered char?
@@ -155,7 +154,7 @@ ci2	pha             ;save current char
 ci4	sta bsour       ;buffer current char
 	clc             ;carry-good exit
 	rts
-.ski 3
+
 ;send untalk command on serial bus
 ;
 untlk	sei
@@ -165,7 +164,7 @@ untlk	sei
 	sta d2pra
 	lda #$5f        ;untalk command
 	.byt $2c        ;skip two bytes
-.ski 3
+
 ;send unlisten command on serial bus
 ;
 unlsn	lda #$3f        ;unlisten command
@@ -182,7 +181,7 @@ dlad00	dex
 	tax
 	jsr clkhi
 	jmp datahi
-.ski 3
+
 ;input a byte from serial bus
 ;
 acptr
@@ -290,7 +289,7 @@ w1ms1	dex             ;5us loop
 	bne w1ms1
 	tax             ;restore .x
 	rts
-.end
+
 ;*******************************
 ;written 8/11/80 bob fairbairn
 ;test serial0.6 8/12/80  rjf
@@ -307,4 +306,4 @@ w1ms1	dex             ;5us loop
 ;change acptr eoi for better response 3/28/82 rsr
 ;change wait 1 ms routine for less code 4/8/82 rsr
 ;******************************
-.end
+

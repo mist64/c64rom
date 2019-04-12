@@ -1,4 +1,3 @@
-.pag 'code10'
 ;test pointer to variable to see
 ;if constant is contained in basic.
 ;array variables have zeroes placed
@@ -18,7 +17,7 @@ tstrom	sec
 	sbc faclo
 ;
 tstr10	rts
-.ski 5
+
 isvar	jsr ptrget
 isvret	sta facmo
 	sty facmo+1
@@ -178,4 +177,4 @@ qcomp	bmi docmp
 	clc
 	bcc docmp
 getcmp	lda (argmo)y
-.end
+

@@ -1,4 +1,3 @@
-.page 'nmi handler'
 nmi	sei             ;no irq's allowed...
 	jmp (nminv)     ;...could mess up cassettes
 nnmi	pha
@@ -28,7 +27,7 @@ timb	jsr restor      ;restore system indirects
 	jsr ioinit      ;restore i/o for basic
 	jsr cint        ;restore screen for basic
 	jmp ($a002)     ;...no, so basic warm start
-.ski 2
+
 ; disable nmi's untill ready
 ;  save on stack
 ;
@@ -66,7 +65,7 @@ nnmi22	jsr flnmi       ;handle a start bit...
 nnmi25	jsr rstrab      ;go calc info (code could be in line)
 	jmp nmirti
 ;
-.ski 2
+
 ; t2 nmi check - recieve a bit
 ;
 nnmi30	txa
@@ -75,7 +74,7 @@ nnmi30	txa
 ;
 	jsr t2nmi       ;handle interrupt
 	jmp nmirti
-.ski 2
+
 ; flag nmi handler - recieve a start bit
 ;
 nnmi40	txa             ;check for edge
@@ -83,7 +82,7 @@ nnmi40	txa             ;check for edge
 	beq nmirti      ;no...
 ;
 	jsr flnmi       ;start bit routine
-.ski 2
+
 nmirti	lda enabl       ;restore nmi's
 	sta d2icr
 prend	pla             ;because of missing screen editor
@@ -92,7 +91,7 @@ prend	pla             ;because of missing screen editor
 	tax
 	pla
 	rti
-.ski 4
+
 ; baudo table contains values
 ;  for 14.31818e6/14/baud rate/2 (ntsc)
 ;
@@ -111,7 +110,7 @@ baudo	.wor 10277-cbit ; 50 baud
 ;   of the next bit.
 ;   aprox the time to service a cb1 nmi
 cbit	=100            ;cycles
-.pag 'nmi - subroutines'
+
 ; t2nmi - subroutine to handle an rs232
 ;  bit input.
 ;
@@ -142,7 +141,7 @@ t2nmi	lda d2prb       ;get data in
 	sta d2t2h
 ;
 	jmp rsrcvr      ;go shift in...
-.ski 3
+
 ; flnmi - subroutine to handle the
 ;  start bit timing..
 ;
@@ -189,7 +188,7 @@ popen	tax             ;we're calculating baud rate
 	rts
 	nop
 	nop
-.end
+
 ; rsr  8/02/80 - routine for panic
 ; rsr  8/08/80 - panic & stop key
 ; rsr  8/12/80 - change for a0int a subroutine

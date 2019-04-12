@@ -1,4 +1,3 @@
-.pag 'code11'
 	cmp (dsctmp+1)y
 	beq nxtcmp
 	ldx #$ff
@@ -168,4 +167,4 @@ fmaptr	lda count
 jsrgm	sta arypnt
 	sty arypnt+1
 	rts
-.end
+

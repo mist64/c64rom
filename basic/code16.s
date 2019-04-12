@@ -1,4 +1,3 @@
-.pag 'code16'
 	lda (strng1)y
 	tax
 	iny
@@ -161,4 +160,4 @@ asc	jsr len1
 	jmp sngflt
 gofuc	jmp fcerr
 gtbytc	jsr chrget
-.end
+

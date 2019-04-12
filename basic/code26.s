@@ -1,4 +1,3 @@
-.pag 'code26'
 ;most references to kernal are defined here
 ;
 erexit	cmp #$f0        ;check for special case
@@ -11,42 +10,42 @@ erexix	tax             ;set termination flags
 	bne erexiy
 	ldx #erbrk      ;break error
 erexiy	jmp error       ;normal error
-.ski 5
+
 clschn	=$ffcc
-.ski 5
+
 outch	jsr $ffd2
 	bcs erexit
 	rts
-.ski 5
+
 inchr	jsr $ffcf
 	bcs erexit
 	rts
-.ski 5
+
 ccall	=$ffe7
-.ski 5
+
 settim	=$ffdb
 rdtim	=$ffde
-.ski 5
+
 coout	jsr ppach       ; go out to save .a for print# patch
 	bcs erexit
 	rts
-.ski 5
+
 coin	jsr $ffc6
 	bcs erexit
 	rts
-.ski 5
+
 readst	=$ffb7
-.ski 5
+
 cgetl	jsr $ffe4
 	bcs erexit
 	rts
-.ski 5
+
 rdbas	=$fff3
-.ski 5
+
 setmsg	=$ff90
-.ski 5
+
 plot	=$fff0
-.ski 5
+
 csys	jsr frmnum      ;eval formula
 	jsr getadr      ;convert to int. addr
 	lda #>csysrz    ;push return address
@@ -68,7 +67,7 @@ csysrz	=*-1            ;return to here
 	pla             ;get status reg
 	sta spreg
 	rts             ;return to system
-.ski 5
+
 csave	jsr plsv        ;parse parms
 	ldx vartab      ;end save addr
 	ldy vartab+1
@@ -76,10 +75,10 @@ csave	jsr plsv        ;parse parms
 	jsr $ffd8       ;save it
 	bcs erexit
 	rts
-.ski 5
+
 cverf	lda #1          ;verify flag
 	.byt $2c        ;skip two bytes
-.ski 5
+
 cload	lda #0          ;load flag
 	sta verck
 	jsr plsv        ;parse parameters
@@ -113,7 +112,7 @@ cld10	; jsr $ffe1 ;check run/stop
 	jmp strout
 ;
 cld20	rts
-.ski 5
+
 ;
 ;finish load
 ;
@@ -139,19 +138,19 @@ cld60	lda txtptr+1
 cld70	jsr stxtpt
 	jsr lnkprg
 	jmp fload
-.ski 5
+
 copen	jsr paoc        ;parse statement
 	jsr $ffc0       ;open it
 	bcs jerxit      ;bad stuff or memsiz change
 	rts             ;a.o.k.
-.ski 5
+
 cclos	jsr paoc        ;parse statement
 	lda andmsk      ;get la
 	jsr $ffc3       ;close it
 	bcc cld20       ;it's okay...no memsize change
 ;
 jerxit	jmp erexit
-.ski 5
+
 ;
 ;parse load and save commands
 ;
@@ -180,11 +179,11 @@ plsv
 	tay
 	ldx andmsk      ;device #
 	jmp $ffba
-.ski 5
+
 ;look for comma followed by byte
 plsv7	jsr paoc30
 	jmp getbyt
-.ski 5
+
 ;skip return if next char is end
 ;
 paoc20	jsr chrgot
@@ -192,14 +191,14 @@ paoc20	jsr chrgot
 	pla
 	pla
 paocx	rts
-.ski 5
+
 ;check for comma and good stuff
 ;
 paoc30	jsr chkcom      ;check comma
 paoc32	jsr chrgot      ;get current
 	bne paocx       ;is o.k.
 paoc40	jmp snerr       ;bad...end of line
-.ski 5
+
 ;parse open/close
 ;
 paoc	lda #0
@@ -235,7 +234,7 @@ paoc15	jsr frmevl
 	ldx index1
 	ldy index1+1
 	jmp $ffbd
-.end
+
 ; rsr 8/10/80 - change sys command
 ; rsr 8/26/80 - add open&close memsiz detect
 ; rsr 10/7/80 - change load (remove run wait)

@@ -1,4 +1,3 @@
-.pag 'code18'
 	stx facmoh
 	ldx facmo+1
 	stx facmo
@@ -123,4 +122,4 @@ sqr05	.byt @200,@65,4,@363,@64
 sqr20	.byt @201,@65,@4,@363,@64
 neghlf	.byt @200,@200,0,0,0
 log2	.byt @200,@61,@162,@27,@370
-.end
+

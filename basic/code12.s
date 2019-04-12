@@ -1,4 +1,3 @@
-.pag 'code12'
 n32768	.byt 144,128,0,0,0
 flpint	jsr ayint
 	lda facmo
@@ -151,4 +150,4 @@ grease	jsr reason
 	sty strend+1
 	lda #0
 	inc curtol+1
-.end
+

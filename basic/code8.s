@@ -1,4 +1,3 @@
-.pag 'code8'
 datbk1	jsr chrget
 	bit valtyp
 	bpl numins
@@ -143,4 +142,4 @@ chknum	clc
 	.byt $24
 chkstr	sec
 chkval	bit valtyp
-.end
+

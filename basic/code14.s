@@ -1,4 +1,3 @@
-.pag 'code14'
 	pha
 	lda txtptr
 	pha
@@ -205,4 +204,4 @@ svars	lda #6+addprc
 	sta four6
 	lda vartab
 	ldx vartab+1
-.end
+

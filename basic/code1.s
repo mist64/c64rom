@@ -1,4 +1,3 @@
-.pag 'code1'
 omerr	ldx #errom
 error	jmp (ierror)
 nerrox	txa
@@ -29,13 +28,13 @@ errfin	jsr strout
 	iny
 	beq readyx
 	jsr inprt
-.ski 5
+
 readyx	lda #<reddy
 	ldy #>reddy
 	jsr strout
 	lda #$80        ;direct messages on
 	jsr setmsg      ;from kernal
-.ski 5
+
 main	jmp (imain)
 nmain	jsr inlin
 	stx txtptr
@@ -150,7 +149,7 @@ czloop	iny
 	sta index+1
 	bcc chead
 lnkrts	rts
-.ski 5
+
 ;function to get a line one character at
 ;a time from the input channel and
 ;build it in the input buffer.
@@ -170,4 +169,4 @@ inlinc	jsr inchr
 	jmp error
 ;
 finin1	jmp fininl
-.end
+

@@ -1,4 +1,3 @@
-.pag 'code6'
 timelp	sty fbufpt
 	jsr timnum
 	jsr mul10
@@ -145,4 +144,4 @@ xspac2	dex
 	bne xspac1
 notabr	jsr chrget
 	jmp printc
-.end
+

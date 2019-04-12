@@ -1,4 +1,3 @@
-.pag 'close all files'
 ;***************************************
 ;* clall -- close all logical files  *
 ;*      deletes all table entries and*
@@ -8,7 +7,7 @@
 ;
 nclall	lda #0
 	sta ldtnd       ;forget all files
-.ski 3
+
 ;********************************************
 ;* clrch -- clear channels                  *
 ;*   unlisten or untalk ieee devices, but   *
@@ -34,4 +33,4 @@ clall2	stx dflto       ;output chan=3=screen
 	lda #0
 	sta dfltn       ;input chan=0=keyboard
 	rts
-.end
+

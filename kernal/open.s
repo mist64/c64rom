@@ -1,4 +1,3 @@
-.pag 'open file'
 ;***********************************
 ;*                                 *
 ;* open function                   *
@@ -112,7 +111,7 @@ op171	lda #bufsz-1    ;assume force read
 op172	sta bufpt       ;point to data
 op175	clc             ;flag good open
 op180	rts             ;exit in peace
-.ski 5
+
 openi	lda sa
 	bmi op175       ;no sa...done
 ;
@@ -154,7 +153,7 @@ op40	lda (fnadr)y
 	bne op40
 ;
 op45	jmp cunlsn      ;jsr unlsn: clc: rts
-.page 'open rs232 file'
+
 ; opn232 - open an rs-232 or parallel port file
 ;
 ; variables initilized
@@ -262,7 +261,7 @@ cln232	lda #$7f        ;clear nmi's
 	ldy #00
 	sty enabl       ;clear enabls
 	rts
-.end
+
 ; rsr  8/25/80 - add rs-232 code
 ; rsr  8/26/80 - top of memory handler
 ; rsr  8/29/80 - add filename to m51regs

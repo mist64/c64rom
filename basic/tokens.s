@@ -1,4 +1,3 @@
-.page 'tokens'
 	*=romloc
 	.wor init       ;c000 hard reset
 	.wor panic      ;c000 soft reset
@@ -125,4 +124,4 @@ printk	=@231
 	.byt 'GE',$d4
 	.byt 'NE',$d7
 scratk	=@242
-.end
+

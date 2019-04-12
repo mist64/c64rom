@@ -1,4 +1,3 @@
-.pag 'code5'
 	sta txtptr
 	lda lowtr+1
 	sbc #0
@@ -146,4 +145,4 @@ inpcom	ldy forpnt+1
 	ldy #0
 	sty facexp
 	sty facsgn
-.end
+

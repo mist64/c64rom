@@ -1,4 +1,3 @@
-.pag 'code7'
 xspac1	jsr outspc
 	bne xspac2
 strout	jsr strlit
@@ -144,4 +143,4 @@ qdata	bmi datlop
 getnth	jsr qinlin
 datbk	stx txtptr
 	sty txtptr+1
-.end
+

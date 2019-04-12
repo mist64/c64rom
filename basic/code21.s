@@ -1,4 +1,3 @@
-.pag 'code21'
 qint	lda facexp
 	beq clrfac
 	sec
@@ -141,4 +140,4 @@ mlex10	asl a
 	sbc #'0
 mlexmi	sta tenexp
 	jmp finec
-.end
+

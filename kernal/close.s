@@ -1,4 +1,3 @@
-.pag 'close'
 ;***************************************
 ;* close -- close logical file       *
 ;*                                   *
@@ -109,7 +108,7 @@ jxrmv	tax
 ;
 jx170	clc             ;close exit
 jx175	rts
-.ski 5
+
 ;lookup tablized logical file data
 ;
 lookup	lda #0
@@ -121,7 +120,7 @@ jx600	dex
 	cmp lat,x
 	bne jx600
 	rts
-.ski 5
+
 ;routine to fetch table entries
 ;
 jz100	lda lat,x
@@ -131,5 +130,5 @@ jz100	lda lat,x
 	lda sat,x
 	sta sa
 jz101	rts
-.end
+
 ; rsr  5/12/82 - modify for cln232

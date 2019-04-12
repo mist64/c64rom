@@ -1,4 +1,3 @@
-.pag 'code19'
 log	jsr sign
 	beq logerr
 	bpl log1
@@ -210,4 +209,4 @@ divnrm	asl a
 	jmp movfr
 dv0err	ldx #errdvo
 	jmp error
-.end
+

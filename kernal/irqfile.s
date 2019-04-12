@@ -1,4 +1,3 @@
-.page 'irqfile - dispatcher'
 ; simirq - simulate an irq (for cassette read)
 ;  enter by a jsr simirq
 ;
@@ -19,8 +18,7 @@ puls	pha
 	beq puls1       ;...no
 	jmp (cbinv)     ;...yes...break instr
 puls1	jmp (cinv)      ;...irq
-.ski 5
-.pag "irqfile-patches 6/82"
+
 ; pcint - add universal to cinit
 ;
 pcint	jsr cint
@@ -55,7 +53,7 @@ baudop	.wor 9853-cbit ;50 baud
 	.wor 411-cbit  ;1200 baud
 	.wor 274-cbit  ;1800 baud
 	.wor 205-cbit  ;2400 baud
-.page "irqfile -  patches"
+
 	*=$e500-32      ;(20-12)
 ; fpatch - tape filename timeout
 ;
@@ -66,7 +64,7 @@ fpat00	ldy stkey       ;check for key down on last row...
 	cmp time+1      ;watch timer
 	bne fpat00
 fpat01	rts
-.ski 5
+
 	*=$e500-38      ;(32-6)
 ; cpatch - fix to clear line...modified 901227-03
 ;  prevents white character flash...
@@ -74,7 +72,7 @@ cpatch                  ;always clear to current foregnd color
 	lda color
 	sta (user)y
 	rts
-.ski 5
+
 	*=$e500-45      ;(38-7)
 ; prtyp - rs232 parity patch...added 901227-03
 ;
@@ -82,4 +80,4 @@ prtyp	sta rinone      ;good receiver start...disable flag
 	lda #1          ;set parity to 1 always
 	sta riprty
 	rts
-.end
+

@@ -1,4 +1,3 @@
-.pag 'rs232 inout'
 ; output a file over usr port
 ;  using rs232
 ;
@@ -46,7 +45,7 @@ ckdsrx	lda #$40        ;a data set ready error
 cko100	clc             ;no error
 	rts
 ;
-.page 'rs232 inout'
+
 ; bso232 - output a char rs232
 ;   data passed in t1 from bsout
 ;
@@ -85,7 +84,7 @@ bso110	lda #$10        ;turn off timer to prevent false start...
 	lda #$11        ;turn on timer
 	sta d2cra
 bso120	rts
-.page 'rs232 inout'
+
 ; input a file over user port
 ;  using rs232
 ;
@@ -139,7 +138,7 @@ cki100	lda enabl       ;check for flag or t2 active
 	beq cki080      ;no need to turn on
 cki110	clc             ;no error
 	rts
-.page 'rs232 inout'
+
 ; bsi232 - input a char rs232
 ;
 ; buffer handler
@@ -162,7 +161,7 @@ bsi010	ora #$08        ;set buffer empty status
 	sta rsstat
 	lda #$0         ;return a null
 	rts
-.ski 4
+
 ; rsp232 - protect serial/cass from rs232 nmi's
 ;
 rsp232	pha             ;save .a
@@ -177,7 +176,7 @@ rspoff	lda enabl       ;wait untill done
 	sta enabl       ;clear all enabls
 rspok	pla             ;all done
 	rts
-.end
+
 ; rsr  8/24/80 original code out
 ; rsr  8/25/80 original code in
 ; rsr  9/22/80 remove parallel refs & fix xline logic

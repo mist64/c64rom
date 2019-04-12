@@ -1,4 +1,3 @@
-.pag 'jump table/vectors'
 	*=$ff8a-9
 	jmp pcint
 	jmp ioinit
@@ -41,10 +40,9 @@ clall	jmp (iclall)    ;close all files
 jscrog	jmp scrorg      ;screen org
 jplot	jmp plot        ;read/set x,y coord
 jiobas	jmp iobase      ;return i/o base
-.ski 5
-.pag 'jump table/vectors'
+
 	*=$fffa
 	.wor nmi        ;program defineable
 	.wor start      ;initialization code
 	.wor puls       ;interrupt handler
-.end
+

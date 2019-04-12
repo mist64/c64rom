@@ -1,4 +1,3 @@
-.pag 'code24'
 logeb2	.byt @201,@70,@252,@73,@51
 expcon	.byt 7,@161,@64,@130,@76
 	.byt @126,@164,@26,@176
@@ -21,4 +20,4 @@ exp	lda #<logeb2
 	bcc stoldx
 	jsr incrnd
 stoldx	jmp stold       ;cross boundries
-.end
+

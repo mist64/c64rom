@@ -1,4 +1,3 @@
-.pag 'screen editor'
 maxchr=80
 nwrap=2 ;max number of physical lines per logical line
 ;
@@ -37,7 +36,7 @@ plot	bcs plot10
 plot10	ldx tblx
 	ldy pntr
 	rts
-.ski 5
+
 ;initialize i/o
 ;
 cint
@@ -49,7 +48,7 @@ cint
 	lda #0          ;make sure we're in pet mode
 	sta mode
 	sta blnon       ;we dont have a good char from the screen yet
-.ski
+
 	lda #<shflog    ;set shift logic indirects
 	sta keylog
 	lda #>shflog
@@ -83,7 +82,7 @@ lps2	inx
 clear1	jsr clrln       ;see scroll routines
 	dex
 	bpl clear1
-.ski 5
+
 ;home function
 ;
 nxtd	ldy #0
@@ -116,7 +115,7 @@ fndend	ldy ldtb1,x
 stdone
 	sta lnmx
 	jmp scolor      ;make color pointer follow 901227-03**********
-.ski 5
+
 ; this is a patch for input logic 901227-03**********
 ;   fixes input"xxxxxxx-40-xxxxx";a$ problem
 ;
@@ -125,17 +124,17 @@ finput	cpx lsxp        ;check if on same line
 	jmp findst      ;check if we wrapped down...
 finpux	rts
 	nop             ;keep the space the same...
-.ski 5
+
 ;panic nmi entry
 ;
 vpan	jsr panic       ;fix vic screen
 	jmp nxtd        ;home cursor
-.ski 5
+
 panic	lda #3          ;reset default i/o
 	sta dflto
 	lda #0
 	sta dfltn
-.ski 5
+
 ;init vic
 ;
 initv	ldx #47         ;load all vic regs ***
@@ -144,7 +143,7 @@ px4	lda tvic-1,x
 	dex
 	bne px4
 	rts
-.ski 5
+
 ;
 ;remove character from queue
 ;
@@ -212,7 +211,7 @@ clp6	iny
 	cmp indx
 	bcc lop5
 	bcs clp2
-.ski 5
+
 ;input a line until carriage return
 ;
 loop5	tya
@@ -261,7 +260,7 @@ clp1	sta data
 	lda #$ff
 clp7	clc
 	rts
-.ski 5
+
 qtswc	cmp #$22
 	bne qtswl
 	lda qtsw
@@ -269,7 +268,7 @@ qtswc	cmp #$22
 	sta qtsw
 	lda #$22
 qtswl	rts
-.ski 5
+
 nxt33	ora #$40
 nxt3	ldx rvs
 	beq nvs
@@ -291,7 +290,7 @@ lop2	pla
 	clc             ;good return
 	cli
 	rts
-.pag
+
 wlogic
 	jsr chkdwn      ;maybe we should we increment tblx
 	inc pntr        ;bump charcter pointer
@@ -303,7 +302,7 @@ wlogic
 	lda autodn      ;should we auto scroll down?
 	beq wlog20      ;branch if not
 	jmp bmt1        ;else decide which way to scroll
-.skip 3
+
 wlog20
 	ldx tblx        ;see if we should scroll down
 	cpx #nlines
@@ -329,13 +328,13 @@ findst
 	bne findst
 finx
 	jmp setpnt      ;make sure pnt is right
-.ski
+
 wlog10	dec tblx
 	jsr nxln
 	lda #0
 	sta pntr        ;point to first byte
 wlgrts	rts
-.pag
+
 bkln	ldx tblx
 	bne bkln1
 	stx pntr
@@ -349,7 +348,7 @@ bkln1	dex
 	ldy lnmx
 	sty pntr
 	rts
-.ski 5
+
 ;print routine
 ;
 prt	pha
@@ -446,10 +445,10 @@ gotdwn	jsr nxln
 jpl3	jmp loop2
 colr1	jsr chkcol      ;check for a color
 	jmp lower       ;was jmp loop2
-.ski 3
+
 ;check color
 ;
-.ski 5
+
 ;shifted keys
 ;
 nxtx
@@ -592,7 +591,7 @@ dnline	ldx tblx
 	inc tblx
 ;
 dwnbye	rts
-.ski2
+
 chkcol
 	ldx #15         ;there's 15 colors
 chk1a	cmp coltab,x
@@ -604,11 +603,11 @@ chk1a	cmp coltab,x
 chk1b
 	stx color       ;change the color
 	rts
-.ski1
+
 coltab
 ;blk,wht,red,cyan,magenta,grn,blue,yellow
 	.byt $90,$05,$1c,$9f,$9c,$1e,$1f,$9e
 	.byt $81,$95,$96,$97,$98,$99,$9a,$9b
-.end
+
 ; rsr modify for vic-40 system
 ; rsr 12/31/81 add 8 more colors

@@ -1,4 +1,3 @@
-.pag 'code23'
 	lda #'-
 fout14	sta fbuffr+1,y
 	lda #'E
@@ -79,4 +78,4 @@ negop	lda facexp
 	eor #@377
 	sta facsgn
 negrts	rts
-.end
+

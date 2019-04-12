@@ -1,4 +1,3 @@
-.pag 'channel i/o'
 ;***************************************
 ;* getin -- get character from channel *
 ;*      channel is determined by dfltn.*
@@ -26,7 +25,7 @@ gn232	sty xsav        ;save .y, used in rs232
 	ldy xsav        ;restore .y
 gn20	clc             ;good return
 	rts
-.ski 3
+
 ;***************************************
 ;* basin-- input character from channel*
 ;*     input differs from get on device*
@@ -87,7 +86,7 @@ jtg36	tax             ;save error info
 	txa             ;restore error
 jtg37	ldx xsav        ;return
 	rts             ;error return c-set from jtget
-.ski 3
+
 ;get a character from appropriate
 ;cassette buffer
 ;
@@ -102,7 +101,7 @@ jtget	jsr jtp20       ;buffer pointer wrap?
 jtg10	lda (tape1)y    ;get char from buf
 	clc             ;good return
 	rts 
-.ski 3
+
 ;input from serial bus
 ;
 bn30	lda status      ;status from last
@@ -123,7 +122,7 @@ bn50	jsr gn232       ;get info
 	and #$60
 	bne bn31        ;an error...exit with c/r
 	beq bn50        ;no error...stay in loop
-.pag 'channel output'
+
 ;***************************************
 ;* bsout -- out character to channel   *
 ;*     determined by variable dflto:   *
@@ -202,5 +201,5 @@ rstor1	rts
 ;
 bo50	jsr bso232      ;pass data through variable t1
 	jmp rstoa       ;go restore all..always good
-.end
+
 ; rsr 5/12/82 fix bsout for no reg affect but errors

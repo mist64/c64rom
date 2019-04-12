@@ -1,24 +1,23 @@
-.pag 'init'
 panic	jsr clschn      ;warm start basic...
 	lda #0          ;clear channels
 	sta channl
 	jsr stkini      ;restore stack
 	cli             ;enable irq's
-.ski 2
+
 ready	ldx #$80
 	jmp (ierror)
 nerror	txa             ;get  high bit
 	bmi nready
 	jmp nerrox
 nready	jmp readyx
-.ski 2
+
 init	jsr initv       ;go init vectors
 	jsr initcz      ;go init charget & z-page
 	jsr initms      ;go print initilization messages
 	ldx #stkend-256 ;set up end of stack
 	txs
 	bne ready       ;jmp...ready
-.ski 4
+
 initat	inc chrget+7
 	bne chdgot
 	inc chrget+8
@@ -33,7 +32,7 @@ chdgot	lda 60000
 	sbc #$d0
 chdrts	rts
 	.byt 128,79,199,82,88
-.ski 6
+
 initcz	lda #76
 	sta jmper
 	sta usrpok
@@ -82,7 +81,7 @@ usedef	stx memsiz
 	bne init20
 	inc txttab+1
 init20	rts
-.ski 6
+
 initms	lda txttab
 	ldy txttab+1
 	jsr reason
@@ -100,7 +99,7 @@ initms	lda txttab
 	ldy #>words
 	jsr strout
 	jmp scrtch
-.ski 4
+
 bvtrs	.wor nerror,nmain,ncrnch,nqplop,ngone,neval
 ;
 initv	ldx #initv-bvtrs-1 ;init vectors
@@ -110,7 +109,7 @@ initv1	lda bvtrs,x
 	bpl initv1
 	rts
 chke0	.byt $00
-.ski 4
+
 words	.byt ' BASIC BYTES FREE',13,0
 fremes	.byt 147,13,'    **** COMMODORE 64 BASIC V2 ****'
 	.byt 13,13,' 64K RAM SYSTEM  ',0
@@ -124,7 +123,7 @@ ppach	pha
 	bcc ppach0      ;no error....
 	txa             ;error code
 ppach0	rts
-.end
+
 ;rsr 8/10/80 update panic :rem could use in error routine
 ;rsr 2/08/82 modify for vic-40 release
 ;rsr 4/15/82 add advertising sign-on

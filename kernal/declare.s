@@ -1,4 +1,3 @@
-.pag 'declare'
 	*=$0000         ;declare 6510 ports
 d6510	*=*+1           ;6510 data direction register
 r6510	*=*+1           ;6510 data register
@@ -13,7 +12,7 @@ yr	*=*+1
 sp	*=*+1
 invh	*=*+1           ;user modifiable irq
 invl	*=*+1
-.ski 3
+
 	* =$90
 status	*=*+1           ;i/o operation status byte
 ; crfac *=*+2 ;correction factor (unused)
@@ -114,25 +113,25 @@ ribuf	*=*+2           ;rs-232 input buffer pointer
 robuf	*=*+2           ;rs-232 output buffer pointer
 frekzp	*=*+4           ;free kernal zero page 9/24/80
 baszpt	*=*+1           ;location ($00ff) used by basic
-.ski 3
+
 	*=$100 
 bad	*=*+1
 	*=$200
 buf	*=*+89          ;basic/monitor buffer
-.ski
+
 ; tables for open files
 ;
 lat	*=*+10          ;logical file numbers
 fat	*=*+10          ;primary device numbers
 sat	*=*+10          ;secondary addresses
-.ski 2
+
 ; system storage
 ;
 keyd	*=*+10          ;irq keyboard buffer
 memstr	*=*+2           ;start of memory
 memsiz	*=*+2           ;top of memory
 timout	*=*+1           ;ieee timeout flag
-.ski 2
+
 ; screen editor storage
 ;
 color	*=*+1           ;activ color nybble
@@ -147,7 +146,7 @@ lstshf	*=*+1           ;last shift pattern
 keylog	*=*+2           ;indirect for keyboard table setup
 mode	*=*+1           ;0-pet mode, 1-cattacanna
 autodn	*=*+1           ;auto scroll down flag(=0 on,<>0 off)
-.ski 3
+
 ; rs-232 storage
 ;
 m51ctr	*=*+1           ;6551 control register
@@ -186,7 +185,7 @@ kika26	*=*+1           ;temp storage for cassette read routine
 stupid	*=*+1           ;temp d1irq indicator for cassette read
 lintmp	*=*+1           ;temporary for line index
 palnts	*=*+1           ;pal vs ntsc flag 0=ntsc 1=pal
-.ski 3
+
 	*=$0300         ;rem program indirects(10)
 	*=$0300+20      ;rem kernal/os indirects(20)
 cinv	*=*+2           ;irq ram vector
@@ -205,26 +204,25 @@ iclall	*=*+2
 usrcmd	*=*+2
 iload	*=*+2
 isave	*=*+2           ;savesp
-.ski 3
+
 	*=$0300+60
 tbuffr	*=*+192         ;cassette data buffer
-.ski 3
+
 	* =$400
 vicscn	*=*+1024
 ramloc
-.ski 3
-.pag 'declare'
+
 ; i/o devices
 ;
 	* =$d000
 vicreg	=* ;vic registers
-.ski 2
+
 	* =$d400
 sidreg	=* ;sid registers
-.ski 2
+
 	* =$d800
 viccol	*=*+1024        ;vic color nybbles
-.ski 2
+
 	* =$dc00        ;device1 6526 (page1 irq)
 colm	;keyboard matrix
 d1pra	*=*+1
@@ -244,7 +242,7 @@ d1sdr	*=*+1
 d1icr	*=*+1
 d1cra	*=*+1
 d1crb	*=*+1
-.ski 2
+
 	* =$dd00        ;device2 6526 (page2 nmi)
 d2pra	*=*+1
 d2prb	*=*+1
@@ -262,9 +260,9 @@ d2sdr	*=*+1
 d2icr	*=*+1
 d2cra	*=*+1
 d2crb	*=*+1
-.ski 2
+
 timrb	=$19            ;6526 crb enable one-shot tb
-.pag 'declare'
+
 ;tape block types
 ;
 eot	=5 ;end of tape
@@ -282,7 +280,7 @@ nlines	=25             ;25 rows on screen
 white	=$01            ;white screen color
 blue	=$06            ;blue char color
 cr	=$d             ;carriage return
-.end
+
 ;rsr 8/3/80 add & change z-page
 ;rsr 8/11/80 add memuss & plf type
 ;rsr 8/22/80 add rs-232 routines
