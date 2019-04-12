@@ -1,208 +1,208 @@
-.PAG 'CODE14'
-	PHA
-	LDA TXTPTR
-	PHA
-	JSR DATA
-	JMP DEFFIN
-GETFNM	LDA #FNTK
-	JSR SYNCHR
-	ORA #128
-	STA SUBFLG
-	JSR PTRGT2
-	STA DEFPNT
-	STY DEFPNT+1
-	JMP CHKNUM
-FNDOER	JSR GETFNM
-	LDA DEFPNT+1
-	PHA
-	LDA DEFPNT
-	PHA
-	JSR PARCHK
-	JSR CHKNUM
-	PLA
-	STA DEFPNT
-	PLA
-	STA DEFPNT+1
-	LDY #2
-	LDA (DEFPNT)Y
-	STA VARPNT
-	TAX
-	INY
-	LDA (DEFPNT)Y
-	BEQ ERRGUF
-	STA VARPNT+1
-	INY
-DEFSTF	LDA (VARPNT)Y
-	PHA
-	DEY
-	BPL DEFSTF
-	LDY VARPNT+1
-	JSR MOVMF
-	LDA TXTPTR+1
-	PHA
-	LDA TXTPTR
-	PHA
-	LDA (DEFPNT)Y
-	STA TXTPTR
-	INY
-	LDA (DEFPNT)Y
-	STA TXTPTR+1
-	LDA VARPNT+1
-	PHA
-	LDA VARPNT
-	PHA
-	JSR FRMNUM
-	PLA
-	STA DEFPNT
-	PLA
-	STA DEFPNT+1
-	JSR CHRGOT
-	BEQ *+5
-	JMP SNERR
-	PLA
-	STA TXTPTR
-	PLA
-	STA TXTPTR+1
-DEFFIN	LDY #0
-	PLA
-	STA (DEFPNT)Y
-	PLA
-	INY
-	STA (DEFPNT)Y
-	PLA
-	INY
-	STA (DEFPNT)Y
-	PLA
-	INY
-	STA (DEFPNT)Y
-	PLA
-	INY
-	STA (DEFPNT)Y
-	RTS
-STRD	JSR CHKNUM
-	LDY #0
-	JSR FOUTC
-	PLA
-	PLA
-TIMSTR	LDA #<LOFBUF
-	LDY #>LOFBUF
-	BEQ STRLIT
-STRINI	LDX FACMO
-	LDY FACMO+1
-	STX DSCPNT
-	STY DSCPNT+1
-STRSPA	JSR GETSPA
-	STX DSCTMP+1
-	STY DSCTMP+2
-	STA DSCTMP
-	RTS
-STRLIT	LDX #34
-	STX CHARAC
-	STX ENDCHR
-STRLT2	STA STRNG1
-	STY STRNG1+1
-	STA DSCTMP+1
-	STY DSCTMP+2
-	LDY #255
-STRGET	INY
-	LDA (STRNG1)Y
-	BEQ STRFI1
-	CMP CHARAC
-	BEQ STRFIN
-	CMP ENDCHR
-	BNE STRGET
-STRFIN	CMP #34
-	BEQ STRFI2
-STRFI1	CLC
-STRFI2	STY DSCTMP
-	TYA
-	ADC STRNG1
-	STA STRNG2
-	LDX STRNG1+1
-	BCC STRST2
-	INX
-STRST2	STX STRNG2+1
-	LDA STRNG1+1
-	BEQ STRCP
-	CMP #BUFPAG
-	BNE PUTNEW
-STRCP	TYA
-	JSR STRINI
-	LDX STRNG1
-	LDY STRNG1+1
-	JSR MOVSTR
-PUTNEW	LDX TEMPPT
-	CPX #TEMPST+STRSIZ+STRSIZ+STRSIZ
-	BNE PUTNW1
-	LDX #ERRST
-ERRGO2	JMP ERROR
-PUTNW1	LDA DSCTMP
-	STA 0,X
-	LDA DSCTMP+1
-	STA 1,X
-	LDA DSCTMP+2
-	STA 2,X
-	LDY #0
-	STX FACMO
-	STY FACMO+1
-	STY FACOV
-	DEY
-	STY VALTYP
-	STX LASTPT
-	INX
-	INX
-	INX
-	STX TEMPPT
-	RTS
-GETSPA	LSR GARBFL
-TRYAG2	PHA
-	EOR #255
-	SEC
-	ADC FRETOP
-	LDY FRETOP+1
-	BCS TRYAG3
-	DEY
-TRYAG3	CPY STREND+1
-	BCC GARBAG
-	BNE STRFRE
-	CMP STREND
-	BCC GARBAG
-STRFRE	STA FRETOP
-	STY FRETOP+1
-	STA FRESPC
-	STY FRESPC+1
-	TAX
-	PLA
-	RTS
-GARBAG	LDX #ERROM
-	LDA GARBFL
-	BMI ERRGO2
-	JSR GARBA2
-	LDA #128
-	STA GARBFL
-	PLA
-	BNE TRYAG2
-GARBA2	LDX MEMSIZ
-	LDA MEMSIZ+1
-FNDVAR	STX FRETOP
-	STA FRETOP+1
-	LDY #0
-	STY GRBPNT+1
-	STY GRBPNT
-	LDA STREND
-	LDX STREND+1
-	STA GRBTOP
-	STX GRBTOP+1
-	LDA #<TEMPST
-	LDX #>TEMPST
-	STA INDEX1
-	STX INDEX1+1
-TVAR	CMP TEMPPT
-	BEQ SVARS
-	JSR DVAR
-	BEQ TVAR
-SVARS	LDA #6+ADDPRC
-	STA FOUR6
-	LDA VARTAB
-	LDX VARTAB+1
-.END
+.pag 'code14'
+	pha
+	lda txtptr
+	pha
+	jsr data
+	jmp deffin
+getfnm	lda #fntk
+	jsr synchr
+	ora #128
+	sta subflg
+	jsr ptrgt2
+	sta defpnt
+	sty defpnt+1
+	jmp chknum
+fndoer	jsr getfnm
+	lda defpnt+1
+	pha
+	lda defpnt
+	pha
+	jsr parchk
+	jsr chknum
+	pla
+	sta defpnt
+	pla
+	sta defpnt+1
+	ldy #2
+	lda (defpnt)y
+	sta varpnt
+	tax
+	iny
+	lda (defpnt)y
+	beq errguf
+	sta varpnt+1
+	iny
+defstf	lda (varpnt)y
+	pha
+	dey
+	bpl defstf
+	ldy varpnt+1
+	jsr movmf
+	lda txtptr+1
+	pha
+	lda txtptr
+	pha
+	lda (defpnt)y
+	sta txtptr
+	iny
+	lda (defpnt)y
+	sta txtptr+1
+	lda varpnt+1
+	pha
+	lda varpnt
+	pha
+	jsr frmnum
+	pla
+	sta defpnt
+	pla
+	sta defpnt+1
+	jsr chrgot
+	beq *+5
+	jmp snerr
+	pla
+	sta txtptr
+	pla
+	sta txtptr+1
+deffin	ldy #0
+	pla
+	sta (defpnt)y
+	pla
+	iny
+	sta (defpnt)y
+	pla
+	iny
+	sta (defpnt)y
+	pla
+	iny
+	sta (defpnt)y
+	pla
+	iny
+	sta (defpnt)y
+	rts
+strd	jsr chknum
+	ldy #0
+	jsr foutc
+	pla
+	pla
+timstr	lda #<lofbuf
+	ldy #>lofbuf
+	beq strlit
+strini	ldx facmo
+	ldy facmo+1
+	stx dscpnt
+	sty dscpnt+1
+strspa	jsr getspa
+	stx dsctmp+1
+	sty dsctmp+2
+	sta dsctmp
+	rts
+strlit	ldx #34
+	stx charac
+	stx endchr
+strlt2	sta strng1
+	sty strng1+1
+	sta dsctmp+1
+	sty dsctmp+2
+	ldy #255
+strget	iny
+	lda (strng1)y
+	beq strfi1
+	cmp charac
+	beq strfin
+	cmp endchr
+	bne strget
+strfin	cmp #34
+	beq strfi2
+strfi1	clc
+strfi2	sty dsctmp
+	tya
+	adc strng1
+	sta strng2
+	ldx strng1+1
+	bcc strst2
+	inx
+strst2	stx strng2+1
+	lda strng1+1
+	beq strcp
+	cmp #bufpag
+	bne putnew
+strcp	tya
+	jsr strini
+	ldx strng1
+	ldy strng1+1
+	jsr movstr
+putnew	ldx temppt
+	cpx #tempst+strsiz+strsiz+strsiz
+	bne putnw1
+	ldx #errst
+errgo2	jmp error
+putnw1	lda dsctmp
+	sta 0,x
+	lda dsctmp+1
+	sta 1,x
+	lda dsctmp+2
+	sta 2,x
+	ldy #0
+	stx facmo
+	sty facmo+1
+	sty facov
+	dey
+	sty valtyp
+	stx lastpt
+	inx
+	inx
+	inx
+	stx temppt
+	rts
+getspa	lsr garbfl
+tryag2	pha
+	eor #255
+	sec
+	adc fretop
+	ldy fretop+1
+	bcs tryag3
+	dey
+tryag3	cpy strend+1
+	bcc garbag
+	bne strfre
+	cmp strend
+	bcc garbag
+strfre	sta fretop
+	sty fretop+1
+	sta frespc
+	sty frespc+1
+	tax
+	pla
+	rts
+garbag	ldx #errom
+	lda garbfl
+	bmi errgo2
+	jsr garba2
+	lda #128
+	sta garbfl
+	pla
+	bne tryag2
+garba2	ldx memsiz
+	lda memsiz+1
+fndvar	stx fretop
+	sta fretop+1
+	ldy #0
+	sty grbpnt+1
+	sty grbpnt
+	lda strend
+	ldx strend+1
+	sta grbtop
+	stx grbtop+1
+	lda #<tempst
+	ldx #>tempst
+	sta index1
+	stx index1+1
+tvar	cmp temppt
+	beq svars
+	jsr dvar
+	beq tvar
+svars	lda #6+addprc
+	sta four6
+	lda vartab
+	ldx vartab+1
+.end

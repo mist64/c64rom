@@ -1,206 +1,206 @@
-.PAG 'CHANNEL I/O'
+.pag 'channel i/o'
 ;***************************************
-;* GETIN -- GET CHARACTER FROM CHANNEL *
-;*      CHANNEL IS DETERMINED BY DFLTN.*
-;* IF DEVICE IS 0, KEYBOARD QUEUE IS   *
-;* EXAMINED AND A CHARACTER REMOVED IF *
-;* AVAILABLE.  IF QUEUE IS EMPTY, Z    *
-;* FLAG IS RETURNED SET.  DEVICES 1-31 *
-;* ADVANCE TO BASIN.                   *
-;***************************************
-;
-NGETIN	LDA DFLTN       ;CHECK DEVICE
-	BNE GN10        ;NOT KEYBOARD
-;
-	LDA NDX         ;QUEUE INDEX
-	BEQ GN20        ;NOBODY THERE...EXIT
-;
-	SEI
-	JMP LP2         ;GO REMOVE A CHARACTER
-;
-GN10	CMP #2          ;IS IT RS-232
-	BNE BN10        ;NO...USE BASIN
-;
-GN232	STY XSAV        ;SAVE .Y, USED IN RS232
-	JSR BSI232
-	LDY XSAV        ;RESTORE .Y
-GN20	CLC             ;GOOD RETURN
-	RTS
-.SKI 3
-;***************************************
-;* BASIN-- INPUT CHARACTER FROM CHANNEL*
-;*     INPUT DIFFERS FROM GET ON DEVICE*
-;* #0 FUNCTION WHICH IS KEYBOARD. THE  *
-;* SCREEN EDITOR MAKES READY AN ENTIRE *
-;* LINE WHICH IS PASSED CHAR BY CHAR   *
-;* UP TO THE CARRIAGE RETURN.  OTHER   *
-;* DEVICES ARE:                        *
-;*      0 -- KEYBOARD                  *
-;*      1 -- CASSETTE #1               *
-;*      2 -- RS232                     *
-;*      3 -- SCREEN                    *
-;*   4-31 -- SERIAL BUS                *
+;* getin -- get character from channel *
+;*      channel is determined by dfltn.*
+;* if device is 0, keyboard queue is   *
+;* examined and a character removed if *
+;* available.  if queue is empty, z    *
+;* flag is returned set.  devices 1-31 *
+;* advance to basin.                   *
 ;***************************************
 ;
-NBASIN	LDA DFLTN       ;CHECK DEVICE
-	BNE BN10        ;IS NOT KEYBOARD...
+ngetin	lda dfltn       ;check device
+	bne gn10        ;not keyboard
 ;
-;INPUT FROM KEYBOARD
+	lda ndx         ;queue index
+	beq gn20        ;nobody there...exit
 ;
-	LDA PNTR        ;SAVE CURRENT...
-	STA LSTP        ;... CURSOR COLUMN
-	LDA TBLX        ;SAVE CURRENT...
-	STA LSXP        ;... LINE NUMBER
-	JMP LOOP5       ;BLINK CURSOR UNTIL RETURN
+	sei
+	jmp lp2         ;go remove a character
 ;
-BN10	CMP #3          ;IS INPUT FROM SCREEN?
-	BNE BN20        ;NO...
+gn10	cmp #2          ;is it rs-232
+	bne bn10        ;no...use basin
 ;
-	STA CRSW        ;FAKE A CARRIAGE RETURN
-	LDA LNMX        ;SAY WE ENDED...
-	STA INDX        ;...UP ON THIS LINE
-	JMP LOOP5       ;PICK UP CHARACTERS
-;
-BN20	BCS BN30        ;DEVICES >3
-	CMP #2          ;RS232?
-	BEQ BN50
-;
-;INPUT FROM CASSETTE BUFFERS
-;
-	STX XSAV
-	JSR JTGET
-	BCS JTG37       ;STOP KEY/ERROR
-	PHA
-	JSR JTGET
-	BCS JTG36       ;STOP KEY/ERROR
-	BNE JTG35       ;NOT AN END OF FILE
-	LDA #64         ;TELL USER EOF
-	JSR UDST        ;IN STATUS
-JTG35	DEC BUFPT
-	LDX XSAV        ;.X PRESERVED
-	PLA             ;CHARACTER RETURNED
-;C-CLEAR FROM JTGET
-	RTS             ;ALL DONE
-;
-JTG36	TAX             ;SAVE ERROR INFO
-	PLA             ;TOSS DATA
-	TXA             ;RESTORE ERROR
-JTG37	LDX XSAV        ;RETURN
-	RTS             ;ERROR RETURN C-SET FROM JTGET
-.SKI 3
-;GET A CHARACTER FROM APPROPRIATE
-;CASSETTE BUFFER
-;
-JTGET	JSR JTP20       ;BUFFER POINTER WRAP?
-	BNE JTG10       ;NO...
-	JSR RBLK        ;YES...READ NEXT BLOCK
-	BCS BN33        ;STOP KEY PRESSED
-	LDA #0
-	STA BUFPT       ;POINT TO BEGIN.
-	BEQ JTGET       ;BRANCH ALWAYS
-;
-JTG10	LDA (TAPE1)Y    ;GET CHAR FROM BUF
-	CLC             ;GOOD RETURN
-	RTS 
-.SKI 3
-;INPUT FROM SERIAL BUS
-;
-BN30	LDA STATUS      ;STATUS FROM LAST
-	BEQ BN35        ;WAS GOOD
-BN31	LDA #$D         ;BAD...ALL DONE
-BN32	CLC             ;VALID DATA
-BN33	RTS
-;
-BN35	JMP ACPTR       ;GOOD...HANDSHAKE
-;
-;INPUT FROM RS232
-;
-BN50	JSR GN232       ;GET INFO
-	BCS BN33        ;ERROR RETURN
-	CMP #00
-	BNE BN32        ;GOOD DATA...EXIT
-	LDA RSSTAT      ;CHECK FOR DSR OR DCD ERROR
-	AND #$60
-	BNE BN31        ;AN ERROR...EXIT WITH C/R
-	BEQ BN50        ;NO ERROR...STAY IN LOOP
-.PAG 'CHANNEL OUTPUT'
+gn232	sty xsav        ;save .y, used in rs232
+	jsr bsi232
+	ldy xsav        ;restore .y
+gn20	clc             ;good return
+	rts
+.ski 3
 ;***************************************
-;* BSOUT -- OUT CHARACTER TO CHANNEL   *
-;*     DETERMINED BY VARIABLE DFLTO:   *
-;*     0 -- INVALID                    *
-;*     1 -- CASSETTE #1                *
-;*     2 -- RS232                      *
-;*     3 -- SCREEN                     *
-;*  4-31 -- SERIAL BUS                 *
+;* basin-- input character from channel*
+;*     input differs from get on device*
+;* #0 function which is keyboard. the  *
+;* screen editor makes ready an entire *
+;* line which is passed char by char   *
+;* up to the carriage return.  other   *
+;* devices are:                        *
+;*      0 -- keyboard                  *
+;*      1 -- cassette #1               *
+;*      2 -- rs232                     *
+;*      3 -- screen                    *
+;*   4-31 -- serial bus                *
 ;***************************************
 ;
-NBSOUT	PHA             ;PRESERVE .A
-	LDA DFLTO       ;CHECK DEVICE
-	CMP #3          ;IS IT THE SCREEN?
-	BNE BO10        ;NO...
+nbasin	lda dfltn       ;check device
+	bne bn10        ;is not keyboard...
 ;
-;PRINT TO CRT
+;input from keyboard
 ;
-	PLA             ;RESTORE DATA
-	JMP PRT         ;PRINT ON CRT
+	lda pntr        ;save current...
+	sta lstp        ;... cursor column
+	lda tblx        ;save current...
+	sta lsxp        ;... line number
+	jmp loop5       ;blink cursor until return
 ;
-BO10
-	BCC BO20        ;DEVICE 1 OR 2
+bn10	cmp #3          ;is input from screen?
+	bne bn20        ;no...
 ;
-;PRINT TO SERIAL BUS
+	sta crsw        ;fake a carriage return
+	lda lnmx        ;say we ended...
+	sta indx        ;...up on this line
+	jmp loop5       ;pick up characters
 ;
-	PLA
-	JMP CIOUT
+bn20	bcs bn30        ;devices >3
+	cmp #2          ;rs232?
+	beq bn50
 ;
-;PRINT TO CASSETTE DEVICES
+;input from cassette buffers
 ;
-BO20	LSR A           ;RS232?
-	PLA             ;GET DATA OFF STACK...
+	stx xsav
+	jsr jtget
+	bcs jtg37       ;stop key/error
+	pha
+	jsr jtget
+	bcs jtg36       ;stop key/error
+	bne jtg35       ;not an end of file
+	lda #64         ;tell user eof
+	jsr udst        ;in status
+jtg35	dec bufpt
+	ldx xsav        ;.x preserved
+	pla             ;character returned
+;c-clear from jtget
+	rts             ;all done
 ;
-CASOUT	STA T1          ;PASS DATA IN T1
-; CASOUT MUST BE ENTERED WITH CARRY SET!!!
-;PRESERVE REGISTERS
+jtg36	tax             ;save error info
+	pla             ;toss data
+	txa             ;restore error
+jtg37	ldx xsav        ;return
+	rts             ;error return c-set from jtget
+.ski 3
+;get a character from appropriate
+;cassette buffer
 ;
-	TXA
-	PHA
-	TYA
-	PHA
-	BCC BO50        ;C-CLR MEANS DFLTO=2 (RS232)
+jtget	jsr jtp20       ;buffer pointer wrap?
+	bne jtg10       ;no...
+	jsr rblk        ;yes...read next block
+	bcs bn33        ;stop key pressed
+	lda #0
+	sta bufpt       ;point to begin.
+	beq jtget       ;branch always
 ;
-	JSR JTP20       ;CHECK BUFFER POINTER
-	BNE JTP10       ;HAS NOT REACHED END
-	JSR WBLK        ;WRITE FULL BUFFER
-	BCS RSTOR       ;ABORT ON STOP KEY
+jtg10	lda (tape1)y    ;get char from buf
+	clc             ;good return
+	rts 
+.ski 3
+;input from serial bus
 ;
-;PUT BUFFER TYPE BYTE
+bn30	lda status      ;status from last
+	beq bn35        ;was good
+bn31	lda #$d         ;bad...all done
+bn32	clc             ;valid data
+bn33	rts
 ;
-	LDA #BDF
-	LDY #0
-	STA (TAPE1)Y
+bn35	jmp acptr       ;good...handshake
 ;
-;RESET BUFFER POINTER
+;input from rs232
 ;
-	INY             ;MAKE .Y=1
-	STY BUFPT       ;BUFPT=1
+bn50	jsr gn232       ;get info
+	bcs bn33        ;error return
+	cmp #00
+	bne bn32        ;good data...exit
+	lda rsstat      ;check for dsr or dcd error
+	and #$60
+	bne bn31        ;an error...exit with c/r
+	beq bn50        ;no error...stay in loop
+.pag 'channel output'
+;***************************************
+;* bsout -- out character to channel   *
+;*     determined by variable dflto:   *
+;*     0 -- invalid                    *
+;*     1 -- cassette #1                *
+;*     2 -- rs232                      *
+;*     3 -- screen                     *
+;*  4-31 -- serial bus                 *
+;***************************************
 ;
-JTP10	LDA T1
-	STA (TAPE1)Y    ;DATA TO BUFFER
+nbsout	pha             ;preserve .a
+	lda dflto       ;check device
+	cmp #3          ;is it the screen?
+	bne bo10        ;no...
 ;
-;RESTORE .X AND .Y
+;print to crt
 ;
-RSTOA	CLC             ;GOOD RETURN
-RSTOR	PLA
-	TAY
-	PLA
-	TAX
-	LDA T1          ;GET .A FOR RETURN
-	BCC RSTOR1      ;NO ERROR
-	LDA #00         ;STOP ERROR IF C-SET
-RSTOR1	RTS
+	pla             ;restore data
+	jmp prt         ;print on crt
 ;
-;OUTPUT TO RS232
+bo10
+	bcc bo20        ;device 1 or 2
 ;
-BO50	JSR BSO232      ;PASS DATA THROUGH VARIABLE T1
-	JMP RSTOA       ;GO RESTORE ALL..ALWAYS GOOD
-.END
-; RSR 5/12/82 FIX BSOUT FOR NO REG AFFECT BUT ERRORS
+;print to serial bus
+;
+	pla
+	jmp ciout
+;
+;print to cassette devices
+;
+bo20	lsr a           ;rs232?
+	pla             ;get data off stack...
+;
+casout	sta t1          ;pass data in t1
+; casout must be entered with carry set!!!
+;preserve registers
+;
+	txa
+	pha
+	tya
+	pha
+	bcc bo50        ;c-clr means dflto=2 (rs232)
+;
+	jsr jtp20       ;check buffer pointer
+	bne jtp10       ;has not reached end
+	jsr wblk        ;write full buffer
+	bcs rstor       ;abort on stop key
+;
+;put buffer type byte
+;
+	lda #bdf
+	ldy #0
+	sta (tape1)y
+;
+;reset buffer pointer
+;
+	iny             ;make .y=1
+	sty bufpt       ;bufpt=1
+;
+jtp10	lda t1
+	sta (tape1)y    ;data to buffer
+;
+;restore .x and .y
+;
+rstoa	clc             ;good return
+rstor	pla
+	tay
+	pla
+	tax
+	lda t1          ;get .a for return
+	bcc rstor1      ;no error
+	lda #00         ;stop error if c-set
+rstor1	rts
+;
+;output to rs232
+;
+bo50	jsr bso232      ;pass data through variable t1
+	jmp rstoa       ;go restore all..always good
+.end
+; rsr 5/12/82 fix bsout for no reg affect but errors

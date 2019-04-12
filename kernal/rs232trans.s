@@ -1,144 +1,144 @@
-.PAGE 'RS-232 TRANSMITT'
-; RSTRAB - ENTRY FOR NMI CONTINUE ROUTINE
-; RSTBGN - ENTRY FOR START TRANSMITTER
+.page 'rs-232 transmitt'
+; rstrab - entry for nmi continue routine
+; rstbgn - entry for start transmitter
 ;
-;   RSR - 8/18/80
+;   rsr - 8/18/80
 ;
-; VARIABLES USED
-;   BITTS - # OF BITS TO BE SENT (<>0 NOT DONE)
-;   NXTBIT - BYTE CONTAINS NEXT BIT TO BE SENT
-;   ROPRTY - BYTE CONTAINS PARITY BIT CALCULATED
-;   RODATA - STORES DATA BYTE CURRENTLY BEING TRANSMITTED
-;   RODBS - OUTPUT BUFFER INDEX START
-;   RODBE - OUTPUT BUFFER INDEX END
-;   IF RODBS=RODBE THEN BUFFER EMPTY
-;   ROBUF - INDIRECT POINTER TO DATA BUFFER
-;   RSSTAT - RS-232 STATUS BYTE
+; variables used
+;   bitts - # of bits to be sent (<>0 not done)
+;   nxtbit - byte contains next bit to be sent
+;   roprty - byte contains parity bit calculated
+;   rodata - stores data byte currently being transmitted
+;   rodbs - output buffer index start
+;   rodbe - output buffer index end
+;   if rodbs=rodbe then buffer empty
+;   robuf - indirect pointer to data buffer
+;   rsstat - rs-232 status byte
 ;
-;   XXX US - NORMAL BIT PATH
-;   XXX US - WORST CASE PARITY BIT PATH
-;   XXX US - STOP BIT PATH
-;   XXX US - START BIT PATH
+;   xxx us - normal bit path
+;   xxx us - worst case parity bit path
+;   xxx us - stop bit path
+;   xxx us - start bit path
 ;
-RSTRAB	LDA BITTS       ;CHECK FOR PLACE IN BYTE...
-	BEQ RSTBGN      ;...DONE, =0 START NEXT
+rstrab	lda bitts       ;check for place in byte...
+	beq rstbgn      ;...done, =0 start next
 ;
-	BMI RST050      ;...DOING STOP BITS
+	bmi rst050      ;...doing stop bits
 ;
-	LSR RODATA      ;SHIFT DATA INTO CARRY
-	LDX #00         ;PREPARE FOR A ZERO
-	BCC RST005      ;YES...A ZERO
-	DEX             ;NO...MAKE AN $FF
-RST005	TXA             ;READY TO SEND
+	lsr rodata      ;shift data into carry
+	ldx #00         ;prepare for a zero
+	bcc rst005      ;yes...a zero
+	dex             ;no...make an $ff
+rst005	txa             ;ready to send
 ;
-	EOR ROPRTY      ;CALC INTO PARITY
-	STA ROPRTY
+	eor roprty      ;calc into parity
+	sta roprty
 ;
-	DEC BITTS       ;BIT COUNT DOWN
-	BEQ RST010      ;WANT A PARITY INSTEAD
+	dec bitts       ;bit count down
+	beq rst010      ;want a parity instead
 ;
-RSTEXT	TXA             ;CALC BIT WHOLE TO SEND
-	AND #$04        ;GOES OUT D2PA2
-	STA NXTBIT
-	RTS
-.PAGE 'RS-232 TRANSMITT'
-; CALCULATE PARITY
-;  NXTBIT =0 UPON ENTRY
+rstext	txa             ;calc bit whole to send
+	and #$04        ;goes out d2pa2
+	sta nxtbit
+	rts
+.page 'rs-232 transmitt'
+; calculate parity
+;  nxtbit =0 upon entry
 ;
-RST010	LDA #$20        ;CHECK 6551 REG BITS
-	BIT M51CDR
-	BEQ RSPNO       ;...NO PARITY, SEND A STOP
-	BMI RST040      ;...NOT REAL PARITY
-	BVS RST030      ;...EVEN PARITY
+rst010	lda #$20        ;check 6551 reg bits
+	bit m51cdr
+	beq rspno       ;...no parity, send a stop
+	bmi rst040      ;...not real parity
+	bvs rst030      ;...even parity
 ;
-	LDA ROPRTY      ;CALC ODD PARITY
-	BNE RSPEXT      ;CORRECT GUESS
+	lda roprty      ;calc odd parity
+	bne rspext      ;correct guess
 ;
-RSWEXT	DEX             ;WRONG GUESS...ITS A ONE
+rswext	dex             ;wrong guess...its a one
 ;
-RSPEXT	DEC BITTS       ;ONE STOP BIT ALWAYS
-	LDA M51CTR      ;CHECK # OF STOP BITS
-	BPL RSTEXT      ;...ONE
-	DEC BITTS       ;...TWO
-	BNE RSTEXT      ;JUMP
+rspext	dec bitts       ;one stop bit always
+	lda m51ctr      ;check # of stop bits
+	bpl rstext      ;...one
+	dec bitts       ;...two
+	bne rstext      ;jump
 ;
-RSPNO	;LINE TO SEND CANNOT BE PB0
-	INC BITTS       ;COUNTS AS ONE STOP BIT
-	BNE RSWEXT      ;JUMP TO FLIP TO ONE
+rspno	;line to send cannot be pb0
+	inc bitts       ;counts as one stop bit
+	bne rswext      ;jump to flip to one
 ;
-RST030	LDA ROPRTY      ;EVEN PARITY
-	BEQ RSPEXT      ;CORRECT GUESS...EXIT
-	BNE RSWEXT      ;WRONG...FLIP AND EXIT
+rst030	lda roprty      ;even parity
+	beq rspext      ;correct guess...exit
+	bne rswext      ;wrong...flip and exit
 ;
-RST040	BVS RSPEXT      ;WANTED SPACE
-	BVC RSWEXT      ; WANTED MARK
-.SKI 3
-; STOP BITS
+rst040	bvs rspext      ;wanted space
+	bvc rswext      ; wanted mark
+.ski 3
+; stop bits
 ;
-RST050	INC BITTS       ;STOP BIT COUNT TOWARDS ZERO
-	LDX #$FF        ;SEND STOP BIT
-	BNE RSTEXT      ;JUMP TO EXIT
+rst050	inc bitts       ;stop bit count towards zero
+	ldx #$ff        ;send stop bit
+	bne rstext      ;jump to exit
 ;
-.PAG 'RS-232 TRANSMITT'
-; RSTBGN - ENTRY TO START BYTE TRANS
+.pag 'rs-232 transmitt'
+; rstbgn - entry to start byte trans
 ;
-RSTBGN	LDA M51CDR      ;CHECK FOR 3/X LINE
-	LSR A
-	BCC RST060      ;3 LINE...NO CHECK
-	BIT D2PRB       ;CHECK FOR...
-	BPL DSRERR      ;...DSR ERROR
-	BVC CTSERR      ;...CTS ERROR
+rstbgn	lda m51cdr      ;check for 3/x line
+	lsr a
+	bcc rst060      ;3 line...no check
+	bit d2prb       ;check for...
+	bpl dsrerr      ;...dsr error
+	bvc ctserr      ;...cts error
 ;
-; SET UP TO SEND NEXT BYTE
+; set up to send next byte
 ;
-RST060	LDA #0
-	STA ROPRTY      ;ZERO PARITY
-	STA NXTBIT      ;SEND START BIT
-	LDX BITNUM      ;GET # OF BITS
-RST070	STX BITTS       ;BITTS=#OF BITTS+1
+rst060	lda #0
+	sta roprty      ;zero parity
+	sta nxtbit      ;send start bit
+	ldx bitnum      ;get # of bits
+rst070	stx bitts       ;bitts=#of bitts+1
 ;
-RST080	LDY RODBS       ;CHECK BUFFER POINTERS
-	CPY RODBE
-	BEQ RSODNE      ;ALL DONE...
+rst080	ldy rodbs       ;check buffer pointers
+	cpy rodbe
+	beq rsodne      ;all done...
 ;
-	LDA (ROBUF)Y    ;GET DATA...
-	STA RODATA      ;...INTO BYTE BUFFER
-	INC RODBS       ;MOVE POINTER TO NEXT
-	RTS
-.SKI 3
-; SET ERRORS
+	lda (robuf)y    ;get data...
+	sta rodata      ;...into byte buffer
+	inc rodbs       ;move pointer to next
+	rts
+.ski 3
+; set errors
 ;
-DSRERR	LDA #$40        ;DSR GONE ERROR
-	.BYT $2C
-CTSERR	LDA #$10        ;CTS GONE ERROR
-	ORA RSSTAT
-	STA RSSTAT
+dsrerr	lda #$40        ;dsr gone error
+	.byt $2c
+ctserr	lda #$10        ;cts gone error
+	ora rsstat
+	sta rsstat
 ;
-; ERRORS TURN OFF T1
+; errors turn off t1
 ;
-RSODNE	LDA #$01        ;KILL T1 NMI
-;ENTRY TO TURN OFF AN ENABLED NMI...
-OENABL	STA D2ICR       ;TOSS BAD/OLD NMI
-	EOR ENABL       ;FLIP ENABLE
-	ORA #$80        ;ENABLE GOOD NMI'S
-	STA ENABL
-	STA D2ICR
-	RTS
-.SKI 3
-; BITCNT - CAL # OF BITS TO BE SENT
-;   RETURNS #OF BITS+1
+rsodne	lda #$01        ;kill t1 nmi
+;entry to turn off an enabled nmi...
+oenabl	sta d2icr       ;toss bad/old nmi
+	eor enabl       ;flip enable
+	ora #$80        ;enable good nmi's
+	sta enabl
+	sta d2icr
+	rts
+.ski 3
+; bitcnt - cal # of bits to be sent
+;   returns #of bits+1
 ;
-BITCNT	LDX #9          ;CALC WORD LENGTH
-	LDA #$20
-	BIT M51CTR
-	BEQ BIT010
-	DEX             ;BIT 5 HIGH IS A 7 OR 5
-BIT010	BVC BIT020
-	DEX             ;BIT 6 HIGH IS A 6 OR 5
-	DEX
-BIT020	RTS
-.END
-; RSR  8/24/80 CORRECT SOME MISTAKES
-; RSR  8/27/80 CHANGE BITNUM BASE TO #BITS+1
-; RSR 12/11/81 MODIFY FOR VIC-40
-; RSR  3/11/82 FIX ENABLES FOR BAD/OLD NMI'S
+bitcnt	ldx #9          ;calc word length
+	lda #$20
+	bit m51ctr
+	beq bit010
+	dex             ;bit 5 high is a 7 or 5
+bit010	bvc bit020
+	dex             ;bit 6 high is a 6 or 5
+	dex
+bit020	rts
+.end
+; rsr  8/24/80 correct some mistakes
+; rsr  8/27/80 change bitnum base to #bits+1
+; rsr 12/11/81 modify for vic-40
+; rsr  3/11/82 fix enables for bad/old nmi's

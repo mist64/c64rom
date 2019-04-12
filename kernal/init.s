@@ -1,244 +1,244 @@
-.PAGE 'INITIALIZATION'
-; START - SYSTEM RESET
-; WILL GOTO ROM AT $8000...
-; IF LOCS $8004-$8008
-; = 'CBM80'
-;    ^^^  > THESE HAVE MSB SET
-; KERNAL EXPECTS...
-; $8000- .WORD INITILIZE (HARD START)
-; $8002- .WORD PANIC (WARM START)
-; ... ELSE BASIC SYSTEM USED
-; ******************TESTING ONLY***************
-; USE AUTO DISK/CASSETTE LOAD WHEN DEVELOPED...
+.page 'initialization'
+; start - system reset
+; will goto rom at $8000...
+; if locs $8004-$8008
+; = 'cbm80'
+;    ^^^  > these have msb set
+; kernal expects...
+; $8000- .word initilize (hard start)
+; $8002- .word panic (warm start)
+; ... else basic system used
+; ******************testing only***************
+; use auto disk/cassette load when developed...
 ;
-START	LDX #$FF
-	SEI
-	TXS
-	CLD
-	JSR A0INT       ;TEST FOR $A0 ROM IN
-	BNE START1
-	JMP ($8000)     ; GO INIT AS $A000 ROM WANTS
-START1	STX VICREG+22   ;SET UP REFRESH (.X=<5)
-	JSR IOINIT      ;GO INITILIZE I/O DEVICES
-	JSR RAMTAS      ;GO RAM TEST AND SET
-	JSR RESTOR      ;GO SET UP OS VECTORS
+start	ldx #$ff
+	sei
+	txs
+	cld
+	jsr a0int       ;test for $a0 rom in
+	bne start1
+	jmp ($8000)     ; go init as $a000 rom wants
+start1	stx vicreg+22   ;set up refresh (.x=<5)
+	jsr ioinit      ;go initilize i/o devices
+	jsr ramtas      ;go ram test and set
+	jsr restor      ;go set up os vectors
 ;
-	JSR PCINT       ;GO INITILIZE SCREEN NEWXXX
-	CLI             ;INTERRUPTS OKAY NOW
-	JMP ($A000)     ;GO TO BASIC SYSTEM
-.SKI 4
-; A0INT - TEST FOR AN $8000 ROM
-;  RETURNS Z - $8000 IN
+	jsr pcint       ;go initilize screen newxxx
+	cli             ;interrupts okay now
+	jmp ($a000)     ;go to basic system
+.ski 4
+; a0int - test for an $8000 rom
+;  returns z - $8000 in
 ;
-A0INT	LDX #TBLA0E-TBLA0R ;CHECK FOR $8000
-A0IN1	LDA TBLA0R-1,X
-	CMP $8004-1,X
-	BNE A0IN2
-	DEX
-	BNE A0IN1
-A0IN2	RTS
+a0int	ldx #tbla0e-tbla0r ;check for $8000
+a0in1	lda tbla0r-1,x
+	cmp $8004-1,x
+	bne a0in2
+	dex
+	bne a0in1
+a0in2	rts
 ;
-TBLA0R	.BYT $C3,$C2,$CD,'80' ;..CBM80..
-TBLA0E
-.SKI 4
-; RESTOR - SET KERNAL INDIRECTS AND VECTORS (SYSTEM)
+tbla0r	.byt $c3,$c2,$cd,'80' ;..cbm80..
+tbla0e
+.ski 4
+; restor - set kernal indirects and vectors (system)
 ;
-RESTOR	LDX #<VECTSS
-	LDY #>VECTSS
-	CLC
+restor	ldx #<vectss
+	ldy #>vectss
+	clc
 ;
-; VECTOR - SET KERNAL INDIRECT AND VECTORS (USER)
+; vector - set kernal indirect and vectors (user)
 ;
-VECTOR	STX TMP2
-	STY TMP2+1
-	LDY #VECTSE-VECTSS-1
-MOVOS1	LDA CINV,Y      ;GET FROM STORAGE
-	BCS MOVOS2      ;C...WANT STORAGE TO USER
-	LDA (TMP2)Y     ;...WANT USER TO STORAGE
-MOVOS2	STA (TMP2)Y     ;PUT IN USER
-	STA CINV,Y      ;PUT IN STORAGE
-	DEY
-	BPL MOVOS1
-	RTS
+vector	stx tmp2
+	sty tmp2+1
+	ldy #vectse-vectss-1
+movos1	lda cinv,y      ;get from storage
+	bcs movos2      ;c...want storage to user
+	lda (tmp2)y     ;...want user to storage
+movos2	sta (tmp2)y     ;put in user
+	sta cinv,y      ;put in storage
+	dey
+	bpl movos1
+	rts
 ;
-VECTSS	.WOR KEY,TIMB,NNMI
-	.WOR NOPEN,NCLOSE,NCHKIN
-	.WOR NCKOUT,NCLRCH,NBASIN
-	.WOR NBSOUT,NSTOP,NGETIN
-	.WOR NCLALL,TIMB ;GOTO BREAK ON A USRCMD JMP
-	.WOR NLOAD,NSAVE
-VECTSE
-.PAGE 'INITILIZE CODE'
-; RAMTAS - MEMORY SIZE CHECK AND SET
+vectss	.wor key,timb,nnmi
+	.wor nopen,nclose,nchkin
+	.wor nckout,nclrch,nbasin
+	.wor nbsout,nstop,ngetin
+	.wor nclall,timb ;goto break on a usrcmd jmp
+	.wor nload,nsave
+vectse
+.page 'initilize code'
+; ramtas - memory size check and set
 ;
-RAMTAS	LDA #0          ;ZERO LOW MEMORY
-	TAY             ;START AT 0002
-RAMTZ0	STA $0002,Y     ;ZERO PAGE
-	STA $0200,Y     ;USER BUFFERS AND VARS
-	STA $0300,Y     ;SYSTEM SPACE AND USER SPACE
-	INY
-	BNE RAMTZ0
+ramtas	lda #0          ;zero low memory
+	tay             ;start at 0002
+ramtz0	sta $0002,y     ;zero page
+	sta $0200,y     ;user buffers and vars
+	sta $0300,y     ;system space and user space
+	iny
+	bne ramtz0
 ;
-;ALLOCATE TAPE BUFFERS
+;allocate tape buffers
 ;
-	LDX #<TBUFFR
-	LDY #>TBUFFR
-	STX TAPE1
-	STY TAPE1+1
+	ldx #<tbuffr
+	ldy #>tbuffr
+	stx tape1
+	sty tape1+1
 ;
-; SET TOP OF MEMORY
+; set top of memory
 ;
-RAMTBT
-	TAY             ;MOVE $00 TO .Y
-	LDA #3          ;SET HIGH INITAL INDEX
-	STA TMP0+1
+ramtbt
+	tay             ;move $00 to .y
+	lda #3          ;set high inital index
+	sta tmp0+1
 ;
-RAMTZ1	INC TMP0+1      ;MOVE INDEX THRU MEMORY
-RAMTZ2	LDA (TMP0)Y     ;GET PRESENT DATA
-	TAX             ;SAVE IN .X
-	LDA #$55        ;DO A $55,$AA TEST
-	STA (TMP0)Y
-	CMP (TMP0)Y
-	BNE SIZE
-	ROL A
-	STA (TMP0)Y
-	CMP (TMP0)Y
-	BNE SIZE
-	TXA             ;RESTORE OLD DATA
-	STA (TMP0)Y
-	INY
-	BNE RAMTZ2
-	BEQ RAMTZ1
+ramtz1	inc tmp0+1      ;move index thru memory
+ramtz2	lda (tmp0)y     ;get present data
+	tax             ;save in .x
+	lda #$55        ;do a $55,$aa test
+	sta (tmp0)y
+	cmp (tmp0)y
+	bne size
+	rol a
+	sta (tmp0)y
+	cmp (tmp0)y
+	bne size
+	txa             ;restore old data
+	sta (tmp0)y
+	iny
+	bne ramtz2
+	beq ramtz1
 ;
-SIZE	TYA             ;SET TOP OF MEMORY
-	TAX
-	LDY TMP0+1
-	CLC
-	JSR SETTOP
-	LDA #$08        ;SET BOTTOM OF MEMORY
-	STA MEMSTR+1    ;ALWAYS AT $0800
-	LDA #$04        ;SCREEN ALWAYS AT $400
-	STA HIBASE      ;SET BASE OF SCREEN
-	RTS
-.SKI 3
-BSIT	.WOR WRTZ,WRTN,KEY,READ ;TABLE OF INDIRECTS FOR CASSETTE IRQ'S
-.PAG 'INITILIZE CODE'
-; IOINIT - INITILIZE IO DEVICES
+size	tya             ;set top of memory
+	tax
+	ldy tmp0+1
+	clc
+	jsr settop
+	lda #$08        ;set bottom of memory
+	sta memstr+1    ;always at $0800
+	lda #$04        ;screen always at $400
+	sta hibase      ;set base of screen
+	rts
+.ski 3
+bsit	.wor wrtz,wrtn,key,read ;table of indirects for cassette irq's
+.pag 'initilize code'
+; ioinit - initilize io devices
 ;
-IOINIT	LDA #$7F        ;KILL INTERRUPTS
-	STA D1ICR
-	STA D2ICR
-	STA D1PRA       ;TURN ON STOP KEY
-	LDA #%00001000  ;SHUT OFF TIMERS
-	STA D1CRA
-	STA D2CRA
-	STA D1CRB
-	STA D2CRB
-; CONFIGURE PORTS
-	LDX #$00        ;SET UP KEYBOARD INPUTS
-	STX D1DDRB      ;KEYBOARD INPUTS
-	STX D2DDRB      ;USER PORT (NO RS-232)
-	STX SIDREG+24   ;TURN OFF SID
-	DEX
-	STX D1DDRA      ;KEYBOARD OUTPUTS
-	LDA #%00000111  ;SET SERIAL/VA14/15 (CLKHI)
-	STA D2PRA
-	LDA #%00111111  ;SET SERIAL IN/OUT, VA14/15OUT
-	STA D2DDRA
+ioinit	lda #$7f        ;kill interrupts
+	sta d1icr
+	sta d2icr
+	sta d1pra       ;turn on stop key
+	lda #%00001000  ;shut off timers
+	sta d1cra
+	sta d2cra
+	sta d1crb
+	sta d2crb
+; configure ports
+	ldx #$00        ;set up keyboard inputs
+	stx d1ddrb      ;keyboard inputs
+	stx d2ddrb      ;user port (no rs-232)
+	stx sidreg+24   ;turn off sid
+	dex
+	stx d1ddra      ;keyboard outputs
+	lda #%00000111  ;set serial/va14/15 (clkhi)
+	sta d2pra
+	lda #%00111111  ;set serial in/out, va14/15out
+	sta d2ddra
 ;
-; SET UP THE 6510 LINES
+; set up the 6510 lines
 ;
-	LDA #%11100111  ;MOTOR ON, HIRAM LOWRAM CHAREN HIGH
-	STA R6510
-	LDA #%00101111  ;MTR OUT,SW IN,WR OUT,CONTROL OUT
-	STA D6510
+	lda #%11100111  ;motor on, hiram lowram charen high
+	sta r6510
+	lda #%00101111  ;mtr out,sw in,wr out,control out
+	sta d6510
 ;
-;JSR CLKHI ;CLKHI TO RELEASE SERIAL DEVICES  ^
+;jsr clkhi ;clkhi to release serial devices  ^
 ;
-IOKEYS	LDA PALNTS      ;PAL OR NTSC
-	BEQ I0010	;NTSC
-	LDA #<SIXTYP
-	STA D1T1L
-	LDA #>SIXTYP
-	JMP I0020
-I0010	LDA #<SIXTY     ;KEYBOARD SCAN IRQ'S
-	STA D1T1L
-	LDA #>SIXTY
-I0020	STA D1T1H
-	JMP PIOKEY
-; LDA #$81 ;ENABLE T1 IRQ'S
-; STA D1ICR
-; LDA D1CRA
-; AND #$80 ;SAVE ONLY TOD BIT
-; ORA #%00010001 ;ENABLE TIMER1
-; STA D1CRA
-; JMP CLKLO ;RELEASE THE CLOCK LINE
+iokeys	lda palnts      ;pal or ntsc
+	beq i0010	;ntsc
+	lda #<sixtyp
+	sta d1t1l
+	lda #>sixtyp
+	jmp i0020
+i0010	lda #<sixty     ;keyboard scan irq's
+	sta d1t1l
+	lda #>sixty
+i0020	sta d1t1h
+	jmp piokey
+; lda #$81 ;enable t1 irq's
+; sta d1icr
+; lda d1cra
+; and #$80 ;save only tod bit
+; ora #%00010001 ;enable timer1
+; sta d1cra
+; jmp clklo ;release the clock line
 ;
-; SIXTY HERTZ VALUE
+; sixty hertz value
 ;
-SIXTY	= 17045         ; NTSC
-SIXTYP	= 16421         ; PAL
-.PAGE 'INIT - SYS SUBS'
-SETNAM	STA FNLEN
-	STX FNADR
-	STY FNADR+1
-	RTS
-.SKI 5
-SETLFS	STA LA
-	STX FA
-	STY SA
-	RTS
-.SKI 5
-READSS	LDA FA          ;SEE WHICH DEVICES' TO READ
-	CMP #2          ;IS IT RS-232?
-	BNE READST      ;NO...READ SERIAL/CASS
-	LDA RSSTAT      ;YES...GET RS-232 UP
-	PHA
-	LDA #00         ;CLEAR RS232 STATUS WHEN READ
-	STA RSSTAT
-	PLA
-	RTS
-SETMSG	STA MSGFLG
-READST	LDA STATUS
-UDST	ORA STATUS
-	STA STATUS
-	RTS
-.SKI 5
-SETTMO	STA TIMOUT
-	RTS
-.SKI 5
-MEMTOP	BCC SETTOP
+sixty	= 17045         ; ntsc
+sixtyp	= 16421         ; pal
+.page 'init - sys subs'
+setnam	sta fnlen
+	stx fnadr
+	sty fnadr+1
+	rts
+.ski 5
+setlfs	sta la
+	stx fa
+	sty sa
+	rts
+.ski 5
+readss	lda fa          ;see which devices' to read
+	cmp #2          ;is it rs-232?
+	bne readst      ;no...read serial/cass
+	lda rsstat      ;yes...get rs-232 up
+	pha
+	lda #00         ;clear rs232 status when read
+	sta rsstat
+	pla
+	rts
+setmsg	sta msgflg
+readst	lda status
+udst	ora status
+	sta status
+	rts
+.ski 5
+settmo	sta timout
+	rts
+.ski 5
+memtop	bcc settop
 ;
-;CARRY SET--READ TOP OF MEMORY
+;carry set--read top of memory
 ;
-GETTOP	LDX MEMSIZ
-	LDY MEMSIZ+1
+gettop	ldx memsiz
+	ldy memsiz+1
 ;
-;CARRY CLEAR--SET TOP OF MEMORY
+;carry clear--set top of memory
 ;
-SETTOP	STX MEMSIZ
-	STY MEMSIZ+1
-	RTS
-.SKI 5
-;MANAGE BOTTOM OF MEMORY
+settop	stx memsiz
+	sty memsiz+1
+	rts
+.ski 5
+;manage bottom of memory
 ;
-MEMBOT	BCC SETBOT
+membot	bcc setbot
 ;
-;CARRY SET--READ BOTTOM OF MEMORY
+;carry set--read bottom of memory
 ;
-	LDX MEMSTR
-	LDY MEMSTR+1
+	ldx memstr
+	ldy memstr+1
 ;
-;CARRY CLEAR--SET BOTTOM OF MEMORY
+;carry clear--set bottom of memory
 ;
-SETBOT	STX MEMSTR
-	STY MEMSTR+1
-	RTS
-.END
-; RSR 8/5/80 CHANGE IO STRUCTURE
-; RSR 8/15/80 ADD MEMORY TEST
-; RSR 8/21/80 CHANGE I/O FOR MOD
-; RSR 8/25/80 CHANGE I/O FOR MOD2
-; RSR 8/29/80 CHANGE RAMTEST FOR HARDWARE MISTAKE
-; RSR 9/22/80 CHANGE SO RAM HANG RS232 STATUS READ
-; RSR 5/12/82 CHANGE START1 ORDER TO REMOVE DISK PROBLEM
+setbot	stx memstr
+	sty memstr+1
+	rts
+.end
+; rsr 8/5/80 change io structure
+; rsr 8/15/80 add memory test
+; rsr 8/21/80 change i/o for mod
+; rsr 8/25/80 change i/o for mod2
+; rsr 8/29/80 change ramtest for hardware mistake
+; rsr 9/22/80 change so ram hang rs232 status read
+; rsr 5/12/82 change start1 order to remove disk problem

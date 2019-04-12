@@ -1,213 +1,213 @@
-.PAG 'CODE19'
-LOG	JSR SIGN
-	BEQ LOGERR
-	BPL LOG1
-LOGERR	JMP FCERR
-LOG1	LDA FACEXP
-	SBC #@177
-	PHA
-	LDA #@200
-	STA FACEXP
-	LDA #<SQR05
-	LDY #>SQR05
-	JSR FADD
-	LDA #<SQR20
-	LDY #>SQR20
-	JSR FDIV
-	LDA #<FONE
-	LDY #>FONE
-	JSR FSUB
-	LDA #<LOGCN2
-	LDY #>LOGCN2
-	JSR POLYX
-	LDA #<NEGHLF
-	LDY #>NEGHLF
-	JSR FADD
-	PLA
-	JSR FINLOG
-	LDA #<LOG2
-	LDY #>LOG2
-FMULT	JSR CONUPK
-FMULTT	BNE *+5
-	JMP MULTRT
-	JSR MULDIV
-	LDA #0
-	STA RESHO
-	STA RESMOH
-	STA RESMO
-	STA RESLO
-	LDA FACOV
-	JSR MLTPLY
-	LDA FACLO
-	JSR MLTPLY
-	LDA FACMO
-	JSR MLTPLY
-	LDA FACMOH
-	JSR MLTPLY
-	LDA FACHO
-	JSR MLTPL1
-	JMP MOVFR
-MLTPLY	BNE *+5
-	JMP MULSHF
-MLTPL1	LSR A
-	ORA #@200
-MLTPL2	TAY
-	BCC MLTPL3
-	CLC
-	LDA RESLO
-	ADC ARGLO
-	STA RESLO
-	LDA RESMO
-	ADC ARGMO
-	STA RESMO
-	LDA RESMOH
-	ADC ARGMOH
-	STA RESMOH
-	LDA RESHO
-	ADC ARGHO
-	STA RESHO
-MLTPL3	ROR RESHO
-	ROR RESMOH
-	ROR RESMO
-	ROR RESLO
-	ROR FACOV
-	TYA
-	LSR A
-	BNE MLTPL2
-MULTRT	RTS
-CONUPK	STA INDEX1
-	STY INDEX1+1
-	LDY #3+ADDPRC
-	LDA (INDEX1)Y
-	STA ARGLO
-	DEY
-	LDA (INDEX)Y
-	STA ARGMO
-	DEY
-	LDA (INDEX1)Y
-	STA ARGMOH
-	DEY
-	LDA (INDEX1)Y
-	STA ARGSGN
-	EOR FACSGN
-	STA ARISGN
-	LDA ARGSGN
-	ORA #@200
-	STA ARGHO
-	DEY
-	LDA (INDEX1)Y
-	STA ARGEXP
-	LDA FACEXP
-	RTS
-MULDIV	LDA ARGEXP
-MLDEXP	BEQ ZEREMV
-	CLC
-	ADC FACEXP
-	BCC TRYOFF
-	BMI GOOVER
-	CLC
-	.BYT $2C
-TRYOFF	BPL ZEREMV
-	ADC #@200
-	STA FACEXP
-	BNE *+5
-	JMP ZEROML
-	LDA ARISGN
-	STA FACSGN
-	RTS
-MLDVEX	LDA FACSGN
-	EOR #@377
-	BMI GOOVER
-ZEREMV	PLA
-	PLA
-	JMP ZEROFC
-GOOVER	JMP OVERR
-MUL10	JSR MOVAF
-	TAX
-	BEQ MUL10R
-	CLC
-	ADC #2
-	BCS GOOVER
-FINML6	LDX #0
-	STX ARISGN
-	JSR FADDC
-	INC FACEXP
-	BEQ GOOVER
-MUL10R	RTS
-TENC	.BYT @204,@40,0,0,0
-DIV10	JSR MOVAF
-	LDA #<TENC
-	LDY #>TENC
-	LDX #0
-FDIVF	STX ARISGN
-	JSR MOVFM
-	JMP FDIVT
-FDIV	JSR CONUPK
-FDIVT	BEQ DV0ERR
-	JSR ROUND
-	LDA #0
-	SEC
-	SBC FACEXP
-	STA FACEXP
-	JSR MULDIV
-	INC FACEXP
-	BEQ GOOVER
-	LDX #253-ADDPRC
-	LDA #1
-DIVIDE	LDY ARGHO
-	CPY FACHO
-	BNE SAVQUO
-	LDY ARGMOH
-	CPY FACMOH
-	BNE SAVQUO
-	LDY ARGMO
-	CPY FACMO
-	BNE SAVQUO
-	LDY ARGLO
-	CPY FACLO
-SAVQUO	PHP
-	ROL A
-	BCC QSHFT
-	INX
-	STA RESLO,X
-	BEQ LD100
-	BPL DIVNRM
-	LDA #1
-QSHFT	PLP
-	BCS DIVSUB
-SHFARG	ASL ARGLO
-	ROL ARGMO
-	ROL ARGMOH
-	ROL ARGHO
-	BCS SAVQUO
-	BMI DIVIDE
-	BPL SAVQUO
-DIVSUB	TAY
-	LDA ARGLO
-	SBC FACLO
-	STA ARGLO
-	LDA ARGMO
-	SBC FACMO
-	STA ARGMO
-	LDA ARGMOH
-	SBC FACMOH
-	STA ARGMOH
-	LDA ARGHO
-	SBC FACHO
-	STA ARGHO
-	TYA
-	JMP SHFARG
-LD100	LDA #@100
-	BNE QSHFT
-DIVNRM	ASL A
-	ASL A
-	ASL A
-	ASL A
-	ASL A
-	ASL A
-	STA FACOV
-	PLP
-	JMP MOVFR
-DV0ERR	LDX #ERRDVO
-	JMP ERROR
-.END
+.pag 'code19'
+log	jsr sign
+	beq logerr
+	bpl log1
+logerr	jmp fcerr
+log1	lda facexp
+	sbc #@177
+	pha
+	lda #@200
+	sta facexp
+	lda #<sqr05
+	ldy #>sqr05
+	jsr fadd
+	lda #<sqr20
+	ldy #>sqr20
+	jsr fdiv
+	lda #<fone
+	ldy #>fone
+	jsr fsub
+	lda #<logcn2
+	ldy #>logcn2
+	jsr polyx
+	lda #<neghlf
+	ldy #>neghlf
+	jsr fadd
+	pla
+	jsr finlog
+	lda #<log2
+	ldy #>log2
+fmult	jsr conupk
+fmultt	bne *+5
+	jmp multrt
+	jsr muldiv
+	lda #0
+	sta resho
+	sta resmoh
+	sta resmo
+	sta reslo
+	lda facov
+	jsr mltply
+	lda faclo
+	jsr mltply
+	lda facmo
+	jsr mltply
+	lda facmoh
+	jsr mltply
+	lda facho
+	jsr mltpl1
+	jmp movfr
+mltply	bne *+5
+	jmp mulshf
+mltpl1	lsr a
+	ora #@200
+mltpl2	tay
+	bcc mltpl3
+	clc
+	lda reslo
+	adc arglo
+	sta reslo
+	lda resmo
+	adc argmo
+	sta resmo
+	lda resmoh
+	adc argmoh
+	sta resmoh
+	lda resho
+	adc argho
+	sta resho
+mltpl3	ror resho
+	ror resmoh
+	ror resmo
+	ror reslo
+	ror facov
+	tya
+	lsr a
+	bne mltpl2
+multrt	rts
+conupk	sta index1
+	sty index1+1
+	ldy #3+addprc
+	lda (index1)y
+	sta arglo
+	dey
+	lda (index)y
+	sta argmo
+	dey
+	lda (index1)y
+	sta argmoh
+	dey
+	lda (index1)y
+	sta argsgn
+	eor facsgn
+	sta arisgn
+	lda argsgn
+	ora #@200
+	sta argho
+	dey
+	lda (index1)y
+	sta argexp
+	lda facexp
+	rts
+muldiv	lda argexp
+mldexp	beq zeremv
+	clc
+	adc facexp
+	bcc tryoff
+	bmi goover
+	clc
+	.byt $2c
+tryoff	bpl zeremv
+	adc #@200
+	sta facexp
+	bne *+5
+	jmp zeroml
+	lda arisgn
+	sta facsgn
+	rts
+mldvex	lda facsgn
+	eor #@377
+	bmi goover
+zeremv	pla
+	pla
+	jmp zerofc
+goover	jmp overr
+mul10	jsr movaf
+	tax
+	beq mul10r
+	clc
+	adc #2
+	bcs goover
+finml6	ldx #0
+	stx arisgn
+	jsr faddc
+	inc facexp
+	beq goover
+mul10r	rts
+tenc	.byt @204,@40,0,0,0
+div10	jsr movaf
+	lda #<tenc
+	ldy #>tenc
+	ldx #0
+fdivf	stx arisgn
+	jsr movfm
+	jmp fdivt
+fdiv	jsr conupk
+fdivt	beq dv0err
+	jsr round
+	lda #0
+	sec
+	sbc facexp
+	sta facexp
+	jsr muldiv
+	inc facexp
+	beq goover
+	ldx #253-addprc
+	lda #1
+divide	ldy argho
+	cpy facho
+	bne savquo
+	ldy argmoh
+	cpy facmoh
+	bne savquo
+	ldy argmo
+	cpy facmo
+	bne savquo
+	ldy arglo
+	cpy faclo
+savquo	php
+	rol a
+	bcc qshft
+	inx
+	sta reslo,x
+	beq ld100
+	bpl divnrm
+	lda #1
+qshft	plp
+	bcs divsub
+shfarg	asl arglo
+	rol argmo
+	rol argmoh
+	rol argho
+	bcs savquo
+	bmi divide
+	bpl savquo
+divsub	tay
+	lda arglo
+	sbc faclo
+	sta arglo
+	lda argmo
+	sbc facmo
+	sta argmo
+	lda argmoh
+	sbc facmoh
+	sta argmoh
+	lda argho
+	sbc facho
+	sta argho
+	tya
+	jmp shfarg
+ld100	lda #@100
+	bne qshft
+divnrm	asl a
+	asl a
+	asl a
+	asl a
+	asl a
+	asl a
+	sta facov
+	plp
+	jmp movfr
+dv0err	ldx #errdvo
+	jmp error
+.end

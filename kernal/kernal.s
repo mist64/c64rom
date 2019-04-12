@@ -1,30 +1,30 @@
-.LIB DISCLAIMER
-.LIB DECLARE
-	*=$E500         ;START OF VIC-40 KERNAL
-.LIB EDITOR.1
-;.LIB CONKAT (JAPAN CONVERSION TABLES)
-.LIB EDITOR.2
-.LIB EDITOR.3
-.LIB SERIAL???
-.LIB RS232TRANS
-.LIB RS232RCVR
-.LIB RS232INOUT
-.LIB MESSAGES
-.LIB CHANNELIO
-.LIB OPENCHANNEL
-.LIB CLOSE
-.LIB CLALL
-.LIB OPEN
-.LIB LOAD
-.LIB SAVE
-.LIB TIME
-.LIB ERRORHANDLER
-.LIB TAPEFILE
-.LIB TAPECONTROL
-.LIB READ
-.LIB WRITE
-.LIB INIT
-.LIB RS232NMI
-.LIB IRQFILE
-.LIB VECTORS
-.END
+.lib disclaimer
+.lib declare
+	*=$e500         ;start of vic-40 kernal
+.lib editor.1
+;.lib conkat (japan conversion tables)
+.lib editor.2
+.lib editor.3
+.lib serial???
+.lib rs232trans
+.lib rs232rcvr
+.lib rs232inout
+.lib messages
+.lib channelio
+.lib openchannel
+.lib close
+.lib clall
+.lib open
+.lib load
+.lib save
+.lib time
+.lib errorhandler
+.lib tapefile
+.lib tapecontrol
+.lib read
+.lib write
+.lib init
+.lib rs232nmi
+.lib irqfile
+.lib vectors
+.end

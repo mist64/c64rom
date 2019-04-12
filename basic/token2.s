@@ -1,252 +1,252 @@
-.PAG 'TOKEN2'
-	.BYT 'TAB',$A8
-TABTK	=@243
-	.BYT 'T',$CF
-TOTK	=@244
-	.BYT 'F',$CE
-FNTK	=@245
-	.BYT 'SPC',$A8
-SPCTK	=@246
-	.BYT 'THE',$CE
-THENTK	=@247
-	.BYT 'NO',$D4
-NOTTK	=@250
-	.BYT 'STE',$D0
-STEPTK	=@251
-	.BYT $AB
-PLUSTK	=@252
-	.BYT $AD
-MINUTK	=@253
-	.BYT $AA
-	.BYT $AF
-	.BYT $DE
-	.BYT 'AN',$C4
-	.BYT 'O',$D2
-	.BYT 190
-GREATK	=@261
-	.BYT $BD
-EQULTK	=@262
-	.BYT 188
-LESSTK	=@263
-	.BYT 'SG',$CE
-ONEFUN	=@264
-	.BYT 'IN',$D4
-	.BYT 'AB',$D3
-	.BYT 'US',$D2
-	.BYT 'FR',$C5
-	.BYT 'PO',$D3
-	.BYT 'SQ',$D2
-	.BYT 'RN',$C4
-	.BYT 'LO',$C7
-	.BYT 'EX',$D0
-	.BYT 'CO',$D3
-	.BYT 'SI',$CE
-	.BYT 'TA',$CE
-	.BYT 'AT',$CE
-	.BYT 'PEE',$CB
-	.BYT 'LE',$CE
-	.BYT 'STR',$A4
-	.BYT 'VA',$CC
-	.BYT 'AS',$C3
-	.BYT 'CHR',$A4
-LASNUM	=@307
-	.BYT 'LEFT',$A4
-	.BYT 'RIGHT',$A4
-	.BYT 'MID',$A4
-	.BYT 'G',$CF
-GOTK	=@313
-	.BYT 0
-.PAG 'ERROR MESSAGES'
-ERR01	.BYT 'TOO MANY FILE',$D3
-ERR02	.BYT 'FILE OPE',$CE
-ERR03	.BYT 'FILE NOT OPE',$CE
-ERR04	.BYT 'FILE NOT FOUN',$C4
-ERR05	.BYT 'DEVICE NOT PRESEN',$D4
-ERR06	.BYT 'NOT INPUT FIL',$C5
-ERR07	.BYT 'NOT OUTPUT FIL',$C5
-ERR08	.BYT 'MISSING FILE NAM',$C5
-ERR09	.BYT 'ILLEGAL DEVICE NUMBE',$D2
-ERR10	.BYT 'NEXT WITHOUT FO',$D2
-ERRNF	=10
-ERR11	.BYT 'SYNTA',$D8
-ERRSN	=11
-ERR12	.BYT 'RETURN WITHOUT GOSU',$C2
-ERRRG	=12
-ERR13	.BYT 'OUT OF DAT',$C1
-ERROD	=13
-ERR14	.BYT 'ILLEGAL QUANTIT',$D9
-ERRFC	=14
-ERR15	.BYT 'OVERFLO',$D7
-ERROV	=15
-ERR16	.BYT 'OUT OF MEMOR',$D9
-ERROM	=16
-ERR17	.BYT 'UNDEF',$27
-	.BYT 'D STATEMEN',$D4
-ERRUS	=17
-ERR18	.BYT 'BAD SUBSCRIP',$D4
-ERRBS	=18
-ERR19	.BYT 'REDIM',$27,'D ARRA',$D9
-ERRDD	=19
-ERR20	.BYT 'DIVISION BY ZER',$CF
-ERRDVO	=20
-ERR21	.BYT 'ILLEGAL DIREC',$D4
-ERRID	=21
-ERR22	.BYT 'TYPE MISMATC',$C8
-ERRTM	=22
-ERR23	.BYT 'STRING TOO LON',$C7
-ERRLS	=23
-ERR24	.BYT 'FILE DAT',$C1
-ERRBD	=24
-ERR25	.BYT 'FORMULA TOO COMPLE',$D8
-ERRST	=25
-ERR26	.BYT 'CAN',$27,'T CONTINU',$C5
-ERRCN	=26
-ERR27	.BYT 'UNDEF',$27,'D FUNCTIO',$CE
-ERRUF	=27
-ERR28	.BYT 'VERIF',$D9
-ERVFY	=28
-ERR29	.BYT 'LOA',$C4
-ERLOAD	=29
-.PAG 'ERROR MESSAGES'
-; TABLE TO TRANSLATE ERROR MESSAGE #
-; TO ADDRESS OF STRING CONTAINING MESSAGE
+.pag 'token2'
+	.byt 'tab',$a8
+tabtk	=@243
+	.byt 't',$cf
+totk	=@244
+	.byt 'f',$ce
+fntk	=@245
+	.byt 'spc',$a8
+spctk	=@246
+	.byt 'the',$ce
+thentk	=@247
+	.byt 'no',$d4
+nottk	=@250
+	.byt 'ste',$d0
+steptk	=@251
+	.byt $ab
+plustk	=@252
+	.byt $ad
+minutk	=@253
+	.byt $aa
+	.byt $af
+	.byt $de
+	.byt 'an',$c4
+	.byt 'o',$d2
+	.byt 190
+greatk	=@261
+	.byt $bd
+equltk	=@262
+	.byt 188
+lesstk	=@263
+	.byt 'sg',$ce
+onefun	=@264
+	.byt 'in',$d4
+	.byt 'ab',$d3
+	.byt 'us',$d2
+	.byt 'fr',$c5
+	.byt 'po',$d3
+	.byt 'sq',$d2
+	.byt 'rn',$c4
+	.byt 'lo',$c7
+	.byt 'ex',$d0
+	.byt 'co',$d3
+	.byt 'si',$ce
+	.byt 'ta',$ce
+	.byt 'at',$ce
+	.byt 'pee',$cb
+	.byt 'le',$ce
+	.byt 'str',$a4
+	.byt 'va',$cc
+	.byt 'as',$c3
+	.byt 'chr',$a4
+lasnum	=@307
+	.byt 'left',$a4
+	.byt 'right',$a4
+	.byt 'mid',$a4
+	.byt 'g',$cf
+gotk	=@313
+	.byt 0
+.pag 'error messages'
+err01	.byt 'too many file',$d3
+err02	.byt 'file ope',$ce
+err03	.byt 'file not ope',$ce
+err04	.byt 'file not foun',$c4
+err05	.byt 'device not presen',$d4
+err06	.byt 'not input fil',$c5
+err07	.byt 'not output fil',$c5
+err08	.byt 'missing file nam',$c5
+err09	.byt 'illegal device numbe',$d2
+err10	.byt 'next without fo',$d2
+errnf	=10
+err11	.byt 'synta',$d8
+errsn	=11
+err12	.byt 'return without gosu',$c2
+errrg	=12
+err13	.byt 'out of dat',$c1
+errod	=13
+err14	.byt 'illegal quantit',$d9
+errfc	=14
+err15	.byt 'overflo',$d7
+errov	=15
+err16	.byt 'out of memor',$d9
+errom	=16
+err17	.byt 'undef',$27
+	.byt 'd statemen',$d4
+errus	=17
+err18	.byt 'bad subscrip',$d4
+errbs	=18
+err19	.byt 'redim',$27,'d arra',$d9
+errdd	=19
+err20	.byt 'division by zer',$cf
+errdvo	=20
+err21	.byt 'illegal direc',$d4
+errid	=21
+err22	.byt 'type mismatc',$c8
+errtm	=22
+err23	.byt 'string too lon',$c7
+errls	=23
+err24	.byt 'file dat',$c1
+errbd	=24
+err25	.byt 'formula too comple',$d8
+errst	=25
+err26	.byt 'can',$27,'t continu',$c5
+errcn	=26
+err27	.byt 'undef',$27,'d functio',$ce
+erruf	=27
+err28	.byt 'verif',$d9
+ervfy	=28
+err29	.byt 'loa',$c4
+erload	=29
+.pag 'error messages'
+; table to translate error message #
+; to address of string containing message
 ;
-ERRTAB	.WOR ERR01
-	.WOR ERR02
-	.WOR ERR03
-	.WOR ERR04
-	.WOR ERR05
-	.WOR ERR06
-	.WOR ERR07
-	.WOR ERR08
-	.WOR ERR09
-	.WOR ERR10
-	.WOR ERR11
-	.WOR ERR12
-	.WOR ERR13
-	.WOR ERR14
-	.WOR ERR15
-	.WOR ERR16
-	.WOR ERR17
-	.WOR ERR18
-	.WOR ERR19
-	.WOR ERR20
-	.WOR ERR21
-	.WOR ERR22
-	.WOR ERR23
-	.WOR ERR24
-	.WOR ERR25
-	.WOR ERR26
-	.WOR ERR27
-	.WOR ERR28
-	.WOR ERR29
-	.WOR ERR30
-.SKI 5
-OKMSG	.BYT $D,'OK',$D,$0
-ERR	.BYT $20,' ERROR',0 ;ADD A SPACE FOR VIC-40 SCREEN
-INTXT	.BYT ' IN ',0
-REDDY	.BYT $D,$A,'READY.',$D,$A,0
-ERBRK	=30
-BRKTXT	.BYT $D,$A
-ERR30	.BYT 'BREAK',0,$A0 ;SHIFTED SPACE
-.PAG
-FORSIZ	=@22
-FNDFOR	TSX
-	INX
-	INX
-	INX
-	INX
-FFLOOP	LDA 257,X
-	CMP #FORTK
-	BNE FFRTS
-	LDA FORPNT+1
-	BNE CMPFOR
-	LDA 258,X
-	STA FORPNT
-	LDA 259,X
-	STA FORPNT+1
-CMPFOR	CMP 259,X
-	BNE ADDFRS
-	LDA FORPNT
-	CMP 258,X
-	BEQ FFRTS
-ADDFRS	TXA 
-	CLC
-	ADC #FORSIZ
-	TAX
-	BNE FFLOOP
-FFRTS	RTS
-BLTU	JSR REASON
-	STA STREND
-	STY STREND+1
-BLTUC	SEC
-	LDA HIGHTR
-	SBC LOWTR
-	STA INDEX
-	TAY
-	LDA HIGHTR+1
-	SBC LOWTR+1
-	TAX
-	INX
-	TYA
-	BEQ DECBLT
-	LDA HIGHTR
-	SEC
-	SBC INDEX
-	STA HIGHTR
-	BCS BLT1
-	DEC HIGHTR+1
-	SEC
-BLT1	LDA HIGHDS
-	SBC INDEX
-	STA HIGHDS
-	BCS MOREN1
-	DEC HIGHDS+1
-	BCC MOREN1
-BLTLP	LDA (HIGHTR)Y
-	STA (HIGHDS)Y
-MOREN1	DEY
-	BNE BLTLP
-	LDA (HIGHTR),Y
-	STA (HIGHDS),Y
-DECBLT	DEC HIGHTR+1
-	DEC HIGHDS+1
-	DEX
-	BNE MOREN1
-	RTS
-GETSTK	ASL A
-	ADC #NUMLEV+NUMLEV+16
-	BCS OMERR
-	STA INDEX
-	TSX
-	CPX INDEX
-	BCC OMERR
-	RTS
-REASON	CPY FRETOP+1
-	BCC REARTS
-	BNE TRYMOR
-	CMP FRETOP
-	BCC REARTS
-TRYMOR	PHA
-	LDX #8+ADDPRC
-	TYA
-REASAV	PHA
-	LDA HIGHDS-1,X
-	DEX
-	BPL REASAV
-	JSR GARBA2
-	LDX #248-ADDPRC
-REASTO	PLA
-	STA HIGHDS+8+ADDPRC,X
-	INX
-	BMI REASTO
-	PLA
-	TAY
-	PLA
-	CPY FRETOP+1
-	BCC REARTS
-	BNE OMERR
-	CMP FRETOP
-	BCS OMERR
-REARTS	RTS
-.END
+errtab	.wor err01
+	.wor err02
+	.wor err03
+	.wor err04
+	.wor err05
+	.wor err06
+	.wor err07
+	.wor err08
+	.wor err09
+	.wor err10
+	.wor err11
+	.wor err12
+	.wor err13
+	.wor err14
+	.wor err15
+	.wor err16
+	.wor err17
+	.wor err18
+	.wor err19
+	.wor err20
+	.wor err21
+	.wor err22
+	.wor err23
+	.wor err24
+	.wor err25
+	.wor err26
+	.wor err27
+	.wor err28
+	.wor err29
+	.wor err30
+.ski 5
+okmsg	.byt $d,'ok',$d,$0
+err	.byt $20,' error',0 ;add a space for vic-40 screen
+intxt	.byt ' in ',0
+reddy	.byt $d,$a,'ready.',$d,$a,0
+erbrk	=30
+brktxt	.byt $d,$a
+err30	.byt 'break',0,$a0 ;shifted space
+.pag
+forsiz	=@22
+fndfor	tsx
+	inx
+	inx
+	inx
+	inx
+ffloop	lda 257,x
+	cmp #fortk
+	bne ffrts
+	lda forpnt+1
+	bne cmpfor
+	lda 258,x
+	sta forpnt
+	lda 259,x
+	sta forpnt+1
+cmpfor	cmp 259,x
+	bne addfrs
+	lda forpnt
+	cmp 258,x
+	beq ffrts
+addfrs	txa 
+	clc
+	adc #forsiz
+	tax
+	bne ffloop
+ffrts	rts
+bltu	jsr reason
+	sta strend
+	sty strend+1
+bltuc	sec
+	lda hightr
+	sbc lowtr
+	sta index
+	tay
+	lda hightr+1
+	sbc lowtr+1
+	tax
+	inx
+	tya
+	beq decblt
+	lda hightr
+	sec
+	sbc index
+	sta hightr
+	bcs blt1
+	dec hightr+1
+	sec
+blt1	lda highds
+	sbc index
+	sta highds
+	bcs moren1
+	dec highds+1
+	bcc moren1
+bltlp	lda (hightr)y
+	sta (highds)y
+moren1	dey
+	bne bltlp
+	lda (hightr),y
+	sta (highds),y
+decblt	dec hightr+1
+	dec highds+1
+	dex
+	bne moren1
+	rts
+getstk	asl a
+	adc #numlev+numlev+16
+	bcs omerr
+	sta index
+	tsx
+	cpx index
+	bcc omerr
+	rts
+reason	cpy fretop+1
+	bcc rearts
+	bne trymor
+	cmp fretop
+	bcc rearts
+trymor	pha
+	ldx #8+addprc
+	tya
+reasav	pha
+	lda highds-1,x
+	dex
+	bpl reasav
+	jsr garba2
+	ldx #248-addprc
+reasto	pla
+	sta highds+8+addprc,x
+	inx
+	bmi reasto
+	pla
+	tay
+	pla
+	cpy fretop+1
+	bcc rearts
+	bne omerr
+	cmp fretop
+	bcs omerr
+rearts	rts
+.end

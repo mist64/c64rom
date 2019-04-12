@@ -1,147 +1,147 @@
-.PAG 'CODE7'
-XSPAC1	JSR OUTSPC
-	BNE XSPAC2
-STROUT	JSR STRLIT
-STRPRT	JSR FREFAC
-	TAX
-	LDY #0
-	INX
-STRPR2	DEX
-	BEQ PRTRTS
-	LDA (INDEX)Y
-	JSR OUTDO
-	INY
-	CMP #13
-	BNE STRPR2
-	JSR CRFIN
-	JMP STRPR2
-OUTSPC
-	LDA CHANNL
-	BEQ CRTSKP
-	LDA #' 
-	.BYT $2C
-CRTSKP	LDA #29
-	.BYT $2C
-OUTQST	LDA #'?
-OUTDO	JSR OUTCH
-OUTRTS	AND #255
-	RTS
-TRMNOK	LDA INPFLG
-	BEQ TRMNO1
-	BMI GETDTL
-	LDY #255
-	BNE STCURL
-GETDTL	LDA DATLIN
-	LDY DATLIN+1
-STCURL	STA CURLIN
-	STY CURLIN+1
-SNERR4	JMP SNERR
-TRMNO1	LDA CHANNL
-	BEQ DOAGIN
-	LDX #ERRBD
-	JMP ERROR
-DOAGIN	LDA #<TRYAGN
-	LDY #>TRYAGN
-	JSR STROUT
-	LDA OLDTXT
-	LDY OLDTXT+1
-	STA TXTPTR
-	STY TXTPTR+1
-	RTS
-GET	JSR ERRDIR
-	CMP #'#
-	BNE GETTTY
-	JSR CHRGET
-	JSR GETBYT
-	LDA #44
-	JSR SYNCHR
-	STX CHANNL
-	JSR COIN
-ZZ2=BUF+1
-GETTTY	LDX #<ZZ2
-ZZ3=BUF+2
-	LDY #>ZZ3
-	LDA #0
-	STA BUF+1
-	LDA #64
-	JSR INPCO1
-	LDX CHANNL
-	BNE IORELE
-	RTS
-INPUTN	JSR GETBYT
-	LDA #44
-	JSR SYNCHR
-	STX CHANNL
-	JSR COIN
-	JSR NOTQTI
-IODONE	LDA CHANNL
-IORELE	JSR CLSCHN
-	LDX #0
-	STX CHANNL
-	RTS
-INPUT	CMP #34
-	BNE NOTQTI
-	JSR STRTXT
-	LDA #59
-	JSR SYNCHR
-	JSR STRPRT
-NOTQTI	JSR ERRDIR
-	LDA #44
-	STA BUF-1
-GETAGN	JSR QINLIN
-	LDA CHANNL
-	BEQ BUFFUL
-	JSR READST
-	AND #2
-	BEQ BUFFUL
-	JSR IODONE
-	JMP DATA
-BUFFUL	LDA BUF
-	BNE INPCON
-	LDA CHANNL
-	BNE GETAGN
-	JSR DATAN
-	JMP ADDON
-QINLIN	LDA CHANNL
-	BNE GINLIN
-	JSR OUTQST
-	JSR OUTSPC
-GINLIN	JMP INLIN
-READ	LDX DATPTR
-	LDY DATPTR+1
-	.BYT $A9
-	TYA
-	.BYT $2C
-INPCON	LDA #0
-INPCO1	STA INPFLG
-	STX INPPTR
-	STY INPPTR+1
-INLOOP	JSR PTRGET
-	STA FORPNT
-	STY FORPNT+1
-	LDA TXTPTR
-	LDY TXTPTR+1
-	STA VARTXT
-	STY VARTXT+1
-	LDX INPPTR
-	LDY INPPTR+1
-	STX TXTPTR
-	STY TXTPTR+1
-	JSR CHRGOT
-	BNE DATBK1
-	BIT INPFLG
-	BVC QDATA
-	JSR CGETL
-	STA BUF
-ZZ4=BUF-1
-	LDX #<ZZ4
-	LDY #>ZZ4
-	BNE DATBK
-QDATA	BMI DATLOP
-	LDA CHANNL
-	BNE GETNTH
-	JSR OUTQST
-GETNTH	JSR QINLIN
-DATBK	STX TXTPTR
-	STY TXTPTR+1
-.END
+.pag 'code7'
+xspac1	jsr outspc
+	bne xspac2
+strout	jsr strlit
+strprt	jsr frefac
+	tax
+	ldy #0
+	inx
+strpr2	dex
+	beq prtrts
+	lda (index)y
+	jsr outdo
+	iny
+	cmp #13
+	bne strpr2
+	jsr crfin
+	jmp strpr2
+outspc
+	lda channl
+	beq crtskp
+	lda #' 
+	.byt $2c
+crtskp	lda #29
+	.byt $2c
+outqst	lda #'?
+outdo	jsr outch
+outrts	and #255
+	rts
+trmnok	lda inpflg
+	beq trmno1
+	bmi getdtl
+	ldy #255
+	bne stcurl
+getdtl	lda datlin
+	ldy datlin+1
+stcurl	sta curlin
+	sty curlin+1
+snerr4	jmp snerr
+trmno1	lda channl
+	beq doagin
+	ldx #errbd
+	jmp error
+doagin	lda #<tryagn
+	ldy #>tryagn
+	jsr strout
+	lda oldtxt
+	ldy oldtxt+1
+	sta txtptr
+	sty txtptr+1
+	rts
+get	jsr errdir
+	cmp #'#
+	bne gettty
+	jsr chrget
+	jsr getbyt
+	lda #44
+	jsr synchr
+	stx channl
+	jsr coin
+zz2=buf+1
+gettty	ldx #<zz2
+zz3=buf+2
+	ldy #>zz3
+	lda #0
+	sta buf+1
+	lda #64
+	jsr inpco1
+	ldx channl
+	bne iorele
+	rts
+inputn	jsr getbyt
+	lda #44
+	jsr synchr
+	stx channl
+	jsr coin
+	jsr notqti
+iodone	lda channl
+iorele	jsr clschn
+	ldx #0
+	stx channl
+	rts
+input	cmp #34
+	bne notqti
+	jsr strtxt
+	lda #59
+	jsr synchr
+	jsr strprt
+notqti	jsr errdir
+	lda #44
+	sta buf-1
+getagn	jsr qinlin
+	lda channl
+	beq bufful
+	jsr readst
+	and #2
+	beq bufful
+	jsr iodone
+	jmp data
+bufful	lda buf
+	bne inpcon
+	lda channl
+	bne getagn
+	jsr datan
+	jmp addon
+qinlin	lda channl
+	bne ginlin
+	jsr outqst
+	jsr outspc
+ginlin	jmp inlin
+read	ldx datptr
+	ldy datptr+1
+	.byt $a9
+	tya
+	.byt $2c
+inpcon	lda #0
+inpco1	sta inpflg
+	stx inpptr
+	sty inpptr+1
+inloop	jsr ptrget
+	sta forpnt
+	sty forpnt+1
+	lda txtptr
+	ldy txtptr+1
+	sta vartxt
+	sty vartxt+1
+	ldx inpptr
+	ldy inpptr+1
+	stx txtptr
+	sty txtptr+1
+	jsr chrgot
+	bne datbk1
+	bit inpflg
+	bvc qdata
+	jsr cgetl
+	sta buf
+zz4=buf-1
+	ldx #<zz4
+	ldy #>zz4
+	bne datbk
+qdata	bmi datlop
+	lda channl
+	bne getnth
+	jsr outqst
+getnth	jsr qinlin
+datbk	stx txtptr
+	sty txtptr+1
+.end

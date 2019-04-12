@@ -1,614 +1,614 @@
-.PAG 'SCREEN EDITOR'
-MAXCHR=80
-NWRAP=2 ;MAX NUMBER OF PHYSICAL LINES PER LOGICAL LINE
+.pag 'screen editor'
+maxchr=80
+nwrap=2 ;max number of physical lines per logical line
 ;
-;UNDEFINED FUNCTION ENTRY
+;undefined function entry
 ;
-; UNDEFD LDX #0
-; UNDEF2 LDA UNMSG,X
-; JSR PRT
-; INX
-; CPX #UNMSG2-UNMSG
-; BNE UNDEF2
-; SEC
-; RTS
+; undefd ldx #0
+; undef2 lda unmsg,x
+; jsr prt
+; inx
+; cpx #unmsg2-unmsg
+; bne undef2
+; sec
+; rts
 ;
-; UNMSG .BYT $D,'?ADVANCED FUNCTION NOT AVAILABLE',$D
-; UNMSG2
+; unmsg .byt $d,'?advanced function not available',$d
+; unmsg2
 ;
-;RETURN ADDRESS OF 6526
+;return address of 6526
 ;
-IOBASE	LDX #<D1PRA
-	LDY #>D1PRA
-	RTS
+iobase	ldx #<d1pra
+	ldy #>d1pra
+	rts
 ;
-;RETURN MAX ROWS,COLS OF SCREEN
+;return max rows,cols of screen
 ;
-SCRORG	LDX #LLEN
-	LDY #NLINES
-	RTS
+scrorg	ldx #llen
+	ldy #nlines
+	rts
 ;
-;READ/PLOT CURSOR POSITION
+;read/plot cursor position
 ;
-PLOT	BCS PLOT10
-	STX TBLX
-	STY PNTR
-	JSR STUPT
-PLOT10	LDX TBLX
-	LDY PNTR
-	RTS
-.SKI 5
-;INITIALIZE I/O
+plot	bcs plot10
+	stx tblx
+	sty pntr
+	jsr stupt
+plot10	ldx tblx
+	ldy pntr
+	rts
+.ski 5
+;initialize i/o
 ;
-CINT
+cint
 ;
-; ESTABLISH SCREEN MEMORY
+; establish screen memory
 ;
-	JSR PANIC       ;SET UP VIC
+	jsr panic       ;set up vic
 ;
-	LDA #0          ;MAKE SURE WE'RE IN PET MODE
-	STA MODE
-	STA BLNON       ;WE DONT HAVE A GOOD CHAR FROM THE SCREEN YET
-.SKI
-	LDA #<SHFLOG    ;SET SHIFT LOGIC INDIRECTS
-	STA KEYLOG
-	LDA #>SHFLOG
-	STA KEYLOG+1
-	LDA #10
-	STA XMAX        ;MAXIMUM TYPE AHEAD BUFFER SIZE
-	STA DELAY
-	LDA #$E         ;INIT COLOR TO LIGHT BLUE<<<<<<<<<<
-	STA COLOR
-	LDA #4
-	STA KOUNT       ;DELAY BETWEEN KEY REPEATS
-	LDA #$C
-	STA BLNCT
-	STA BLNSW
-CLSR	LDA HIBASE      ;FILL HI BYTE PTR TABLE
-	ORA #$80
-	TAY
-	LDA #0
-	TAX
-LPS1	STY LDTB1,X
-	CLC
-	ADC #LLEN
-	BCC LPS2
-	INY             ;CARRY BUMP HI BYTE
-LPS2	INX
-	CPX #NLINES+1   ;DONE # OF LINES?
-	BNE LPS1        ;NO...
-	LDA #$FF        ;TAG END OF LINE TABLE
-	STA LDTB1,X
-	LDX #NLINES-1   ;CLEAR FROM THE BOTTOM LINE UP
-CLEAR1	JSR CLRLN       ;SEE SCROLL ROUTINES
-	DEX
-	BPL CLEAR1
-.SKI 5
-;HOME FUNCTION
+	lda #0          ;make sure we're in pet mode
+	sta mode
+	sta blnon       ;we dont have a good char from the screen yet
+.ski
+	lda #<shflog    ;set shift logic indirects
+	sta keylog
+	lda #>shflog
+	sta keylog+1
+	lda #10
+	sta xmax        ;maximum type ahead buffer size
+	sta delay
+	lda #$e         ;init color to light blue<<<<<<<<<<
+	sta color
+	lda #4
+	sta kount       ;delay between key repeats
+	lda #$c
+	sta blnct
+	sta blnsw
+clsr	lda hibase      ;fill hi byte ptr table
+	ora #$80
+	tay
+	lda #0
+	tax
+lps1	sty ldtb1,x
+	clc
+	adc #llen
+	bcc lps2
+	iny             ;carry bump hi byte
+lps2	inx
+	cpx #nlines+1   ;done # of lines?
+	bne lps1        ;no...
+	lda #$ff        ;tag end of line table
+	sta ldtb1,x
+	ldx #nlines-1   ;clear from the bottom line up
+clear1	jsr clrln       ;see scroll routines
+	dex
+	bpl clear1
+.ski 5
+;home function
 ;
-NXTD	LDY #0
-	STY PNTR        ;LEFT COLUMN
-	STY TBLX        ;TOP LINE
+nxtd	ldy #0
+	sty pntr        ;left column
+	sty tblx        ;top line
 ;
-;MOVE CURSOR TO TBLX,PNTR
+;move cursor to tblx,pntr
 ;
-STUPT
-	LDX TBLX        ;GET CURENT LINE INDEX
-	LDA PNTR        ;GET CHARACTER POINTER
-FNDSTR	LDY LDTB1,X     ;FIND BEGINING OF LINE
-	BMI STOK        ;BRANCH IF START FOUND
-	CLC
-	ADC #LLEN       ;ADJUST POINTER
-	STA PNTR
-	DEX
-	BPL FNDSTR
+stupt
+	ldx tblx        ;get curent line index
+	lda pntr        ;get character pointer
+fndstr	ldy ldtb1,x     ;find begining of line
+	bmi stok        ;branch if start found
+	clc
+	adc #llen       ;adjust pointer
+	sta pntr
+	dex
+	bpl fndstr
 ;
-STOK	JSR SETPNT      ;SET UP PNT INDIRECT 901227-03**********
+stok	jsr setpnt      ;set up pnt indirect 901227-03**********
 ;
-	LDA #LLEN-1
-	INX
-FNDEND	LDY LDTB1,X
-	BMI STDONE
-	CLC
-	ADC #LLEN
-	INX
-	BPL FNDEND
-STDONE
-	STA LNMX
-	JMP SCOLOR      ;MAKE COLOR POINTER FOLLOW 901227-03**********
-.SKI 5
-; THIS IS A PATCH FOR INPUT LOGIC 901227-03**********
-;   FIXES INPUT"XXXXXXX-40-XXXXX";A$ PROBLEM
+	lda #llen-1
+	inx
+fndend	ldy ldtb1,x
+	bmi stdone
+	clc
+	adc #llen
+	inx
+	bpl fndend
+stdone
+	sta lnmx
+	jmp scolor      ;make color pointer follow 901227-03**********
+.ski 5
+; this is a patch for input logic 901227-03**********
+;   fixes input"xxxxxxx-40-xxxxx";a$ problem
 ;
-FINPUT	CPX LSXP        ;CHECK IF ON SAME LINE
-	BEQ FINPUX      ;YES..RETURN TO SEND
-	JMP FINDST      ;CHECK IF WE WRAPPED DOWN...
-FINPUX	RTS
-	NOP             ;KEEP THE SPACE THE SAME...
-.SKI 5
-;PANIC NMI ENTRY
+finput	cpx lsxp        ;check if on same line
+	beq finpux      ;yes..return to send
+	jmp findst      ;check if we wrapped down...
+finpux	rts
+	nop             ;keep the space the same...
+.ski 5
+;panic nmi entry
 ;
-VPAN	JSR PANIC       ;FIX VIC SCREEN
-	JMP NXTD        ;HOME CURSOR
-.SKI 5
-PANIC	LDA #3          ;RESET DEFAULT I/O
-	STA DFLTO
-	LDA #0
-	STA DFLTN
-.SKI 5
-;INIT VIC
+vpan	jsr panic       ;fix vic screen
+	jmp nxtd        ;home cursor
+.ski 5
+panic	lda #3          ;reset default i/o
+	sta dflto
+	lda #0
+	sta dfltn
+.ski 5
+;init vic
 ;
-INITV	LDX #47         ;LOAD ALL VIC REGS ***
-PX4	LDA TVIC-1,X
-	STA VICREG-1,X
-	DEX
-	BNE PX4
-	RTS
-.SKI 5
+initv	ldx #47         ;load all vic regs ***
+px4	lda tvic-1,x
+	sta vicreg-1,x
+	dex
+	bne px4
+	rts
+.ski 5
 ;
-;REMOVE CHARACTER FROM QUEUE
+;remove character from queue
 ;
-LP2	LDY KEYD
-	LDX #0
-LP1	LDA KEYD+1,X
-	STA KEYD,X
-	INX
-	CPX NDX
-	BNE LP1
-	DEC NDX
-	TYA
-	CLI
-	CLC             ;GOOD RETURN
-	RTS
+lp2	ldy keyd
+	ldx #0
+lp1	lda keyd+1,x
+	sta keyd,x
+	inx
+	cpx ndx
+	bne lp1
+	dec ndx
+	tya
+	cli
+	clc             ;good return
+	rts
 ;
-LOOP4	JSR PRT
-LOOP3
-	LDA NDX
-	STA BLNSW
-	STA AUTODN      ;TURN ON AUTO SCROLL DOWN
-	BEQ LOOP3
-	SEI
-	LDA BLNON
-	BEQ LP21
-	LDA GDBLN
-	LDX GDCOL       ;RESTORE ORIGINAL COLOR
-	LDY #0
-	STY BLNON
-	JSR DSPP
-LP21	JSR LP2
-	CMP #$83        ;RUN KEY?
-	BNE LP22
-	LDX #9
-	SEI
-	STX NDX
-LP23	LDA RUNTB-1,X
-	STA KEYD-1,X
-	DEX
-	BNE LP23
-	BEQ LOOP3
-LP22	CMP #$D
-	BNE LOOP4
-	LDY LNMX
-	STY CRSW
-CLP5	LDA (PNT)Y
-	CMP #' 
-	BNE CLP6
-	DEY
-	BNE CLP5
-CLP6	INY
-	STY INDX
-	LDY #0
-	STY AUTODN      ;TURN OFF AUTO SCROLL DOWN
-	STY PNTR
-	STY QTSW
-	LDA LSXP
-	BMI LOP5
-	LDX TBLX
-	JSR FINPUT      ;CHECK FOR SAME LINE AS START  901227-03**********
-	CPX LSXP
-	BNE LOP5
-	LDA LSTP
-	STA PNTR
-	CMP INDX
-	BCC LOP5
-	BCS CLP2
-.SKI 5
-;INPUT A LINE UNTIL CARRIAGE RETURN
+loop4	jsr prt
+loop3
+	lda ndx
+	sta blnsw
+	sta autodn      ;turn on auto scroll down
+	beq loop3
+	sei
+	lda blnon
+	beq lp21
+	lda gdbln
+	ldx gdcol       ;restore original color
+	ldy #0
+	sty blnon
+	jsr dspp
+lp21	jsr lp2
+	cmp #$83        ;run key?
+	bne lp22
+	ldx #9
+	sei
+	stx ndx
+lp23	lda runtb-1,x
+	sta keyd-1,x
+	dex
+	bne lp23
+	beq loop3
+lp22	cmp #$d
+	bne loop4
+	ldy lnmx
+	sty crsw
+clp5	lda (pnt)y
+	cmp #' 
+	bne clp6
+	dey
+	bne clp5
+clp6	iny
+	sty indx
+	ldy #0
+	sty autodn      ;turn off auto scroll down
+	sty pntr
+	sty qtsw
+	lda lsxp
+	bmi lop5
+	ldx tblx
+	jsr finput      ;check for same line as start  901227-03**********
+	cpx lsxp
+	bne lop5
+	lda lstp
+	sta pntr
+	cmp indx
+	bcc lop5
+	bcs clp2
+.ski 5
+;input a line until carriage return
 ;
-LOOP5	TYA
-	PHA
-	TXA
-	PHA
-	LDA CRSW
-	BEQ LOOP3
-LOP5	LDY PNTR
-	LDA (PNT)Y
-NOTONE
-	STA DATA
-LOP51	AND #$3F
-	ASL DATA
-	BIT DATA
-	BPL LOP54
-	ORA #$80
-LOP54	BCC LOP52
-	LDX QTSW
-	BNE LOP53
-LOP52	BVS LOP53
-	ORA #$40
-LOP53	INC PNTR
-	JSR QTSWC
-	CPY INDX
-	BNE CLP1
-CLP2	LDA #0
-	STA CRSW
-	LDA #$D
-	LDX DFLTN       ;FIX GETS FROM SCREEN
-	CPX #3          ;IS IT THE SCREEN?
-	BEQ CLP2A
-	LDX DFLTO
-	CPX #3
-	BEQ CLP21
-CLP2A	JSR PRT
-CLP21	LDA #$D
-CLP1	STA DATA
-	PLA
-	TAX
-	PLA
-	TAY
-	LDA DATA
-	CMP #$DE        ;IS IT <PI> ?
-	BNE CLP7
-	LDA #$FF
-CLP7	CLC
-	RTS
-.SKI 5
-QTSWC	CMP #$22
-	BNE QTSWL
-	LDA QTSW
-	EOR #$1
-	STA QTSW
-	LDA #$22
-QTSWL	RTS
-.SKI 5
-NXT33	ORA #$40
-NXT3	LDX RVS
-	BEQ NVS
-NC3	ORA #$80
-NVS	LDX INSRT
-	BEQ NVS1
-	DEC INSRT
-NVS1	LDX COLOR PUT COLOR ON SCREEN
-	JSR DSPP
-	JSR WLOGIC      ;CHECK FOR WRAPAROUND
-LOOP2	PLA
-	TAY
-	LDA INSRT
-	BEQ LOP2
-	LSR QTSW
-LOP2	PLA
-	TAX
-	PLA
-	CLC             ;GOOD RETURN
-	CLI
-	RTS
-.PAG
-WLOGIC
-	JSR CHKDWN      ;MAYBE WE SHOULD WE INCREMENT TBLX
-	INC PNTR        ;BUMP CHARCTER POINTER
-	LDA LNMX        ;
-	CMP PNTR        ;IF LNMX IS LESS THAN PNTR
-	BCS WLGRTS      ;BRANCH IF LNMX>=PNTR
-	CMP #MAXCHR-1   ;PAST MAX CHARACTERS
-	BEQ WLOG10      ;BRANCH IF SO
-	LDA AUTODN      ;SHOULD WE AUTO SCROLL DOWN?
-	BEQ WLOG20      ;BRANCH IF NOT
-	JMP BMT1        ;ELSE DECIDE WHICH WAY TO SCROLL
-.SKIP 3
-WLOG20
-	LDX TBLX        ;SEE IF WE SHOULD SCROLL DOWN
-	CPX #NLINES
-	BCC WLOG30      ;BRANCH IF NOT
-	JSR SCROL       ;ELSE DO THE SCROL UP
-	DEC TBLX        ;AND ADJUST CURENT LINE#
-	LDX TBLX
-WLOG30	ASL LDTB1,X     ;WRAP THE LINE
-	LSR LDTB1,X
-	INX             ;INDEX TO NEXT LLINE
-	LDA LDTB1,X     ;GET HIGH ORDER BYTE OF ADDRESS
-	ORA #$80        ;MAKE IT A NON-CONTINUATION LINE
-	STA LDTB1,X     ;AND PUT IT BACK
-	DEX             ;GET BACK TO CURRENT LINE
-	LDA LNMX        ;CONTINUE THE BYTES TAKEN OUT
-	CLC
-	ADC #LLEN
-	STA LNMX
-FINDST
-	LDA LDTB1,X     ;IS THIS THE FIRST LINE?
-	BMI FINX        ;BRANCH IF SO
-	DEX             ;ELSE BACKUP 1
-	BNE FINDST
-FINX
-	JMP SETPNT      ;MAKE SURE PNT IS RIGHT
-.SKI
-WLOG10	DEC TBLX
-	JSR NXLN
-	LDA #0
-	STA PNTR        ;POINT TO FIRST BYTE
-WLGRTS	RTS
-.PAG
-BKLN	LDX TBLX
-	BNE BKLN1
-	STX PNTR
-	PLA
-	PLA
-	BNE LOOP2
+loop5	tya
+	pha
+	txa
+	pha
+	lda crsw
+	beq loop3
+lop5	ldy pntr
+	lda (pnt)y
+notone
+	sta data
+lop51	and #$3f
+	asl data
+	bit data
+	bpl lop54
+	ora #$80
+lop54	bcc lop52
+	ldx qtsw
+	bne lop53
+lop52	bvs lop53
+	ora #$40
+lop53	inc pntr
+	jsr qtswc
+	cpy indx
+	bne clp1
+clp2	lda #0
+	sta crsw
+	lda #$d
+	ldx dfltn       ;fix gets from screen
+	cpx #3          ;is it the screen?
+	beq clp2a
+	ldx dflto
+	cpx #3
+	beq clp21
+clp2a	jsr prt
+clp21	lda #$d
+clp1	sta data
+	pla
+	tax
+	pla
+	tay
+	lda data
+	cmp #$de        ;is it <pi> ?
+	bne clp7
+	lda #$ff
+clp7	clc
+	rts
+.ski 5
+qtswc	cmp #$22
+	bne qtswl
+	lda qtsw
+	eor #$1
+	sta qtsw
+	lda #$22
+qtswl	rts
+.ski 5
+nxt33	ora #$40
+nxt3	ldx rvs
+	beq nvs
+nc3	ora #$80
+nvs	ldx insrt
+	beq nvs1
+	dec insrt
+nvs1	ldx color put color on screen
+	jsr dspp
+	jsr wlogic      ;check for wraparound
+loop2	pla
+	tay
+	lda insrt
+	beq lop2
+	lsr qtsw
+lop2	pla
+	tax
+	pla
+	clc             ;good return
+	cli
+	rts
+.pag
+wlogic
+	jsr chkdwn      ;maybe we should we increment tblx
+	inc pntr        ;bump charcter pointer
+	lda lnmx        ;
+	cmp pntr        ;if lnmx is less than pntr
+	bcs wlgrts      ;branch if lnmx>=pntr
+	cmp #maxchr-1   ;past max characters
+	beq wlog10      ;branch if so
+	lda autodn      ;should we auto scroll down?
+	beq wlog20      ;branch if not
+	jmp bmt1        ;else decide which way to scroll
+.skip 3
+wlog20
+	ldx tblx        ;see if we should scroll down
+	cpx #nlines
+	bcc wlog30      ;branch if not
+	jsr scrol       ;else do the scrol up
+	dec tblx        ;and adjust curent line#
+	ldx tblx
+wlog30	asl ldtb1,x     ;wrap the line
+	lsr ldtb1,x
+	inx             ;index to next lline
+	lda ldtb1,x     ;get high order byte of address
+	ora #$80        ;make it a non-continuation line
+	sta ldtb1,x     ;and put it back
+	dex             ;get back to current line
+	lda lnmx        ;continue the bytes taken out
+	clc
+	adc #llen
+	sta lnmx
+findst
+	lda ldtb1,x     ;is this the first line?
+	bmi finx        ;branch if so
+	dex             ;else backup 1
+	bne findst
+finx
+	jmp setpnt      ;make sure pnt is right
+.ski
+wlog10	dec tblx
+	jsr nxln
+	lda #0
+	sta pntr        ;point to first byte
+wlgrts	rts
+.pag
+bkln	ldx tblx
+	bne bkln1
+	stx pntr
+	pla
+	pla
+	bne loop2
 ;
-BKLN1	DEX
-	STX TBLX
-	JSR STUPT
-	LDY LNMX
-	STY PNTR
-	RTS
-.SKI 5
-;PRINT ROUTINE
+bkln1	dex
+	stx tblx
+	jsr stupt
+	ldy lnmx
+	sty pntr
+	rts
+.ski 5
+;print routine
 ;
-PRT	PHA
-	STA DATA
-	TXA
-	PHA
-	TYA
-	PHA
-	LDA #0
-	STA CRSW
-	LDY PNTR
-	LDA DATA
-	BPL *+5
-	JMP NXTX
-	CMP #$D
-	BNE NJT1
-	JMP NXT1
-NJT1	CMP #' 
-	BCC NTCN
-	CMP #$60        ;LOWER CASE?
-	BCC NJT8        ;NO...
-	AND #$DF        ;YES...MAKE SCREEN LOWER
-	BNE NJT9        ;ALWAYS
-NJT8	AND #$3F
-NJT9	JSR QTSWC
-	JMP NXT3
-NTCN	LDX INSRT
-	BEQ CNC3X
-	JMP NC3
-CNC3X	CMP #$14
-	BNE NTCN1
-	TYA
-	BNE BAK1UP
-	JSR BKLN
-	JMP BK2
-BAK1UP	JSR CHKBAK      ;SHOULD WE DEC TBLX
-	DEY
-	STY PNTR
-BK1	JSR SCOLOR      ;FIX COLOR PTRS
-BK15	INY
-	LDA (PNT)Y
-	DEY
-	STA (PNT)Y
-	INY
-	LDA (USER)Y
-	DEY
-	STA (USER)Y
-	INY
-	CPY LNMX
-	BNE BK15
-BK2	LDA #' 
-	STA (PNT)Y 
-	LDA COLOR
-	STA (USER)Y
-	BPL JPL3
-NTCN1	LDX QTSW
-	BEQ NC3W
-CNC3	JMP NC3
-NC3W	CMP #$12
-	BNE NC1
-	STA RVS
-NC1	CMP #$13
-	BNE NC2
-	JSR NXTD
-NC2	CMP #$1D
-	BNE NCX2
-	INY
-	JSR CHKDWN
-	STY PNTR
-	DEY
-	CPY LNMX
-	BCC NCZ2
-	DEC TBLX
-	JSR NXLN
-	LDY #0
-JPL4	STY PNTR
-NCZ2	JMP LOOP2
-NCX2	CMP #$11
-	BNE COLR1
-	CLC
-	TYA
-	ADC #LLEN
-	TAY
-	INC TBLX
-	CMP LNMX
-	BCC JPL4
-	BEQ JPL4
-	DEC TBLX
-CURS10	SBC #LLEN
-	BCC GOTDWN
-	STA PNTR
-	BNE CURS10
-GOTDWN	JSR NXLN
-JPL3	JMP LOOP2
-COLR1	JSR CHKCOL      ;CHECK FOR A COLOR
-	JMP LOWER       ;WAS JMP LOOP2
-.SKI 3
-;CHECK COLOR
+prt	pha
+	sta data
+	txa
+	pha
+	tya
+	pha
+	lda #0
+	sta crsw
+	ldy pntr
+	lda data
+	bpl *+5
+	jmp nxtx
+	cmp #$d
+	bne njt1
+	jmp nxt1
+njt1	cmp #' 
+	bcc ntcn
+	cmp #$60        ;lower case?
+	bcc njt8        ;no...
+	and #$df        ;yes...make screen lower
+	bne njt9        ;always
+njt8	and #$3f
+njt9	jsr qtswc
+	jmp nxt3
+ntcn	ldx insrt
+	beq cnc3x
+	jmp nc3
+cnc3x	cmp #$14
+	bne ntcn1
+	tya
+	bne bak1up
+	jsr bkln
+	jmp bk2
+bak1up	jsr chkbak      ;should we dec tblx
+	dey
+	sty pntr
+bk1	jsr scolor      ;fix color ptrs
+bk15	iny
+	lda (pnt)y
+	dey
+	sta (pnt)y
+	iny
+	lda (user)y
+	dey
+	sta (user)y
+	iny
+	cpy lnmx
+	bne bk15
+bk2	lda #' 
+	sta (pnt)y 
+	lda color
+	sta (user)y
+	bpl jpl3
+ntcn1	ldx qtsw
+	beq nc3w
+cnc3	jmp nc3
+nc3w	cmp #$12
+	bne nc1
+	sta rvs
+nc1	cmp #$13
+	bne nc2
+	jsr nxtd
+nc2	cmp #$1d
+	bne ncx2
+	iny
+	jsr chkdwn
+	sty pntr
+	dey
+	cpy lnmx
+	bcc ncz2
+	dec tblx
+	jsr nxln
+	ldy #0
+jpl4	sty pntr
+ncz2	jmp loop2
+ncx2	cmp #$11
+	bne colr1
+	clc
+	tya
+	adc #llen
+	tay
+	inc tblx
+	cmp lnmx
+	bcc jpl4
+	beq jpl4
+	dec tblx
+curs10	sbc #llen
+	bcc gotdwn
+	sta pntr
+	bne curs10
+gotdwn	jsr nxln
+jpl3	jmp loop2
+colr1	jsr chkcol      ;check for a color
+	jmp lower       ;was jmp loop2
+.ski 3
+;check color
 ;
-.SKI 5
-;SHIFTED KEYS
+.ski 5
+;shifted keys
 ;
-NXTX
-KEEPIT
-	AND #$7F
-	CMP #$7F
-	BNE NXTX1
-	LDA #$5E
-NXTX1
-NXTXA
-	CMP #$20        ;IS IT A FUNCTION KEY
-	BCC UHUH
-	JMP NXT33
-UHUH
-	CMP #$D
-	BNE UP5
-	JMP NXT1
-UP5	LDX  QTSW
-	BNE UP6
-	CMP #$14
-	BNE UP9
-	LDY LNMX
-	LDA (PNT)Y
-	CMP #' 
-	BNE INS3
-	CPY PNTR
-	BNE INS1
-INS3	CPY #MAXCHR-1
-	BEQ INSEXT      ;EXIT IF LINE TOO LONG
-	JSR NEWLIN      ;SCROLL DOWN 1
-INS1	LDY LNMX
-	JSR SCOLOR
-INS2	DEY
-	LDA (PNT)Y
-	INY
-	STA (PNT)Y
-	DEY
-	LDA (USER)Y
-	INY
-	STA (USER)Y
-	DEY
-	CPY PNTR
-	BNE INS2
-	LDA #$20
-	STA (PNT)Y
-	LDA COLOR
-	STA (USER)Y
-	INC INSRT
-INSEXT	JMP LOOP2
-UP9	LDX INSRT
-	BEQ UP2
-UP6	ORA #$40
-	JMP NC3
-UP2	CMP #$11
-	BNE NXT2
-	LDX TBLX
-	BEQ JPL2
-	DEC TBLX
-	LDA PNTR
-	SEC
-	SBC #LLEN
-	BCC UPALIN
-	STA PNTR
-	BPL JPL2
-UPALIN	JSR STUPT
-	BNE JPL2
-NXT2	CMP #$12
-	BNE NXT6
-	LDA #0
-	STA RVS
-NXT6	CMP #$1D
-	BNE NXT61
-	TYA
-	BEQ BAKBAK
-	JSR CHKBAK
-	DEY
-	STY PNTR
-	JMP LOOP2
-BAKBAK	JSR BKLN
-	JMP LOOP2
-NXT61	CMP #$13
-	BNE SCCL
-	JSR CLSR
-JPL2	JMP LOOP2
-SCCL
-	ORA #$80        ;MAKE IT UPPER CASE
-	JSR CHKCOL      ;TRY FOR COLOR
-	JMP UPPER       ;WAS JMP LOOP2
+nxtx
+keepit
+	and #$7f
+	cmp #$7f
+	bne nxtx1
+	lda #$5e
+nxtx1
+nxtxa
+	cmp #$20        ;is it a function key
+	bcc uhuh
+	jmp nxt33
+uhuh
+	cmp #$d
+	bne up5
+	jmp nxt1
+up5	ldx  qtsw
+	bne up6
+	cmp #$14
+	bne up9
+	ldy lnmx
+	lda (pnt)y
+	cmp #' 
+	bne ins3
+	cpy pntr
+	bne ins1
+ins3	cpy #maxchr-1
+	beq insext      ;exit if line too long
+	jsr newlin      ;scroll down 1
+ins1	ldy lnmx
+	jsr scolor
+ins2	dey
+	lda (pnt)y
+	iny
+	sta (pnt)y
+	dey
+	lda (user)y
+	iny
+	sta (user)y
+	dey
+	cpy pntr
+	bne ins2
+	lda #$20
+	sta (pnt)y
+	lda color
+	sta (user)y
+	inc insrt
+insext	jmp loop2
+up9	ldx insrt
+	beq up2
+up6	ora #$40
+	jmp nc3
+up2	cmp #$11
+	bne nxt2
+	ldx tblx
+	beq jpl2
+	dec tblx
+	lda pntr
+	sec
+	sbc #llen
+	bcc upalin
+	sta pntr
+	bpl jpl2
+upalin	jsr stupt
+	bne jpl2
+nxt2	cmp #$12
+	bne nxt6
+	lda #0
+	sta rvs
+nxt6	cmp #$1d
+	bne nxt61
+	tya
+	beq bakbak
+	jsr chkbak
+	dey
+	sty pntr
+	jmp loop2
+bakbak	jsr bkln
+	jmp loop2
+nxt61	cmp #$13
+	bne sccl
+	jsr clsr
+jpl2	jmp loop2
+sccl
+	ora #$80        ;make it upper case
+	jsr chkcol      ;try for color
+	jmp upper       ;was jmp loop2
 ;
-NXLN	LSR LSXP
-	LDX TBLX
-NXLN2	INX
-	CPX #NLINES     ;OFF BOTTOM?
-	BNE NXLN1       ;NO...
-	JSR SCROL       ;YES...SCROLL
-NXLN1	LDA LDTB1,X     ;DOUBLE LINE?
-	BPL NXLN2       ;YES...SCROLL AGAIN
-	STX TBLX
-	JMP STUPT
-NXT1
-	LDX #0
-	STX INSRT
-	STX RVS
-	STX QTSW
-	STX PNTR
-	JSR NXLN
-JPL5	JMP LOOP2
+nxln	lsr lsxp
+	ldx tblx
+nxln2	inx
+	cpx #nlines     ;off bottom?
+	bne nxln1       ;no...
+	jsr scrol       ;yes...scroll
+nxln1	lda ldtb1,x     ;double line?
+	bpl nxln2       ;yes...scroll again
+	stx tblx
+	jmp stupt
+nxt1
+	ldx #0
+	stx insrt
+	stx rvs
+	stx qtsw
+	stx pntr
+	jsr nxln
+jpl5	jmp loop2
 ;
 ;
-; CHECK FOR A DECREMENT TBLX
+; check for a decrement tblx
 ;
-CHKBAK	LDX #NWRAP
-	LDA #0
-CHKLUP	CMP PNTR
-	BEQ BACK
-	CLC
-	ADC #LLEN
-	DEX
-	BNE CHKLUP
-	RTS
+chkbak	ldx #nwrap
+	lda #0
+chklup	cmp pntr
+	beq back
+	clc
+	adc #llen
+	dex
+	bne chklup
+	rts
 ;
-BACK	DEC TBLX
-	RTS
+back	dec tblx
+	rts
 ;
-; CHECK FOR INCREMENT TBLX
+; check for increment tblx
 ;
-CHKDWN	LDX #NWRAP
-	LDA #LLEN-1
-DWNCHK	CMP PNTR
-	BEQ DNLINE
-	CLC
-	ADC #LLEN
-	DEX
-	BNE DWNCHK
-	RTS
+chkdwn	ldx #nwrap
+	lda #llen-1
+dwnchk	cmp pntr
+	beq dnline
+	clc
+	adc #llen
+	dex
+	bne dwnchk
+	rts
 ;
-DNLINE	LDX TBLX
-	CPX #NLINES
-	BEQ DWNBYE
-	INC TBLX
+dnline	ldx tblx
+	cpx #nlines
+	beq dwnbye
+	inc tblx
 ;
-DWNBYE	RTS
-.SKI2
-CHKCOL
-	LDX #15         ;THERE'S 15 COLORS
-CHK1A	CMP COLTAB,X
-	BEQ CHK1B
-	DEX
-	BPL CHK1A
-	RTS
+dwnbye	rts
+.ski2
+chkcol
+	ldx #15         ;there's 15 colors
+chk1a	cmp coltab,x
+	beq chk1b
+	dex
+	bpl chk1a
+	rts
 ;
-CHK1B
-	STX COLOR       ;CHANGE THE COLOR
-	RTS
-.SKI1
-COLTAB
-;BLK,WHT,RED,CYAN,MAGENTA,GRN,BLUE,YELLOW
-	.BYT $90,$05,$1C,$9F,$9C,$1E,$1F,$9E
-	.BYT $81,$95,$96,$97,$98,$99,$9A,$9B
-.END
-; RSR MODIFY FOR VIC-40 SYSTEM
-; RSR 12/31/81 ADD 8 MORE COLORS
+chk1b
+	stx color       ;change the color
+	rts
+.ski1
+coltab
+;blk,wht,red,cyan,magenta,grn,blue,yellow
+	.byt $90,$05,$1c,$9f,$9c,$1e,$1f,$9e
+	.byt $81,$95,$96,$97,$98,$99,$9a,$9b
+.end
+; rsr modify for vic-40 system
+; rsr 12/31/81 add 8 more colors

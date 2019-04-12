@@ -1,144 +1,144 @@
-.PAG 'CODE20'
-MOVFR	LDA RESHO
-	STA FACHO
-	LDA RESMOH
-	STA FACMOH
-	LDA RESMO
-	STA FACMO
-	LDA RESLO
-	STA FACLO
-	JMP NORMAL
-MOVFM	STA INDEX1
-	STY INDEX1+1
-	LDY #3+ADDPRC
-	LDA (INDEX1)Y
-	STA FACLO
-	DEY
-	LDA (INDEX1)Y
-	STA FACMO
-	DEY
-	LDA (INDEX1)Y
-	STA FACMOH
-	DEY
-	LDA (INDEX1)Y
-	STA FACSGN
-	ORA #@200
-	STA FACHO
-	DEY
-	LDA (INDEX1)Y
-	STA FACEXP
-	STY FACOV
-	RTS   
-MOV2F	LDX #TEMPF2
-	.BYT $2C
-MOV1F	LDX #TEMPF1
-	LDY #0
-	BEQ MOVMF
-MOVVF	LDX FORPNT
-	LDY FORPNT+1
-MOVMF	JSR ROUND
-	STX INDEX1
-	STY INDEX1+1
-	LDY #3+ADDPRC
-	LDA FACLO
-	STA (INDEX)Y
-	DEY
-	LDA FACMO
-	STA (INDEX)Y
-	DEY
-	LDA FACMOH
-	STA (INDEX)Y
-	DEY
-	LDA FACSGN
-	ORA #@177
-	AND FACHO
-	STA (INDEX)Y
-	DEY
-	LDA FACEXP
-	STA (INDEX)Y
-	STY FACOV
-	RTS
-MOVFA	LDA ARGSGN
-MOVFA1	STA FACSGN
-	LDX #4+ADDPRC
-MOVFAL	LDA ARGEXP-1,X
-	STA FACEXP-1,X
-	DEX
-	BNE MOVFAL
-	STX FACOV
-	RTS
-MOVAF	JSR ROUND
-MOVEF	LDX #5+ADDPRC
-MOVAFL	LDA FACEXP-1,X
-	STA ARGEXP-1,X
-	DEX
-	BNE MOVAFL
-	STX FACOV
-MOVRTS	RTS
-ROUND	LDA FACEXP
-	BEQ MOVRTS
-	ASL FACOV
-	BCC MOVRTS
-INCRND	JSR INCFAC
-	BNE MOVRTS
-	JMP RNDSHF
-SIGN	LDA FACEXP
-	BEQ SIGNRT
-FCSIGN	LDA FACSGN
-FCOMPS	ROL A
-	LDA #$FF
-	BCS SIGNRT
-	LDA #1
-SIGNRT	RTS
-SGN	JSR SIGN
-FLOAT	STA FACHO
-	LDA #0
-	STA FACHO+1
-	LDX #@210
-FLOATS	LDA FACHO
-	EOR #@377
-	ROL A
-FLOATC	LDA #0
-	STA FACLO
-	STA FACMO
-FLOATB	STX FACEXP
-	STA FACOV
-	STA FACSGN
-	JMP FADFLT
-ABS	LSR FACSGN
-	RTS
-FCOMP	STA INDEX2
-FCOMPN	STY INDEX2+1
-	LDY #0
-	LDA (INDEX2)Y
-	INY
-	TAX
-	BEQ SIGN
-	LDA (INDEX2)Y
-	EOR FACSGN
-	BMI FCSIGN
-	CPX FACEXP
-	BNE FCOMPC
-	LDA (INDEX2)Y
-	ORA #@200
-	CMP FACHO
-	BNE FCOMPC
-	INY
-	LDA (INDEX2)Y
-	CMP FACMOH
-	BNE FCOMPC
-	INY
-	LDA (INDEX2)Y
-	CMP FACMO
-	BNE FCOMPC
-	INY
-	LDA #@177
-	CMP FACOV
-	LDA (INDEX2)Y
-	SBC FACLO
-	BEQ QINTRT
-FCOMPC	LDA FACSGN
-	BCC FCOMPD
-	EOR #@377
-FCOMPD	JMP FCOMPS
-.END
+.pag 'code20'
+movfr	lda resho
+	sta facho
+	lda resmoh
+	sta facmoh
+	lda resmo
+	sta facmo
+	lda reslo
+	sta faclo
+	jmp normal
+movfm	sta index1
+	sty index1+1
+	ldy #3+addprc
+	lda (index1)y
+	sta faclo
+	dey
+	lda (index1)y
+	sta facmo
+	dey
+	lda (index1)y
+	sta facmoh
+	dey
+	lda (index1)y
+	sta facsgn
+	ora #@200
+	sta facho
+	dey
+	lda (index1)y
+	sta facexp
+	sty facov
+	rts   
+mov2f	ldx #tempf2
+	.byt $2c
+mov1f	ldx #tempf1
+	ldy #0
+	beq movmf
+movvf	ldx forpnt
+	ldy forpnt+1
+movmf	jsr round
+	stx index1
+	sty index1+1
+	ldy #3+addprc
+	lda faclo
+	sta (index)y
+	dey
+	lda facmo
+	sta (index)y
+	dey
+	lda facmoh
+	sta (index)y
+	dey
+	lda facsgn
+	ora #@177
+	and facho
+	sta (index)y
+	dey
+	lda facexp
+	sta (index)y
+	sty facov
+	rts
+movfa	lda argsgn
+movfa1	sta facsgn
+	ldx #4+addprc
+movfal	lda argexp-1,x
+	sta facexp-1,x
+	dex
+	bne movfal
+	stx facov
+	rts
+movaf	jsr round
+movef	ldx #5+addprc
+movafl	lda facexp-1,x
+	sta argexp-1,x
+	dex
+	bne movafl
+	stx facov
+movrts	rts
+round	lda facexp
+	beq movrts
+	asl facov
+	bcc movrts
+incrnd	jsr incfac
+	bne movrts
+	jmp rndshf
+sign	lda facexp
+	beq signrt
+fcsign	lda facsgn
+fcomps	rol a
+	lda #$ff
+	bcs signrt
+	lda #1
+signrt	rts
+sgn	jsr sign
+float	sta facho
+	lda #0
+	sta facho+1
+	ldx #@210
+floats	lda facho
+	eor #@377
+	rol a
+floatc	lda #0
+	sta faclo
+	sta facmo
+floatb	stx facexp
+	sta facov
+	sta facsgn
+	jmp fadflt
+abs	lsr facsgn
+	rts
+fcomp	sta index2
+fcompn	sty index2+1
+	ldy #0
+	lda (index2)y
+	iny
+	tax
+	beq sign
+	lda (index2)y
+	eor facsgn
+	bmi fcsign
+	cpx facexp
+	bne fcompc
+	lda (index2)y
+	ora #@200
+	cmp facho
+	bne fcompc
+	iny
+	lda (index2)y
+	cmp facmoh
+	bne fcompc
+	iny
+	lda (index2)y
+	cmp facmo
+	bne fcompc
+	iny
+	lda #@177
+	cmp facov
+	lda (index2)y
+	sbc faclo
+	beq qintrt
+fcompc	lda facsgn
+	bcc fcompd
+	eor #@377
+fcompd	jmp fcomps
+.end

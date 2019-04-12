@@ -1,153 +1,153 @@
-.PAG 'CODE13'
-	LDY CURTOL
-	BEQ DECCUR
-ZERITA	DEY
-	STA (ARYPNT)Y
-	BNE ZERITA
-DECCUR	DEC ARYPNT+1
-	DEC CURTOL+1
-	BNE ZERITA
-	INC ARYPNT+1
-	SEC
-	LDA STREND
-	SBC LOWTR
-	LDY #2
-	STA (LOWTR)Y
-	LDA STREND+1
-	INY
-	SBC LOWTR+1
-	STA (LOWTR)Y
-	LDA DIMFLG
-	BNE DIMRTS
-	INY
-GETDEF	LDA (LOWTR)Y
-	STA COUNT
-	LDA #0
-	STA CURTOL
-INLPNM	STA CURTOL+1
-	INY
-	PLA
-	TAX
-	STA INDICE
-	PLA
-	STA INDICE+1
-	CMP (LOWTR)Y
-	BCC INLPN2
-	BNE BSERR7
-	INY
-	TXA
-	CMP (LOWTR)Y
-	BCC INLPN1
-BSERR7	JMP BSERR
-OMERR1	JMP OMERR
-INLPN2	INY
-INLPN1	LDA CURTOL+1
-	ORA CURTOL
-	CLC
-	BEQ ADDIND
-	JSR UMULT
-	TXA
-	ADC INDICE
-	TAX
-	TYA
-	LDY INDEX1
-ADDIND	ADC INDICE+1
-	STX CURTOL
-	DEC COUNT
-	BNE INLPNM
-	STA CURTOL+1
-	LDX #5
-	LDA VARNAM
-	BPL NOTFL1
-	DEX
-NOTFL1	LDA VARNAM+1
-	BPL STOML1
-	DEX
-	DEX
-STOML1	STX ADDEND
-	LDA #0
-	JSR UMULTD
-	TXA
-	ADC ARYPNT
-	STA VARPNT
-	TYA
-	ADC ARYPNT+1
-	STA VARPNT+1
-	TAY
-	LDA VARPNT
-DIMRTS	RTS
-UMULT	STY INDEX
-	LDA (LOWTR)Y
-	STA ADDEND
-	DEY
-	LDA (LOWTR)Y
-UMULTD	STA ADDEND+1
-	LDA #16
-	STA DECCNT
-	LDX #0
-	LDY #0
-UMULTC	TXA
-	ASL A
-	TAX
-	TYA
-	ROL A
-	TAY
-	BCS OMERR1
-	ASL CURTOL
-	ROL CURTOL+1
-	BCC UMLCNT
-	CLC
-	TXA
-	ADC ADDEND
-	TAX
-	TYA
-	ADC ADDEND+1
-	TAY
-	BCS OMERR1
-UMLCNT	DEC DECCNT
-	BNE UMULTC
-UMLRTS	RTS
-FRE	LDA VALTYP
-	BEQ NOFREF
-	JSR FREFAC
-NOFREF	JSR GARBA2
-	SEC
-	LDA FRETOP
-	SBC STREND
-	TAY
-	LDA FRETOP+1
-	SBC STREND+1
-GIVAYF	LDX #0
-	STX VALTYP
-	STA FACHO
-	STY FACHO+1
-	LDX #144
-	JMP FLOATS
-POS	SEC
-	JSR PLOT        ;GET TAB POS IN .Y
-SNGFLT	LDA #0
-	BEQ GIVAYF
-ERRDIR	LDX CURLIN+1
-	INX
-	BNE DIMRTS
-	LDX #ERRID
-	.BYT $2C
-ERRGUF	LDX #ERRUF
-	JMP ERROR
-DEF	JSR GETFNM
-	JSR ERRDIR
-	JSR CHKOPN
-	LDA #128
-	STA SUBFLG
-	JSR PTRGET
-	JSR CHKNUM
-	JSR CHKCLS
-	LDA #$B2
-	JSR SYNCHR
-	PHA
-	LDA VARPNT+1
-	PHA
-	LDA VARPNT
-	PHA
-	LDA TXTPTR+1
-.END
+.pag 'code13'
+	ldy curtol
+	beq deccur
+zerita	dey
+	sta (arypnt)y
+	bne zerita
+deccur	dec arypnt+1
+	dec curtol+1
+	bne zerita
+	inc arypnt+1
+	sec
+	lda strend
+	sbc lowtr
+	ldy #2
+	sta (lowtr)y
+	lda strend+1
+	iny
+	sbc lowtr+1
+	sta (lowtr)y
+	lda dimflg
+	bne dimrts
+	iny
+getdef	lda (lowtr)y
+	sta count
+	lda #0
+	sta curtol
+inlpnm	sta curtol+1
+	iny
+	pla
+	tax
+	sta indice
+	pla
+	sta indice+1
+	cmp (lowtr)y
+	bcc inlpn2
+	bne bserr7
+	iny
+	txa
+	cmp (lowtr)y
+	bcc inlpn1
+bserr7	jmp bserr
+omerr1	jmp omerr
+inlpn2	iny
+inlpn1	lda curtol+1
+	ora curtol
+	clc
+	beq addind
+	jsr umult
+	txa
+	adc indice
+	tax
+	tya
+	ldy index1
+addind	adc indice+1
+	stx curtol
+	dec count
+	bne inlpnm
+	sta curtol+1
+	ldx #5
+	lda varnam
+	bpl notfl1
+	dex
+notfl1	lda varnam+1
+	bpl stoml1
+	dex
+	dex
+stoml1	stx addend
+	lda #0
+	jsr umultd
+	txa
+	adc arypnt
+	sta varpnt
+	tya
+	adc arypnt+1
+	sta varpnt+1
+	tay
+	lda varpnt
+dimrts	rts
+umult	sty index
+	lda (lowtr)y
+	sta addend
+	dey
+	lda (lowtr)y
+umultd	sta addend+1
+	lda #16
+	sta deccnt
+	ldx #0
+	ldy #0
+umultc	txa
+	asl a
+	tax
+	tya
+	rol a
+	tay
+	bcs omerr1
+	asl curtol
+	rol curtol+1
+	bcc umlcnt
+	clc
+	txa
+	adc addend
+	tax
+	tya
+	adc addend+1
+	tay
+	bcs omerr1
+umlcnt	dec deccnt
+	bne umultc
+umlrts	rts
+fre	lda valtyp
+	beq nofref
+	jsr frefac
+nofref	jsr garba2
+	sec
+	lda fretop
+	sbc strend
+	tay
+	lda fretop+1
+	sbc strend+1
+givayf	ldx #0
+	stx valtyp
+	sta facho
+	sty facho+1
+	ldx #144
+	jmp floats
+pos	sec
+	jsr plot        ;get tab pos in .y
+sngflt	lda #0
+	beq givayf
+errdir	ldx curlin+1
+	inx
+	bne dimrts
+	ldx #errid
+	.byt $2c
+errguf	ldx #erruf
+	jmp error
+def	jsr getfnm
+	jsr errdir
+	jsr chkopn
+	lda #128
+	sta subflg
+	jsr ptrget
+	jsr chknum
+	jsr chkcls
+	lda #$b2
+	jsr synchr
+	pha
+	lda varpnt+1
+	pha
+	lda varpnt
+	pha
+	lda txtptr+1
+.end

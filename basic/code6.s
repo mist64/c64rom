@@ -1,148 +1,148 @@
-.PAG 'CODE6'
-TIMELP	STY FBUFPT
-	JSR TIMNUM
-	JSR MUL10
-	INC FBUFPT
-	LDY FBUFPT
-	JSR TIMNUM
-	JSR MOVAF
-	TAX
-	BEQ NOML6
-	INX
-	TXA
-	JSR FINML6
-NOML6	LDY FBUFPT
-	INY
-	CPY #6
-	BNE TIMELP
-	JSR MUL10
-	JSR QINT
-	LDX FACMO
-	LDY FACMOH
-	LDA FACLO
-	JMP SETTIM
-TIMNUM	LDA (INDEX)Y
-	JSR QNUM
-	BCC GOTNUM
-FCERR2	JMP FCERR
-GOTNUM	SBC #$2F
-	JMP FINLOG
-GETSPT	LDY #2
-	LDA (FACMO)Y
-	CMP FRETOP+1
-	BCC DNTCPY
-	BNE QVARIA
-	DEY
-	LDA (FACMO)Y
-	CMP FRETOP
-	BCC DNTCPY
-QVARIA	LDY FACLO
-	CPY VARTAB+1
-	BCC DNTCPY
-	BNE COPY
-	LDA FACMO
-	CMP VARTAB
-	BCS COPY
-DNTCPY	LDA FACMO
-	LDY FACMO+1
-	JMP COPYC
-COPY	LDY #0
-	LDA (FACMO)Y
-	JSR STRINI
-	LDA DSCPNT
-	LDY DSCPNT+1
-	STA STRNG1
-	STY STRNG1+1
-	JSR MOVINS
-	LDA #<DSCTMP
-	LDY #>DSCTMP
-COPYC	STA DSCPNT
-	STY DSCPNT+1
-	JSR FRETMS
-	LDY #0
-	LDA (DSCPNT)Y
-	STA (FORPNT)Y
-	INY
-	LDA (DSCPNT)Y
-	STA (FORPNT)Y
-	INY
-	LDA (DSCPNT)Y
-	STA (FORPNT)Y
-	RTS
-PRINTN	JSR CMD
-	JMP IODONE
-CMD	JSR GETBYT
-	BEQ SAVEIT
-	LDA #44
-	JSR SYNCHR
-SAVEIT	PHP
-	STX CHANNL
-	JSR COOUT
-	PLP
-	JMP PRINT
-STRDON	JSR STRPRT
-NEWCHR	JSR CHRGOT
-PRINT	BEQ CRDO
-PRINTC	BEQ PRTRTS
-	CMP #TABTK
-	BEQ TABER
-	CMP #SPCTK
-	CLC
-	BEQ TABER
-	CMP #44
-	BEQ COMPRT
-	CMP #59
-	BEQ NOTABR
-	JSR FRMEVL
-	BIT VALTYP
-	BMI STRDON
-	JSR FOUT
-	JSR STRLIT
-	JSR STRPRT
-	JSR OUTSPC
-	BNE NEWCHR
-FININL	LDA #0
-	STA BUF,X
-ZZ5=BUF-1
-	LDX #<ZZ5
-	LDY #>ZZ5
-	LDA CHANNL
-	BNE PRTRTS
-CRDO	LDA #13
-	JSR OUTDO
-	BIT CHANNL
-	BPL CRFIN
+.pag 'code6'
+timelp	sty fbufpt
+	jsr timnum
+	jsr mul10
+	inc fbufpt
+	ldy fbufpt
+	jsr timnum
+	jsr movaf
+	tax
+	beq noml6
+	inx
+	txa
+	jsr finml6
+noml6	ldy fbufpt
+	iny
+	cpy #6
+	bne timelp
+	jsr mul10
+	jsr qint
+	ldx facmo
+	ldy facmoh
+	lda faclo
+	jmp settim
+timnum	lda (index)y
+	jsr qnum
+	bcc gotnum
+fcerr2	jmp fcerr
+gotnum	sbc #$2f
+	jmp finlog
+getspt	ldy #2
+	lda (facmo)y
+	cmp fretop+1
+	bcc dntcpy
+	bne qvaria
+	dey
+	lda (facmo)y
+	cmp fretop
+	bcc dntcpy
+qvaria	ldy faclo
+	cpy vartab+1
+	bcc dntcpy
+	bne copy
+	lda facmo
+	cmp vartab
+	bcs copy
+dntcpy	lda facmo
+	ldy facmo+1
+	jmp copyc
+copy	ldy #0
+	lda (facmo)y
+	jsr strini
+	lda dscpnt
+	ldy dscpnt+1
+	sta strng1
+	sty strng1+1
+	jsr movins
+	lda #<dsctmp
+	ldy #>dsctmp
+copyc	sta dscpnt
+	sty dscpnt+1
+	jsr fretms
+	ldy #0
+	lda (dscpnt)y
+	sta (forpnt)y
+	iny
+	lda (dscpnt)y
+	sta (forpnt)y
+	iny
+	lda (dscpnt)y
+	sta (forpnt)y
+	rts
+printn	jsr cmd
+	jmp iodone
+cmd	jsr getbyt
+	beq saveit
+	lda #44
+	jsr synchr
+saveit	php
+	stx channl
+	jsr coout
+	plp
+	jmp print
+strdon	jsr strprt
+newchr	jsr chrgot
+print	beq crdo
+printc	beq prtrts
+	cmp #tabtk
+	beq taber
+	cmp #spctk
+	clc
+	beq taber
+	cmp #44
+	beq comprt
+	cmp #59
+	beq notabr
+	jsr frmevl
+	bit valtyp
+	bmi strdon
+	jsr fout
+	jsr strlit
+	jsr strprt
+	jsr outspc
+	bne newchr
+fininl	lda #0
+	sta buf,x
+zz5=buf-1
+	ldx #<zz5
+	ldy #>zz5
+	lda channl
+	bne prtrts
+crdo	lda #13
+	jsr outdo
+	bit channl
+	bpl crfin
 ;
-	LDA #10
-	JSR OUTDO
-CRFIN	EOR #255
-PRTRTS	RTS
-COMPRT	SEC
-	JSR PLOT        ;GET TAB POSITION IN X
-	TYA
-NCMPOS	=@36
-	SEC
-MORCO1	SBC #CLMWID
-	BCS MORCO1
-	EOR #255
-	ADC #1
-	BNE ASPAC
-TABER	PHP
-	SEC
-	JSR PLOT        ;READ TAB POSITION
-	STY TRMPOS
-	JSR GTBYTC
-	CMP #41
-	BNE SNERR4
-	PLP
-	BCC XSPAC
-	TXA
-	SBC TRMPOS
-	BCC NOTABR
-ASPAC	TAX
-XSPAC	INX
-XSPAC2	DEX
-	BNE XSPAC1
-NOTABR	JSR CHRGET
-	JMP PRINTC
-.END
+	lda #10
+	jsr outdo
+crfin	eor #255
+prtrts	rts
+comprt	sec
+	jsr plot        ;get tab position in x
+	tya
+ncmpos	=@36
+	sec
+morco1	sbc #clmwid
+	bcs morco1
+	eor #255
+	adc #1
+	bne aspac
+taber	php
+	sec
+	jsr plot        ;read tab position
+	sty trmpos
+	jsr gtbytc
+	cmp #41
+	bne snerr4
+	plp
+	bcc xspac
+	txa
+	sbc trmpos
+	bcc notabr
+aspac	tax
+xspac	inx
+xspac2	dex
+	bne xspac1
+notabr	jsr chrget
+	jmp printc
+.end

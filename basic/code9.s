@@ -1,201 +1,201 @@
-.PAG 'CODE9'
-	BMI DOCSTR
-	BCS CHKERR
-CHKOK	RTS
-DOCSTR	BCS CHKOK
-CHKERR	LDX #ERRTM
-ERRGO4	JMP ERROR
-FRMEVL	LDX TXTPTR
-	BNE FRMEV1
-	DEC TXTPTR+1
-FRMEV1	DEC TXTPTR
-	LDX #0
-	.BYT $24
-LPOPER	PHA
-	TXA
-	PHA
-	LDA #1
-	JSR GETSTK
-	JSR EVAL
-	LDA #0
-	STA OPMASK
-TSTOP	JSR CHRGOT
-LOPREL	SEC
-	SBC #GREATK
-	BCC ENDREL
-	CMP #LESSTK-GREATK+1
-	BCS ENDREL
-	CMP #1
-	ROL A
-	EOR #1
-	EOR OPMASK
-	CMP OPMASK
-	BCC SNERR5
-	STA OPMASK
-	JSR CHRGET
-	JMP LOPREL
-ENDREL	LDX OPMASK
-	BNE FINREL
-	BCS QOP
-	ADC #GREATK-PLUSTK
-	BCC QOP
-	ADC VALTYP
-	BNE *+5
-	JMP CAT
-	ADC #$FF
-	STA INDEX1
-	ASL A
-	ADC INDEX1
-	TAY 
-QPREC	PLA
-	CMP OPTAB,Y
-	BCS QCHNUM
-	JSR CHKNUM
-DOPREC	PHA
-NEGPRC	JSR DOPRE1
-	PLA
-	LDY OPPTR
-	BPL QPREC1
-	TAX
-	BEQ QOPGO
-	BNE PULSTK
-FINREL	LSR VALTYP
-	TXA
-	ROL A
-	LDX TXTPTR
-	BNE FINRE2
-	DEC TXTPTR+1
-FINRE2	DEC TXTPTR
-	LDY #PTDORL-OPTAB
-	STA OPMASK
-	BNE QPREC
-QPREC1	CMP OPTAB,Y
-	BCS PULSTK
-	BCC DOPREC
-DOPRE1	LDA OPTAB+2,Y
-	PHA
-	LDA OPTAB+1,Y
-	PHA
-	JSR PUSHF1
-	LDA OPMASK
-	JMP LPOPER
-SNERR5	JMP SNERR
-PUSHF1	LDA FACSGN
-	LDX OPTAB,Y
-PUSHF	TAY
-	PLA
-	STA INDEX1
-	INC INDEX1
-	PLA
-	STA INDEX1+1
-	TYA
-	PHA
-FORPSH	JSR ROUND
-	LDA FACLO
-	PHA
-	LDA FACMO
-	PHA
-	LDA FACMOH
-	PHA
-	LDA FACHO
-	PHA
-	LDA FACEXP
-	PHA
-	JMP (INDEX1)
-QOP	LDY #255
-	PLA
-QOPGO	BEQ QOPRTS
-QCHNUM	CMP #100
-	BEQ UNPSTK
-	JSR CHKNUM
-UNPSTK	STY OPPTR
-PULSTK	PLA
-	LSR A
-	STA DOMASK
-	PLA
-	STA ARGEXP
-	PLA
-	STA ARGHO
-	PLA
-	STA ARGMOH
-	PLA
-	STA ARGMO
-	PLA
-	STA ARGLO
-	PLA
-	STA ARGSGN
-	EOR FACSGN
-	STA ARISGN
-QOPRTS	LDA FACEXP
-UNPRTS	RTS
-.SKI 5
-EVAL	JMP (IEVAL)
-NEVAL	LDA #0
-	STA VALTYP
-EVAL0	JSR CHRGET
-	BCS EVAL2
-EVAL1	JMP FIN
-EVAL2	JSR ISLETC
-	BCC *+5
-	JMP ISVAR
-	CMP #PI
-	BNE QDOT
-	LDA #<PIVAL
-	LDY #>PIVAL
-	JSR MOVFM
-	JMP CHRGET
-PIVAL	.BYT @202
-	.BYT @111
-	.BYT @017
-	.BYT @332
-	.BYT @241
-QDOT	CMP #'.
-	BEQ EVAL1
-	CMP #MINUTK
-	BEQ DOMIN
-	CMP #PLUSTK
-	BEQ EVAL0
-	CMP #34
-	BNE EVAL3
-STRTXT	LDA TXTPTR
-	LDY TXTPTR+1
-	ADC #0
-	BCC STRTX2
-	INY
-STRTX2	JSR STRLIT
-	JMP ST2TXT
-EVAL3	CMP #NOTTK
-	BNE EVAL4
-	LDY #24
-	BNE GONPRC
-NOTOP	JSR AYINT
-	LDA FACLO
-	EOR #255
-	TAY
-	LDA FACMO
-	EOR #255
-	JMP GIVAYF
-EVAL4	CMP #FNTK
-	BNE *+5
-	JMP FNDOER
-	CMP #ONEFUN
-	BCC PARCHK
-	JMP ISFUN
-PARCHK	JSR CHKOPN
-	JSR FRMEVL
-CHKCLS	LDA #41
-	.BYT $2C
-CHKOPN	LDA #40
-	.BYT $2C
-CHKCOM	LDA #44
-SYNCHR	LDY #0
-	CMP (TXTPTR)Y
-	BNE SNERR
-	JMP CHRGET
-SNERR	LDX #ERRSN
-	JMP ERROR
-DOMIN	LDY #21
-GONPRC	PLA
-	PLA
-	JMP NEGPRC
-.END
+.pag 'code9'
+	bmi docstr
+	bcs chkerr
+chkok	rts
+docstr	bcs chkok
+chkerr	ldx #errtm
+errgo4	jmp error
+frmevl	ldx txtptr
+	bne frmev1
+	dec txtptr+1
+frmev1	dec txtptr
+	ldx #0
+	.byt $24
+lpoper	pha
+	txa
+	pha
+	lda #1
+	jsr getstk
+	jsr eval
+	lda #0
+	sta opmask
+tstop	jsr chrgot
+loprel	sec
+	sbc #greatk
+	bcc endrel
+	cmp #lesstk-greatk+1
+	bcs endrel
+	cmp #1
+	rol a
+	eor #1
+	eor opmask
+	cmp opmask
+	bcc snerr5
+	sta opmask
+	jsr chrget
+	jmp loprel
+endrel	ldx opmask
+	bne finrel
+	bcs qop
+	adc #greatk-plustk
+	bcc qop
+	adc valtyp
+	bne *+5
+	jmp cat
+	adc #$ff
+	sta index1
+	asl a
+	adc index1
+	tay 
+qprec	pla
+	cmp optab,y
+	bcs qchnum
+	jsr chknum
+doprec	pha
+negprc	jsr dopre1
+	pla
+	ldy opptr
+	bpl qprec1
+	tax
+	beq qopgo
+	bne pulstk
+finrel	lsr valtyp
+	txa
+	rol a
+	ldx txtptr
+	bne finre2
+	dec txtptr+1
+finre2	dec txtptr
+	ldy #ptdorl-optab
+	sta opmask
+	bne qprec
+qprec1	cmp optab,y
+	bcs pulstk
+	bcc doprec
+dopre1	lda optab+2,y
+	pha
+	lda optab+1,y
+	pha
+	jsr pushf1
+	lda opmask
+	jmp lpoper
+snerr5	jmp snerr
+pushf1	lda facsgn
+	ldx optab,y
+pushf	tay
+	pla
+	sta index1
+	inc index1
+	pla
+	sta index1+1
+	tya
+	pha
+forpsh	jsr round
+	lda faclo
+	pha
+	lda facmo
+	pha
+	lda facmoh
+	pha
+	lda facho
+	pha
+	lda facexp
+	pha
+	jmp (index1)
+qop	ldy #255
+	pla
+qopgo	beq qoprts
+qchnum	cmp #100
+	beq unpstk
+	jsr chknum
+unpstk	sty opptr
+pulstk	pla
+	lsr a
+	sta domask
+	pla
+	sta argexp
+	pla
+	sta argho
+	pla
+	sta argmoh
+	pla
+	sta argmo
+	pla
+	sta arglo
+	pla
+	sta argsgn
+	eor facsgn
+	sta arisgn
+qoprts	lda facexp
+unprts	rts
+.ski 5
+eval	jmp (ieval)
+neval	lda #0
+	sta valtyp
+eval0	jsr chrget
+	bcs eval2
+eval1	jmp fin
+eval2	jsr isletc
+	bcc *+5
+	jmp isvar
+	cmp #pi
+	bne qdot
+	lda #<pival
+	ldy #>pival
+	jsr movfm
+	jmp chrget
+pival	.byt @202
+	.byt @111
+	.byt @017
+	.byt @332
+	.byt @241
+qdot	cmp #'.
+	beq eval1
+	cmp #minutk
+	beq domin
+	cmp #plustk
+	beq eval0
+	cmp #34
+	bne eval3
+strtxt	lda txtptr
+	ldy txtptr+1
+	adc #0
+	bcc strtx2
+	iny
+strtx2	jsr strlit
+	jmp st2txt
+eval3	cmp #nottk
+	bne eval4
+	ldy #24
+	bne gonprc
+notop	jsr ayint
+	lda faclo
+	eor #255
+	tay
+	lda facmo
+	eor #255
+	jmp givayf
+eval4	cmp #fntk
+	bne *+5
+	jmp fndoer
+	cmp #onefun
+	bcc parchk
+	jmp isfun
+parchk	jsr chkopn
+	jsr frmevl
+chkcls	lda #41
+	.byt $2c
+chkopn	lda #40
+	.byt $2c
+chkcom	lda #44
+synchr	ldy #0
+	cmp (txtptr)y
+	bne snerr
+	jmp chrget
+snerr	ldx #errsn
+	jmp error
+domin	ldy #21
+gonprc	pla
+	pla
+	jmp negprc
+.end

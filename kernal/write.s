@@ -1,198 +1,198 @@
-.PAG 'TAPE WRITE'
-; CASSETTE INFO - FSBLK IS BLOCK COUNTER FOR RECORD
-;       FSBLK = 2 -FIRST HEADER
-;             = 1 -FIRST DATA
-;             = 0 -SECOND DATA
+.pag 'tape write'
+; cassette info - fsblk is block counter for record
+;       fsblk = 2 -first header
+;             = 1 -first data
+;             = 0 -second data
 ;
-; WRITE - TOGGLE WRITE BIT ACCORDING TO LSB IN OCHAR
+; write - toggle write bit according to lsb in ochar
 ;
-WRITE	LDA OCHAR       ;SHIFT BIT TO WRITE INTO CARRY
-	LSR A
-	LDA #96         ;...C CLR WRITE SHORT
-	BCC WRT1
-WRTW	LDA #176        ;...C SET WRITE LONG
-WRT1	LDX #0          ;SET AND STORE TIME
-WRTX	STA D1T2L
-	STX D1T2H
-	LDA D1ICR       ;CLEAR IRQ
-	LDA #$19        ;ENABLE TIMER (ONE-SHOT)
-	STA D1CRB
-	LDA R6510       ;TOGGLE WRITE BIT
-	EOR #$08
-	STA R6510
-	AND #$08        ;LEAVE ONLY WRITE BIT
-	RTS
+write	lda ochar       ;shift bit to write into carry
+	lsr a
+	lda #96         ;...c clr write short
+	bcc wrt1
+wrtw	lda #176        ;...c set write long
+wrt1	ldx #0          ;set and store time
+wrtx	sta d1t2l
+	stx d1t2h
+	lda d1icr       ;clear irq
+	lda #$19        ;enable timer (one-shot)
+	sta d1crb
+	lda r6510       ;toggle write bit
+	eor #$08
+	sta r6510
+	and #$08        ;leave only write bit
+	rts
 ;
-WRTL3	SEC             ;FLAG PRP FOR END OF BLOCK
-	ROR PRP
-	BMI WRT3        ; JMP
+wrtl3	sec             ;flag prp for end of block
+	ror prp
+	bmi wrt3        ; jmp
 ;
-; WRTN - CALLED AT THE END OF EACH BYTE
-;   TO WRITE A LONG RER    REZ
-;              HHHHHHLLLLLLHHHLLL...
+; wrtn - called at the end of each byte
+;   to write a long rer    rez
+;              hhhhhhllllllhhhlll...
 ;
-WRTN	LDA RER         ;CHECK FOR ONE LONG
-	BNE WRTN1
-	LDA #16         ;WRITE A LONG BIT
-	LDX #1
-	JSR WRTX
-	BNE WRT3
-	INC RER
-	LDA PRP         ;IF END OF BLOCK(BIT SET BY WRTL3)...
-	BPL WRT3        ;...NO END CONTINUE
-	JMP WRNC        ;...END ...FINISH OFF
+wrtn	lda rer         ;check for one long
+	bne wrtn1
+	lda #16         ;write a long bit
+	ldx #1
+	jsr wrtx
+	bne wrt3
+	inc rer
+	lda prp         ;if end of block(bit set by wrtl3)...
+	bpl wrt3        ;...no end continue
+	jmp wrnc        ;...end ...finish off
 ;
-WRTN1	LDA REZ         ;CHECK FOR A ONE BIT
-	BNE WRTN2
-	JSR WRTW
-	BNE WRT3
-	INC REZ
-	BNE WRT3
+wrtn1	lda rez         ;check for a one bit
+	bne wrtn2
+	jsr wrtw
+	bne wrt3
+	inc rez
+	bne wrt3
 ;
-WRTN2	JSR WRITE
-	BNE WRT3        ;ON BIT LOW EXIT
-	LDA FIRT        ;CHECK FOR FIRST OF DIPOLE
-	EOR #1
-	STA FIRT
-	BEQ WRT2        ;DIPOLE DONE
-	LDA OCHAR       ;FLIPS BIT FOR COMPLEMENTARY RIGHT
-	EOR #1
-	STA OCHAR
-	AND #1          ;TOGGLE PARITY
-	EOR PRTY
-	STA PRTY
-WRT3	JMP PREND       ;RESTORE REGS AND RTI EXIT
+wrtn2	jsr write
+	bne wrt3        ;on bit low exit
+	lda firt        ;check for first of dipole
+	eor #1
+	sta firt
+	beq wrt2        ;dipole done
+	lda ochar       ;flips bit for complementary right
+	eor #1
+	sta ochar
+	and #1          ;toggle parity
+	eor prty
+	sta prty
+wrt3	jmp prend       ;restore regs and rti exit
 ;
-WRT2	LSR OCHAR       ;MOVE TO NEXT BIT
-	DEC PCNTR       ;DEC COUNTER FOR # OF BITS
-	LDA PCNTR       ;CHECK FOR 8 BITS SENT...
-	BEQ WRT4        ;...IF YES MOVE IN PARITY
-	BPL WRT3        ;...ELSE SEND REST
+wrt2	lsr ochar       ;move to next bit
+	dec pcntr       ;dec counter for # of bits
+	lda pcntr       ;check for 8 bits sent...
+	beq wrt4        ;...if yes move in parity
+	bpl wrt3        ;...else send rest
 ;
-WRTS	JSR NEWCH       ;CLEAN UP COUNTERS
-	CLI             ;ALLOW FOR INTERRUPTS TO NEST
-	LDA CNTDN       ;ARE WE WRITING HEADER COUNTERS?...
-	BEQ WRT6        ;...NO
-; WRITE HEADER COUNTERS (9876543210 TO HELP WITH READ)
-	LDX #0          ;CLEAR BCC
-	STX DATA
-WRTS1	DEC CNTDN
-	LDX FSBLK       ;CHECK FOR FIRST BLOCK HEADER
-	CPX #2
-	BNE WRT61       ;...NO
-	ORA #$80        ;...YES MARK FIRST BLOCK HEADER
-WRT61	STA OCHAR       ;WRITE CHARACTERS IN HEADER
-	BNE WRT3
+wrts	jsr newch       ;clean up counters
+	cli             ;allow for interrupts to nest
+	lda cntdn       ;are we writing header counters?...
+	beq wrt6        ;...no
+; write header counters (9876543210 to help with read)
+	ldx #0          ;clear bcc
+	stx data
+wrts1	dec cntdn
+	ldx fsblk       ;check for first block header
+	cpx #2
+	bne wrt61       ;...no
+	ora #$80        ;...yes mark first block header
+wrt61	sta ochar       ;write characters in header
+	bne wrt3
 ;
-WRT6	JSR CMPSTE      ;COMPARE START:END
-	BCC WRT7        ;NOT DONE
-	BNE WRTL3       ;GO MARK END
-	INC SAH
-	LDA DATA        ;WRITE OUT BCC
-	STA OCHAR
-	BCS WRT3        ;JMP
+wrt6	jsr cmpste      ;compare start:end
+	bcc wrt7        ;not done
+	bne wrtl3       ;go mark end
+	inc sah
+	lda data        ;write out bcc
+	sta ochar
+	bcs wrt3        ;jmp
 ;
-WRT7	LDY #0          ;GET NEXT CHARACTER
-	LDA (SAL)Y
-	STA OCHAR       ;STORE IN OUTPUT CHARACTER
-	EOR DATA        ;UPDATE BCC
-	STA DATA
-	JSR INCSAL      ;INCREMENT FETCH ADDRESS
-	BNE WRT3        ;BRANCH ALWAYS
+wrt7	ldy #0          ;get next character
+	lda (sal)y
+	sta ochar       ;store in output character
+	eor data        ;update bcc
+	sta data
+	jsr incsal      ;increment fetch address
+	bne wrt3        ;branch always
 ;
-WRT4	LDA PRTY        ;MOVE PARITY INTO OCHAR...
-	EOR #1
-	STA OCHAR       ;...TO BE WRITTEN AS NEXT BIT
-WRTBK	JMP PREND       ;RESTORE REGS AND RTI EXIT
+wrt4	lda prty        ;move parity into ochar...
+	eor #1
+	sta ochar       ;...to be written as next bit
+wrtbk	jmp prend       ;restore regs and rti exit
 ;
-WRNC	DEC FSBLK       ;CHECK FOR END
-	BNE WREND       ;...BLOCK ONLY
-	JSR TNOF        ;...WRITE, SO TURN OFF MOTOR
-WREND	LDA #80         ;PUT 80 CASSETTE SYNCS AT END
-	STA SHCNL
-	LDX #8
-	SEI
-	JSR BSIV        ;SET VECTOR TO WRITE ZEROS
-	BNE WRTBK       ;JMP
+wrnc	dec fsblk       ;check for end
+	bne wrend       ;...block only
+	jsr tnof        ;...write, so turn off motor
+wrend	lda #80         ;put 80 cassette syncs at end
+	sta shcnl
+	ldx #8
+	sei
+	jsr bsiv        ;set vector to write zeros
+	bne wrtbk       ;jmp
 ;
-WRTZ	LDA #120        ;WRITE LEADING ZEROS FOR SYNC
-	JSR WRT1
-	BNE WRTBK
-	DEC SHCNL       ;CHECK IF DONE WITH LOW SYNC...
-	BNE WRTBK       ;...NO
-	JSR NEWCH       ;...YES CLEAR UP COUNTERS
-	DEC SHCNH       ;CHECK IF DONE WITH SYNC...
-	BPL WRTBK       ;...NO
-	LDX #10         ;...YES SO SET VECTOR FOR DATA
-	JSR BSIV
-	CLI
-	INC SHCNH       ;ZERO SHCNH
-	LDA FSBLK       ;IF DONE THEN...
-	BEQ STKY        ;...GOTO SYSTEM RESTORE
-	JSR RD300
-	LDX #9          ;SET UP FOR HEADER COUNT
-	STX CNTDN
-	STX PRP         ;CLEAR ENDOF BLOCK FLAG
-	BNE WRTS        ;JMP
+wrtz	lda #120        ;write leading zeros for sync
+	jsr wrt1
+	bne wrtbk
+	dec shcnl       ;check if done with low sync...
+	bne wrtbk       ;...no
+	jsr newch       ;...yes clear up counters
+	dec shcnh       ;check if done with sync...
+	bpl wrtbk       ;...no
+	ldx #10         ;...yes so set vector for data
+	jsr bsiv
+	cli
+	inc shcnh       ;zero shcnh
+	lda fsblk       ;if done then...
+	beq stky        ;...goto system restore
+	jsr rd300
+	ldx #9          ;set up for header count
+	stx cntdn
+	stx prp         ;clear endof block flag
+	bne wrts        ;jmp
 ;
-TNIF	PHP             ;CLEAN UP INTERRUPTS AND RESTORE PIA'S
-	SEI
-	LDA VICREG+17   ;UNLOCK VIC
-	ORA #$10        ;ENABLE DISPLAY
-	STA VICREG+17
-	JSR TNOF        ;TURN OFF MOTOR
-	LDA #$7F        ;CLEAR INTERRUPTS
-	STA D1ICR
-	JSR IOKEYS      ;RESTORE KEYBOARD IRQ FROM TIMMER1
-	LDA IRQTMP+1    ;RESTORE KEYBOARD INTERRUPT VECTOR
-	BEQ TNIQ        ;NO IRQ (IRQ VECTOR CANNOT BE Z-PAGE)
-	STA CINV+1
-	LDA IRQTMP
-	STA CINV
-TNIQ	PLP
-	RTS
+tnif	php             ;clean up interrupts and restore pia's
+	sei
+	lda vicreg+17   ;unlock vic
+	ora #$10        ;enable display
+	sta vicreg+17
+	jsr tnof        ;turn off motor
+	lda #$7f        ;clear interrupts
+	sta d1icr
+	jsr iokeys      ;restore keyboard irq from timmer1
+	lda irqtmp+1    ;restore keyboard interrupt vector
+	beq tniq        ;no irq (irq vector cannot be z-page)
+	sta cinv+1
+	lda irqtmp
+	sta cinv
+tniq	plp
+	rts
 ;
-STKY	JSR TNIF        ;GO RESTORE SYSTEM INTERRUPTS
-	BEQ WRTBK       ;CAME FOR CASSETTE IRQ SO RTI
+stky	jsr tnif        ;go restore system interrupts
+	beq wrtbk       ;came for cassette irq so rti
 ;
-; BSIV - SUBROUTINE TO CHANGE IRQ VECTORS
-;  ENTRYS - .X = 8 WRITE ZEROS TO TAPE
-;           .X = 10 WRITE DATA TO TAPE
-;           .X = 12 RESTORE TO KEYSCAN
-;           .X = 14 READ DATA FROM TAPE
+; bsiv - subroutine to change irq vectors
+;  entrys - .x = 8 write zeros to tape
+;           .x = 10 write data to tape
+;           .x = 12 restore to keyscan
+;           .x = 14 read data from tape
 ;
-BSIV	LDA BSIT-8,X    ;MOVE IRQ VECTORS, TABLE TO INDIRECT
-	STA CINV
-	LDA BSIT+1-8,X
-	STA CINV+1
-	RTS
+bsiv	lda bsit-8,x    ;move irq vectors, table to indirect
+	sta cinv
+	lda bsit+1-8,x
+	sta cinv+1
+	rts
 ;
-TNOF	LDA R6510       ;TURN OFF CASSETTE MOTOR
-	ORA #$20        ;
-	STA R6510
-	RTS
-.SKI 3
-;COMPARE START AND END LOAD/SAVE
-;ADDRESSES.  SUBROUTINE CALLED BY
-;TAPE READ, SAVE, TAPE WRITE
+tnof	lda r6510       ;turn off cassette motor
+	ora #$20        ;
+	sta r6510
+	rts
+.ski 3
+;compare start and end load/save
+;addresses.  subroutine called by
+;tape read, save, tape write
 ;
-CMPSTE	SEC
-	LDA SAL
-	SBC EAL
-	LDA SAH
-	SBC EAH
-	RTS
-.SKI 3
-;INCREMENT ADDRESS POINTER SAL
+cmpste	sec
+	lda sal
+	sbc eal
+	lda sah
+	sbc eah
+	rts
+.ski 3
+;increment address pointer sal
 ;
-INCSAL	INC SAL
-	BNE INCR
-	INC SAH
-INCR	RTS
-.END
-; RSR 7/28/80 ADD COMMENTS
-; RSR 8/4/80 CHANGED I/O FOR VIXEN
-; RSR 8/21/80 CHANGED I/O FOR VIXEN MOD
-; RSR 8/25/80 CHANGED I/O FOR VIXEN MOD2
-; RSR 12/11/81 MODIFY I/O FOR VIC-40
-; RSR 2/9/82 ADD VIC TURN ON, REPLACE SAH WITH PRP
+incsal	inc sal
+	bne incr
+	inc sah
+incr	rts
+.end
+; rsr 7/28/80 add comments
+; rsr 8/4/80 changed i/o for vixen
+; rsr 8/21/80 changed i/o for vixen mod
+; rsr 8/25/80 changed i/o for vixen mod2
+; rsr 12/11/81 modify i/o for vic-40
+; rsr 2/9/82 add vic turn on, replace sah with prp

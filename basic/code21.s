@@ -1,144 +1,144 @@
-.PAG 'CODE21'
-QINT	LDA FACEXP
-	BEQ CLRFAC
-	SEC
-	SBC #ADDPR8+@230
-	BIT FACSGN
-	BPL QISHFT
-	TAX
-	LDA #@377
-	STA BITS
-	JSR NEGFCH
-	TXA
-QISHFT	LDX #FAC
-	CMP #$F9
-	BPL QINT1
-	JSR SHIFTR
-	STY BITS
-QINTRT	RTS
-QINT1	TAY
-	LDA FACSGN
-	AND #@200
-	LSR FACHO
-	ORA FACHO
-	STA FACHO
-	JSR ROLSHF
-	STY BITS
-	RTS
-INT	LDA FACEXP
-	CMP #ADDPR8+@230
-	BCS INTRTS
-	JSR QINT
-	STY FACOV
-	LDA FACSGN
-	STY FACSGN
-	EOR #@200
-	ROL A
-	LDA #@230+8
-	STA FACEXP
-	LDA FACLO
-	STA INTEGR
-	JMP FADFLT
-CLRFAC	STA FACHO
-	STA FACMOH
-	STA FACMO
-	STA FACLO
-	TAY 
-INTRTS	RTS
-FIN	LDY #@0
-	LDX #@11+ADDPRC
-FINZLP	STY DECCNT,X
-	DEX
-	BPL FINZLP
-	BCC FINDGQ
-	CMP #'-
-	BNE QPLUS
-	STX SGNFLG
-	BEQ FINC
-QPLUS	CMP #'+
-	BNE FIN1
-FINC	JSR CHRGET
-FINDGQ	BCC FINDIG
-FIN1	CMP #'.
-	BEQ FINDP
-	CMP #'E
-	BNE FINE
-	JSR CHRGET
-	BCC FNEDG1
-	CMP #MINUTK
-	BEQ FINEC1
-	CMP #'-
-	BEQ FINEC1
-	CMP #PLUSTK
-	BEQ FINEC
-	CMP #'+
-	BEQ FINEC
-	BNE FINEC2
-FINEC1	ROR EXPSGN
-FINEC	JSR CHRGET
-FNEDG1	BCC FINEDG
-FINEC2	BIT EXPSGN
-	BPL FINE
-	LDA #0
-	SEC
-	SBC TENEXP
-	JMP FINE1
-FINDP	ROR DPTFLG
-	BIT DPTFLG
-	BVC FINC
-FINE	LDA TENEXP
-FINE1	SEC
-	SBC DECCNT
-	STA TENEXP
-	BEQ FINQNG
-	BPL FINMUL
-FINDIV	JSR DIV10
-	INC TENEXP
-	BNE FINDIV
-	BEQ FINQNG
-FINMUL	JSR MUL10
-	DEC TENEXP
-	BNE FINMUL
-FINQNG	LDA SGNFLG
-	BMI NEGXQS
-	RTS
-NEGXQS	JMP NEGOP
-FINDIG	PHA
-	BIT DPTFLG
-	BPL FINDG1
-	INC DECCNT
-FINDG1	JSR MUL10
-	PLA
-	SEC
-	SBC #'0
-	JSR FINLOG
-	JMP FINC
-FINLOG	PHA
-	JSR MOVAF
-	PLA
-	JSR FLOAT
-	LDA ARGSGN
-	EOR FACSGN
-	STA ARISGN
-	LDX FACEXP
-	JMP FADDT
-FINEDG	LDA TENEXP
-	CMP #@12
-	BCC MLEX10
-	LDA #@144
-	BIT EXPSGN
-	BMI MLEXMI
-	JMP OVERR
-MLEX10	ASL A
-	ASL A
-	CLC
-	ADC TENEXP
-	ASL A
-	CLC
-	LDY #0
-	ADC (TXTPTR)Y
-	SEC
-	SBC #'0
-MLEXMI	STA TENEXP
-	JMP FINEC
-.END
+.pag 'code21'
+qint	lda facexp
+	beq clrfac
+	sec
+	sbc #addpr8+@230
+	bit facsgn
+	bpl qishft
+	tax
+	lda #@377
+	sta bits
+	jsr negfch
+	txa
+qishft	ldx #fac
+	cmp #$f9
+	bpl qint1
+	jsr shiftr
+	sty bits
+qintrt	rts
+qint1	tay
+	lda facsgn
+	and #@200
+	lsr facho
+	ora facho
+	sta facho
+	jsr rolshf
+	sty bits
+	rts
+int	lda facexp
+	cmp #addpr8+@230
+	bcs intrts
+	jsr qint
+	sty facov
+	lda facsgn
+	sty facsgn
+	eor #@200
+	rol a
+	lda #@230+8
+	sta facexp
+	lda faclo
+	sta integr
+	jmp fadflt
+clrfac	sta facho
+	sta facmoh
+	sta facmo
+	sta faclo
+	tay 
+intrts	rts
+fin	ldy #@0
+	ldx #@11+addprc
+finzlp	sty deccnt,x
+	dex
+	bpl finzlp
+	bcc findgq
+	cmp #'-
+	bne qplus
+	stx sgnflg
+	beq finc
+qplus	cmp #'+
+	bne fin1
+finc	jsr chrget
+findgq	bcc findig
+fin1	cmp #'.
+	beq findp
+	cmp #'e
+	bne fine
+	jsr chrget
+	bcc fnedg1
+	cmp #minutk
+	beq finec1
+	cmp #'-
+	beq finec1
+	cmp #plustk
+	beq finec
+	cmp #'+
+	beq finec
+	bne finec2
+finec1	ror expsgn
+finec	jsr chrget
+fnedg1	bcc finedg
+finec2	bit expsgn
+	bpl fine
+	lda #0
+	sec
+	sbc tenexp
+	jmp fine1
+findp	ror dptflg
+	bit dptflg
+	bvc finc
+fine	lda tenexp
+fine1	sec
+	sbc deccnt
+	sta tenexp
+	beq finqng
+	bpl finmul
+findiv	jsr div10
+	inc tenexp
+	bne findiv
+	beq finqng
+finmul	jsr mul10
+	dec tenexp
+	bne finmul
+finqng	lda sgnflg
+	bmi negxqs
+	rts
+negxqs	jmp negop
+findig	pha
+	bit dptflg
+	bpl findg1
+	inc deccnt
+findg1	jsr mul10
+	pla
+	sec
+	sbc #'0
+	jsr finlog
+	jmp finc
+finlog	pha
+	jsr movaf
+	pla
+	jsr float
+	lda argsgn
+	eor facsgn
+	sta arisgn
+	ldx facexp
+	jmp faddt
+finedg	lda tenexp
+	cmp #@12
+	bcc mlex10
+	lda #@144
+	bit expsgn
+	bmi mlexmi
+	jmp overr
+mlex10	asl a
+	asl a
+	clc
+	adc tenexp
+	asl a
+	clc
+	ldy #0
+	adc (txtptr)y
+	sec
+	sbc #'0
+mlexmi	sta tenexp
+	jmp finec
+.end

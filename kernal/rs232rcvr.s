@@ -1,131 +1,131 @@
-.PAG 'RS-232 RECEIVER'
-; RSRCVR - NMI ROUTINE TO COLLECT
-;  DATA INTO BYTES
+.pag 'rs-232 receiver'
+; rsrcvr - nmi routine to collect
+;  data into bytes
 ;
-; RSR 8/18/80
+; rsr 8/18/80
 ;
-; VARIABLES USED
-;   INBIT - INPUT BIT VALUE
-;   BITCI - BIT COUNT IN
-;   RINONE - FLAG FOR START BIT CHECK <>0 START BIT
-;   RIDATA - BYTE INPUT BUFFER
-;   RIPRTY - HOLDS BYTE INPUT PARITY
-;   RIBUF - INDIRECT POINTER TO DATA BUFFER
-;   RIDBE - INPUT BUFFER INDEX TO END
-;   RIDBS - INPUT BUFFER POINTER TO START
-;   IF RIDBE=RIDBS THEN INPUT BUFFER EMPTY
+; variables used
+;   inbit - input bit value
+;   bitci - bit count in
+;   rinone - flag for start bit check <>0 start bit
+;   ridata - byte input buffer
+;   riprty - holds byte input parity
+;   ribuf - indirect pointer to data buffer
+;   ridbe - input buffer index to end
+;   ridbs - input buffer pointer to start
+;   if ridbe=ridbs then input buffer empty
 ;
-RSRCVR	LDX RINONE      ;CHECK FOR START BIT
-	BNE RSRTRT      ;WAS START BIT
+rsrcvr	ldx rinone      ;check for start bit
+	bne rsrtrt      ;was start bit
 ;
-	DEC BITCI       ;CHECK WHERE WE ARE IN INPUT...
-	BEQ RSR030      ;HAVE A FULL BYTE
-	BMI RSR020      ;GETTING STOP BITS
+	dec bitci       ;check where we are in input...
+	beq rsr030      ;have a full byte
+	bmi rsr020      ;getting stop bits
 ;
-; CALC PARITY
+; calc parity
 ;
-	LDA INBIT       ;GET DATA UP
-	EOR RIPRTY      ;CALC NEW PARITY
-	STA RIPRTY
+	lda inbit       ;get data up
+	eor riprty      ;calc new parity
+	sta riprty
 ;
-; SHIFT DATA BIT IN
+; shift data bit in
 ;
-	LSR INBIT       ;IN BIT POS 0
-	ROR RIDATA      ;C INTO DATA
+	lsr inbit       ;in bit pos 0
+	ror ridata      ;c into data
 ;
-; EXIT
+; exit
 ;
-RSREXT	RTS
-.PAG 'RS-232 RECEIVER'
-; HAVE STOP BIT, SO STORE IN BUFFER
+rsrext	rts
+.pag 'rs-232 receiver'
+; have stop bit, so store in buffer
 ;
-RSR018	DEC BITCI       ;NO PARITY, DEC SO CHECK WORKS
-RSR020	LDA INBIT       ;GET DATA...
-	BEQ RSR060      ;...ZERO, AN ERROR?
+rsr018	dec bitci       ;no parity, dec so check works
+rsr020	lda inbit       ;get data...
+	beq rsr060      ;...zero, an error?
 ;
-	LDA M51CTR      ;CHECK FOR CORRECT # OF STOP BITS
-	ASL A           ;CARRY TELL HOW MAY STOP BITS
-	LDA #01
-	ADC BITCI
-	BNE RSREXT      ;NO..EXIT
+	lda m51ctr      ;check for correct # of stop bits
+	asl a           ;carry tell how may stop bits
+	lda #01
+	adc bitci
+	bne rsrext      ;no..exit
 ;
-; RSRABL - ENABLE TO RECIEVE A BYTE
+; rsrabl - enable to recieve a byte
 ;
-RSRABL	LDA #$90        ;ENABLE FLAG FOR NEXT BYTE
-	STA D2ICR       ;TOSS BAD/OLD NMI
-	ORA ENABL       ;MARK IN ENABLE REGISTER***********
-	STA ENABL       ;RE-ENABLED BY JMP OENABL
-	STA RINONE      ;FLAG FOR START BIT
+rsrabl	lda #$90        ;enable flag for next byte
+	sta d2icr       ;toss bad/old nmi
+	ora enabl       ;mark in enable register***********
+	sta enabl       ;re-enabled by jmp oenabl
+	sta rinone      ;flag for start bit
 ;
-RSRSXT	LDA #$02        ;DISABLE T2
-	JMP OENABL      ;FLIP-OFF ENABL***************
-.SKI 2
-; RECIEVER START BIT CHECK
+rsrsxt	lda #$02        ;disable t2
+	jmp oenabl      ;flip-off enabl***************
+.ski 2
+; reciever start bit check
 ;
-RSRTRT	LDA INBIT       ;CHECK IF SPACE
-	BNE RSRABL      ;BAD...TRY AGAIN
-	JMP PRTYP       ;GO TO PARITY PATCH 901227-03
-; STA RINONE ;GOOD...DISABLE FLAG
-; RTS ;AND EXIT
-.SKI 4
+rsrtrt	lda inbit       ;check if space
+	bne rsrabl      ;bad...try again
+	jmp prtyp       ;go to parity patch 901227-03
+; sta rinone ;good...disable flag
+; rts ;and exit
+.ski 4
 ;
-; PUT DATA IN BUFFER (AT PARITY TIME)
+; put data in buffer (at parity time)
 ;
-RSR030	LDY RIDBE       ;GET END
-	INY
-	CPY RIDBS       ;HAVE WE PASSED START?
-	BEQ RECERR      ;YES...ERROR
+rsr030	ldy ridbe       ;get end
+	iny
+	cpy ridbs       ;have we passed start?
+	beq recerr      ;yes...error
 ;
-	STY RIDBE       ;MOVE RIDBE FOWARD
-	DEY
+	sty ridbe       ;move ridbe foward
+	dey
 ;
-	LDA RIDATA      ;GET BYTE BUFFER UP
-	LDX BITNUM      ;SHIFT UNTILL FULL BYTE
-RSR031	CPX #9          ;ALWAYS 8 BITS
-	BEQ RSR032
-	LSR A           ;FILL WITH ZEROS
-	INX
-	BNE RSR031
+	lda ridata      ;get byte buffer up
+	ldx bitnum      ;shift untill full byte
+rsr031	cpx #9          ;always 8 bits
+	beq rsr032
+	lsr a           ;fill with zeros
+	inx
+	bne rsr031
 ;
-RSR032	STA (RIBUF)Y    ;DATA TO PAGE BUFFER
+rsr032	sta (ribuf)y    ;data to page buffer
 ;
-; PARITY CHECKING
+; parity checking
 ;
-	LDA #$20        ;CHECK 6551 COMMAND REGISTER
-	BIT M51CDR
-	BEQ RSR018      ;NO PARITY BIT SO STOP BIT
-	BMI RSREXT      ;NO PARITY CHECK
+	lda #$20        ;check 6551 command register
+	bit m51cdr
+	beq rsr018      ;no parity bit so stop bit
+	bmi rsrext      ;no parity check
 ;
-; CHECK CALC PARITY
+; check calc parity
 ;
-	LDA INBIT
-	EOR RIPRTY      ;PUT IN WITH PARITY
-	BEQ RSR050      ;EVEN PARITY
-	BVS RSREXT      ;ODD...OKAY SO EXIT
-	.BYT $2C        ;SKIP TWO
-RSR050	BVC RSREXT      ;EVEN...OKAY SO EXIT
+	lda inbit
+	eor riprty      ;put in with parity
+	beq rsr050      ;even parity
+	bvs rsrext      ;odd...okay so exit
+	.byt $2c        ;skip two
+rsr050	bvc rsrext      ;even...okay so exit
 ;
-; ERRORS REPORTED
-	LDA #1          ;PARITY ERROR
-	.BYT $2C
-RECERR	LDA #$4         ;RECIEVER OVERRUN
-	.BYT $2C
-BREAKE	LDA #$80        ;BREAK DETECTED
-	.BYT $2C
-FRAMEE	LDA #$02        ;FRAME ERROR
-ERR232	ORA RSSTAT
-	STA RSSTAT
-	JMP RSRABL      ;BAD EXIT SO HANG ##????????##
+; errors reported
+	lda #1          ;parity error
+	.byt $2c
+recerr	lda #$4         ;reciever overrun
+	.byt $2c
+breake	lda #$80        ;break detected
+	.byt $2c
+framee	lda #$02        ;frame error
+err232	ora rsstat
+	sta rsstat
+	jmp rsrabl      ;bad exit so hang ##????????##
 ;
-; CHECK FOR ERRORS
+; check for errors
 ;
-RSR060	LDA RIDATA      ;EXPECTING STOP...
-	BNE FRAMEE      ;FRAME ERROR
-	BEQ BREAKE      ;COULD BE A BREAK
-.END
-; RSR -  8/21/80 ADD MODS
-; RSR -  8/24/80 FIX ERRORS
-; RSR -  8/27/80 FIX MAJOR ERRORS
-; RSR -  8/30/80 FIX T2 ADJUST
-; RSR - 12/11/81 MODIFY FOR VIC-40 I/O
-; RSR -  3/11/82 FIX FOR BAD/OLD NMI'S
+rsr060	lda ridata      ;expecting stop...
+	bne framee      ;frame error
+	beq breake      ;could be a break
+.end
+; rsr -  8/21/80 add mods
+; rsr -  8/24/80 fix errors
+; rsr -  8/27/80 fix major errors
+; rsr -  8/30/80 fix t2 adjust
+; rsr - 12/11/81 modify for vic-40 i/o
+; rsr -  3/11/82 fix for bad/old nmi's

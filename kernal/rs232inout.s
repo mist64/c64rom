@@ -1,187 +1,187 @@
-.PAG 'RS232 INOUT'
-; OUTPUT A FILE OVER USR PORT
-;  USING RS232
+.pag 'rs232 inout'
+; output a file over usr port
+;  using rs232
 ;
-CKO232	STA DFLTO       ;SET DEFAULT OUT
-	LDA M51CDR      ;CHECK FOR 3/X LINE
-	LSR A
-	BCC CKO100      ;3LINE...NO TURN AROUND
+cko232	sta dflto       ;set default out
+	lda m51cdr      ;check for 3/x line
+	lsr a
+	bcc cko100      ;3line...no turn around
 ;
-;*TURN AROUND LOGIC
+;*turn around logic
 ;
-; CHECK FOR DSR AND RTS
+; check for dsr and rts
 ;
-	LDA #$02        ;BIT RTS IS ON
-	BIT D2PRB
-	BPL CKDSRX      ;NO DSR...ERROR
-	BNE CKO100      ;RTS...OUTPUTING OR FULL DUPLEX
+	lda #$02        ;bit rts is on
+	bit d2prb
+	bpl ckdsrx      ;no dsr...error
+	bne cko100      ;rts...outputing or full duplex
 ;
-; CHECK FOR ACTIVE INPUT
-;  RTS WILL BE LOW IF CURRENTLY INPUTING
+; check for active input
+;  rts will be low if currently inputing
 ;
-CKO020	LDA ENABL
-	AND #$02        ;LOOK AT IER FOR T2
-	BNE CKO020      ;HANG UNTILL INPUT DONE
+cko020	lda enabl
+	and #$02        ;look at ier for t2
+	bne cko020      ;hang untill input done
 ;
-; WAIT FOR CTS TO BE OFF AS SPEC REQS
+; wait for cts to be off as spec reqs
 ;
-CKO030	BIT D2PRB
-	BVS CKO030
+cko030	bit d2prb
+	bvs cko030
 ;
-; TURN ON RTS
+; turn on rts
 ;
-	LDA D2PRB
-	ORA #$02
-	STA D2PRB
+	lda d2prb
+	ora #$02
+	sta d2prb
 ;
-; WAIT FOR CTS TO GO ON
+; wait for cts to go on
 ;
-CKO040	BIT D2PRB
-	BVS CKO100      ;DONE...
-	BMI CKO040      ;WE STILL HAVE DSR
+cko040	bit d2prb
+	bvs cko100      ;done...
+	bmi cko040      ;we still have dsr
 ;
-CKDSRX	LDA #$40        ;A DATA SET READY ERROR
-	STA RSSTAT      ;MAJOR ERROR....WILL REQUIRE REOPEN
+ckdsrx	lda #$40        ;a data set ready error
+	sta rsstat      ;major error....will require reopen
 ;
-CKO100	CLC             ;NO ERROR
-	RTS
+cko100	clc             ;no error
+	rts
 ;
-.PAGE 'RS232 INOUT'
-; BSO232 - OUTPUT A CHAR RS232
-;   DATA PASSED IN T1 FROM BSOUT
+.page 'rs232 inout'
+; bso232 - output a char rs232
+;   data passed in t1 from bsout
 ;
-; HANG LOOP FOR BUFFER FULL
+; hang loop for buffer full
 ;
-BSOBAD	JSR BSO100      ;KEEP TRYING TO START SYSTEM...
+bsobad	jsr bso100      ;keep trying to start system...
 ;
-; BUFFER HANDLER
+; buffer handler
 ;
-BSO232	LDY RODBE
-	INY
-	CPY RODBS       ;CHECK FOR BUFFER FULL
-	BEQ BSOBAD      ;HANG IF SO...TRYING TO RESTART
-	STY RODBE       ;INDICATE NEW START
-	DEY
-	LDA T1          ;GET DATA...
-	STA (ROBUF)Y    ;STORE DATA
+bso232	ldy rodbe
+	iny
+	cpy rodbs       ;check for buffer full
+	beq bsobad      ;hang if so...trying to restart
+	sty rodbe       ;indicate new start
+	dey
+	lda t1          ;get data...
+	sta (robuf)y    ;store data
 ;
-; SET UP IF NECESSARY TO OUTPUT
+; set up if necessary to output
 ;
-BSO100	LDA ENABL       ;CHECK FOR A T1 NMI ENABLE
-	LSR A           ;BIT 0
-	BCS BSO120      ;RUNNING....SO EXIT
+bso100	lda enabl       ;check for a t1 nmi enable
+	lsr a           ;bit 0
+	bcs bso120      ;running....so exit
 ;
-; SET UP T1 NMI'S
+; set up t1 nmi's
 ;
-BSO110	LDA #$10        ;TURN OFF TIMER TO PREVENT FALSE START...
-	STA D2CRA
-	LDA BAUDOF      ;SET UP TIMER1
-	STA D2T1L
-	LDA BAUDOF+1
-	STA D2T1H
-	LDA #$81
-	JSR OENABL
-	JSR RSTBGN      ;SET UP TO SEND (WILL STOP ON CTS OR DSR ERROR)
-	LDA #$11        ;TURN ON TIMER
-	STA D2CRA
-BSO120	RTS
-.PAGE 'RS232 INOUT'
-; INPUT A FILE OVER USER PORT
-;  USING RS232
+bso110	lda #$10        ;turn off timer to prevent false start...
+	sta d2cra
+	lda baudof      ;set up timer1
+	sta d2t1l
+	lda baudof+1
+	sta d2t1h
+	lda #$81
+	jsr oenabl
+	jsr rstbgn      ;set up to send (will stop on cts or dsr error)
+	lda #$11        ;turn on timer
+	sta d2cra
+bso120	rts
+.page 'rs232 inout'
+; input a file over user port
+;  using rs232
 ;
-CKI232	STA DFLTN       ;SET DEFAULT INPUT
+cki232	sta dfltn       ;set default input
 ;
-	LDA M51CDR      ;CHECK FOR 3/X LINE
-	LSR A
-	BCC CKI100      ;3 LINE...NO HANDSHAKE
+	lda m51cdr      ;check for 3/x line
+	lsr a
+	bcc cki100      ;3 line...no handshake
 ;
-	AND #$08        ;FULL/HALF CHECK (BYTE SHIFTED ABOVE)
-	BEQ CKI100      ;FULL...NO HANDSHAKE
+	and #$08        ;full/half check (byte shifted above)
+	beq cki100      ;full...no handshake
 ;
-;*TURN AROUND LOGIC
+;*turn around logic
 ;
-; CHECK IF DSR AND NOT RTS
+; check if dsr and not rts
 ;
-	LDA #$02        ;BIT RTS IS ON
-	BIT D2PRB
-	BPL CKDSRX      ;NO DSR...ERROR
-	BEQ CKI110      ;RTS LOW...IN CORRECT MODE
+	lda #$02        ;bit rts is on
+	bit d2prb
+	bpl ckdsrx      ;no dsr...error
+	beq cki110      ;rts low...in correct mode
 ;
-; WAIT FOR ACTIVE OUTPUT TO BE DONE
+; wait for active output to be done
 ;
-CKI010	LDA ENABL
-	LSR A           ;CHECK T1 (BIT 0)
-	BCS CKI010
+cki010	lda enabl
+	lsr a           ;check t1 (bit 0)
+	bcs cki010
 ;
-; TURN OFF RTS
+; turn off rts
 ;
-	LDA D2PRB
-	AND #$FF-02
-	STA D2PRB
+	lda d2prb
+	and #$ff-02
+	sta d2prb
 ;
-; WAIT FOR DCD TO GO HIGH (IN SPEC)
+; wait for dcd to go high (in spec)
 ;
-CKI020	LDA D2PRB
-	AND #$04
-	BEQ CKI020
+cki020	lda d2prb
+	and #$04
+	beq cki020
 ;
-; ENABLE FLAG FOR RS232 INPUT
+; enable flag for rs232 input
 ;
-CKI080	LDA #$90
-	CLC             ;NO ERROR
-	JMP OENABL      ;FLAG IN ENABL**********
+cki080	lda #$90
+	clc             ;no error
+	jmp oenabl      ;flag in enabl**********
 ;
-; IF NOT 3 LINE HALF THEN...
-;  SEE IF WE NEED TO TURN ON FLAG
+; if not 3 line half then...
+;  see if we need to turn on flag
 ;
-CKI100	LDA ENABL       ;CHECK FOR FLAG OR T2 ACTIVE
-	AND #$12
-	BEQ CKI080      ;NO NEED TO TURN ON
-CKI110	CLC             ;NO ERROR
-	RTS
-.PAGE 'RS232 INOUT'
-; BSI232 - INPUT A CHAR RS232
+cki100	lda enabl       ;check for flag or t2 active
+	and #$12
+	beq cki080      ;no need to turn on
+cki110	clc             ;no error
+	rts
+.page 'rs232 inout'
+; bsi232 - input a char rs232
 ;
-; BUFFER HANDLER
+; buffer handler
 ;
-BSI232	LDA RSSTAT      ;GET STATUS UP TO CHANGE...
-	LDY RIDBS       ;GET LAST BYTE ADDRESS
-	CPY RIDBE       ;SEE IF BUFFER EMPTY
-	BEQ BSI010      ;RETURN A NULL IF NO CHAR
+bsi232	lda rsstat      ;get status up to change...
+	ldy ridbs       ;get last byte address
+	cpy ridbe       ;see if buffer empty
+	beq bsi010      ;return a null if no char
 ;
-	AND #$FF-$08    ;CLEAR BUFFER EMPTY STATUS
-	STA RSSTAT
-	LDA (RIBUF)Y    ;GET LAST CHAR
-	INC RIDBS       ;INC TO NEXT POS
+	and #$ff-$08    ;clear buffer empty status
+	sta rsstat
+	lda (ribuf)y    ;get last char
+	inc ridbs       ;inc to next pos
 ;
-; RECEIVER ALWAYS RUNS
+; receiver always runs
 ;
-	RTS
+	rts
 ;
-BSI010	ORA #$08        ;SET BUFFER EMPTY STATUS
-	STA RSSTAT
-	LDA #$0         ;RETURN A NULL
-	RTS
-.SKI 4
-; RSP232 - PROTECT SERIAL/CASS FROM RS232 NMI'S
+bsi010	ora #$08        ;set buffer empty status
+	sta rsstat
+	lda #$0         ;return a null
+	rts
+.ski 4
+; rsp232 - protect serial/cass from rs232 nmi's
 ;
-RSP232	PHA             ;SAVE .A
-	LDA ENABL       ;DOES RS232 HAVE ANY ENABLES?
-	BEQ RSPOK       ;NO...
-RSPOFF	LDA ENABL       ;WAIT UNTILL DONE
-	AND #%00000011  ; WITH T1 & T2
-	BNE RSPOFF
-	LDA #%00010000  ; DISABLE FLAG (NEED TO RENABLE IN USER CODE)
-	STA D2ICR       ;TURN OF ENABL************
-	LDA #0
-	STA ENABL       ;CLEAR ALL ENABLS
-RSPOK	PLA             ;ALL DONE
-	RTS
-.END
-; RSR  8/24/80 ORIGINAL CODE OUT
-; RSR  8/25/80 ORIGINAL CODE IN
-; RSR  9/22/80 REMOVE PARALLEL REFS & FIX XLINE LOGIC
-; RSR 12/11/81 MODIFY FOR VIC-40 I/O
-; RSR  2/15/82 FIX SOME ENABL PROBLEMS
-; RSR  3/31/82 FIX FLASE STARTS ON TRANSMITT
-; RSR  5/12/82 REDUCE CODE AND FIX X-LINE CTS HOLD-OFF
+rsp232	pha             ;save .a
+	lda enabl       ;does rs232 have any enables?
+	beq rspok       ;no...
+rspoff	lda enabl       ;wait untill done
+	and #%00000011  ; with t1 & t2
+	bne rspoff
+	lda #%00010000  ; disable flag (need to renable in user code)
+	sta d2icr       ;turn of enabl************
+	lda #0
+	sta enabl       ;clear all enabls
+rspok	pla             ;all done
+	rts
+.end
+; rsr  8/24/80 original code out
+; rsr  8/25/80 original code in
+; rsr  9/22/80 remove parallel refs & fix xline logic
+; rsr 12/11/81 modify for vic-40 i/o
+; rsr  2/15/82 fix some enabl problems
+; rsr  3/31/82 fix flase starts on transmitt
+; rsr  5/12/82 reduce code and fix x-line cts hold-off

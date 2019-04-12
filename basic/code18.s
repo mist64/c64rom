@@ -1,126 +1,126 @@
-.PAG 'CODE18'
-	STX FACMOH
-	LDX FACMO+1
-	STX FACMO
-	LDX FACOV
-	STX FACLO
-	STY FACOV
-	ADC #@10
-ADDPR2	=ADDPRC+ADDPRC
-ADDPR4	=ADDPR2+ADDPR2
-ADDPR8	=ADDPR4+ADDPR4
-	CMP #@30+ADDPR8
-	BNE NORM3
-ZEROFC	LDA #0
-ZEROF1	STA FACEXP
-ZEROML	STA FACSGN
-	RTS
-FADD2	ADC OLDOV
-	STA FACOV
-	LDA FACLO
-	ADC ARGLO
-	STA FACLO
-	LDA FACMO
-	ADC ARGMO
-	STA FACMO
-	LDA FACMOH
-	ADC ARGMOH
-	STA FACMOH
-	LDA FACHO
-	ADC ARGHO
-	STA FACHO
-	JMP SQUEEZ
-NORM2	ADC #1
-	ASL FACOV
-	ROL FACLO
-	ROL FACMO
-	ROL FACMOH
-	ROL FACHO
-NORM1	BPL NORM2
-	SEC
-	SBC FACEXP
-	BCS ZEROFC
-	EOR #@377
-	ADC #1
-	STA FACEXP
-SQUEEZ	BCC RNDRTS
-RNDSHF	INC FACEXP
-	BEQ OVERR
-	ROR FACHO
-	ROR FACMOH
-	ROR FACMO
-	ROR FACLO
-	ROR FACOV
-RNDRTS	RTS
-NEGFAC	LDA FACSGN
-	EOR #@377
-	STA FACSGN
-NEGFCH	LDA FACHO
-	EOR #@377
-	STA FACHO
-	LDA FACMOH
-	EOR #@377
-	STA FACMOH
-	LDA FACMO
-	EOR #@377
-	STA FACMO
-	LDA FACLO
-	EOR #@377
-	STA FACLO
-	LDA FACOV
-	EOR #@377
-	STA FACOV
-	INC FACOV
-	BNE INCFRT
-INCFAC	INC FACLO
-	BNE INCFRT
-	INC FACMO
-	BNE INCFRT
-	INC FACMOH
-	BNE INCFRT
-	INC FACHO
-INCFRT	RTS
-OVERR	LDX #ERROV
-	JMP ERROR
-MULSHF	LDX #RESHO-1
-SHFTR2	LDY 3+ADDPRC,X
-	STY FACOV
-	LDY 3,X
-	STY 4,X
-	LDY 2,X
-	STY 3,X
-	LDY 1,X
-	STY 2,X
-	LDY BITS
-	STY 1,X
-SHIFTR	ADC #@10
-	BMI SHFTR2
-	BEQ SHFTR2
-	SBC #@10
-	TAY
-	LDA FACOV
-	BCS SHFTRT
-SHFTR3	ASL 1,X
-	BCC SHFTR4
-	INC 1,X
-SHFTR4	ROR 1,X
-	ROR 1,X
-ROLSHF	ROR 2,X
-	ROR 3,X
-	ROR 4,X
-	ROR A
-	INY
-	BNE SHFTR3
-SHFTRT	CLC
-	RTS
-FONE	.BYT @201,0,0,0,0
-LOGCN2	.BYT 3,@177,@136,@126
-	.BYT @313,@171,@200,@23
-	.BYT @233,@13,@144,@200
-	.BYT @166,@70,@223,@26
-	.BYT @202,@70,@252,@73,@40
-SQR05	.BYT @200,@65,4,@363,@64
-SQR20	.BYT @201,@65,@4,@363,@64
-NEGHLF	.BYT @200,@200,0,0,0
-LOG2	.BYT @200,@61,@162,@27,@370
-.END
+.pag 'code18'
+	stx facmoh
+	ldx facmo+1
+	stx facmo
+	ldx facov
+	stx faclo
+	sty facov
+	adc #@10
+addpr2	=addprc+addprc
+addpr4	=addpr2+addpr2
+addpr8	=addpr4+addpr4
+	cmp #@30+addpr8
+	bne norm3
+zerofc	lda #0
+zerof1	sta facexp
+zeroml	sta facsgn
+	rts
+fadd2	adc oldov
+	sta facov
+	lda faclo
+	adc arglo
+	sta faclo
+	lda facmo
+	adc argmo
+	sta facmo
+	lda facmoh
+	adc argmoh
+	sta facmoh
+	lda facho
+	adc argho
+	sta facho
+	jmp squeez
+norm2	adc #1
+	asl facov
+	rol faclo
+	rol facmo
+	rol facmoh
+	rol facho
+norm1	bpl norm2
+	sec
+	sbc facexp
+	bcs zerofc
+	eor #@377
+	adc #1
+	sta facexp
+squeez	bcc rndrts
+rndshf	inc facexp
+	beq overr
+	ror facho
+	ror facmoh
+	ror facmo
+	ror faclo
+	ror facov
+rndrts	rts
+negfac	lda facsgn
+	eor #@377
+	sta facsgn
+negfch	lda facho
+	eor #@377
+	sta facho
+	lda facmoh
+	eor #@377
+	sta facmoh
+	lda facmo
+	eor #@377
+	sta facmo
+	lda faclo
+	eor #@377
+	sta faclo
+	lda facov
+	eor #@377
+	sta facov
+	inc facov
+	bne incfrt
+incfac	inc faclo
+	bne incfrt
+	inc facmo
+	bne incfrt
+	inc facmoh
+	bne incfrt
+	inc facho
+incfrt	rts
+overr	ldx #errov
+	jmp error
+mulshf	ldx #resho-1
+shftr2	ldy 3+addprc,x
+	sty facov
+	ldy 3,x
+	sty 4,x
+	ldy 2,x
+	sty 3,x
+	ldy 1,x
+	sty 2,x
+	ldy bits
+	sty 1,x
+shiftr	adc #@10
+	bmi shftr2
+	beq shftr2
+	sbc #@10
+	tay
+	lda facov
+	bcs shftrt
+shftr3	asl 1,x
+	bcc shftr4
+	inc 1,x
+shftr4	ror 1,x
+	ror 1,x
+rolshf	ror 2,x
+	ror 3,x
+	ror 4,x
+	ror a
+	iny
+	bne shftr3
+shftrt	clc
+	rts
+fone	.byt @201,0,0,0,0
+logcn2	.byt 3,@177,@136,@126
+	.byt @313,@171,@200,@23
+	.byt @233,@13,@144,@200
+	.byt @166,@70,@223,@26
+	.byt @202,@70,@252,@73,@40
+sqr05	.byt @200,@65,4,@363,@64
+sqr20	.byt @201,@65,@4,@363,@64
+neghlf	.byt @200,@200,0,0,0
+log2	.byt @200,@61,@162,@27,@370
+.end

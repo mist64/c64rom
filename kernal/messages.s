@@ -1,29 +1,29 @@
-.PAG 'MESSAGES'
-MS1	.BYT $D,'I/O ERROR ',$A3
-MS5	.BYT $D,'SEARCHING',$A0
-MS6	.BYT 'FOR',$A0
-MS7	.BYT $D,'PRESS PLAY ON TAP',$C5
-MS8	.BYT 'PRESS RECORD & PLAY ON TAP',$C5
-MS10	.BYT $D,'LOADIN',$C7
-MS11	.BYT $D,'SAVING',$A0
-MS21	.BYT $D,'VERIFYIN',$C7
-MS17	.BYT $D,'FOUND',$A0
-MS18	.BYT $D,'OK',$8D
-; MS34 .BYT $D,'MONITOR',$8D
-; MS36 .BYT $D,'BREA',$CB
-.SKI 5
-;PRINT MESSAGE TO SCREEN ONLY IF
-;OUTPUT ENABLED
+.pag 'messages'
+ms1	.byt $d,'i/o error ',$a3
+ms5	.byt $d,'searching',$a0
+ms6	.byt 'for',$a0
+ms7	.byt $d,'press play on tap',$c5
+ms8	.byt 'press record & play on tap',$c5
+ms10	.byt $d,'loadin',$c7
+ms11	.byt $d,'saving',$a0
+ms21	.byt $d,'verifyin',$c7
+ms17	.byt $d,'found',$a0
+ms18	.byt $d,'ok',$8d
+; ms34 .byt $d,'monitor',$8d
+; ms36 .byt $d,'brea',$cb
+.ski 5
+;print message to screen only if
+;output enabled
 ;
-SPMSG	BIT MSGFLG      ;PRINTING MESSAGES?
-	BPL MSG10       ;NO...
-MSG	LDA MS1,Y
-	PHP
-	AND #$7F
-	JSR BSOUT
-	INY
-	PLP
-	BPL MSG
-MSG10	CLC
-	RTS
-.END
+spmsg	bit msgflg      ;printing messages?
+	bpl msg10       ;no...
+msg	lda ms1,y
+	php
+	and #$7f
+	jsr bsout
+	iny
+	plp
+	bpl msg
+msg10	clc
+	rts
+.end

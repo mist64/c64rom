@@ -1,146 +1,146 @@
-.PAG 'CODE8'
-DATBK1	JSR CHRGET
-	BIT VALTYP
-	BPL NUMINS
-	BIT INPFLG
-	BVC SETQUT
-	INX
-	STX TXTPTR
-	LDA #0
-	STA CHARAC
-	BEQ RESETC
-SETQUT	STA CHARAC
-	CMP #34
-	BEQ NOWGET
-	LDA #':
-	STA CHARAC
-	LDA #44
-RESETC	CLC
-NOWGET	STA ENDCHR
-	LDA TXTPTR
-	LDY TXTPTR+1
-	ADC #0
-	BCC NOWGE1
-	INY
-NOWGE1	JSR STRLT2
-	JSR ST2TXT
-	JSR INPCOM
-	JMP STRDN2
-NUMINS	JSR FIN
-	LDA INTFLG
-	JSR QINTGR
-STRDN2	JSR CHRGOT
-	BEQ TRMOK
-	CMP #44
-	BEQ *+5
-	JMP TRMNOK
-TRMOK	LDA TXTPTR
-	LDY TXTPTR+1
-	STA INPPTR
-	STY INPPTR+1
-	LDA VARTXT
-	LDY VARTXT+1
-	STA TXTPTR
-	STY TXTPTR+1
-	JSR CHRGOT
-	BEQ VAREND
-	JSR CHKCOM
-	JMP INLOOP
-DATLOP	JSR DATAN
-	INY
-	TAX
-	BNE NOWLIN
-	LDX #ERROD
-	INY
-	LDA (TXTPTR)Y
-	BEQ ERRGO5
-	INY
-	LDA (TXTPTR)Y
-	STA DATLIN
-	INY
-	LDA (TXTPTR)Y
-	INY
-	STA DATLIN+1
-NOWLIN	JSR ADDON       ;TXTPTR+.Y
-	JSR CHRGOT      ;SPAN BLANKS
-	TAX             ;USED LATER
-	CPX #DATATK
-	BNE DATLOP
-	JMP DATBK1
-VAREND	LDA INPPTR
-	LDY INPPTR+1
-	LDX INPFLG
-	BPL VARY0
-	JMP RESFIN
-VARY0	LDY #0
-	LDA (INPPTR)Y
-	BEQ INPRTS
-	LDA CHANNL
-	BNE INPRTS
-	LDA #<EXIGNT
-	LDY #>EXIGNT
-	JMP STROUT
-INPRTS	RTS
-EXIGNT	.BYT '?EXTRA IGNORED'
-	.BYT $D
-	.BYT 0
-TRYAGN	.BYT '?REDO FROM START'
-	.BYT $D
-	.BYT 0
-NEXT	BNE GETFOR
-	LDY #0
-	BEQ STXFOR
-GETFOR	JSR PTRGET
-STXFOR	STA FORPNT
-	STY FORPNT+1
-	JSR FNDFOR
-	BEQ HAVFOR
-	LDX #ERRNF
-ERRGO5	JMP ERROR       ;CHANGE
-HAVFOR	TXS
-	TXA
-	CLC
-	ADC #4
-	PHA
-	ADC #5+ADDPRC
-	STA INDEX2
-	PLA
-	LDY #1
-	JSR MOVFM
-	TSX
-	LDA ADDPRC+264,X
-	STA FACSGN
-	LDA FORPNT
-	LDY FORPNT+1
-	JSR FADD
-	JSR MOVVF
-	LDY #1
-	JSR FCOMPN
-	TSX
-	SEC
-	SBC ADDPRC+264,X
-	BEQ LOOPDN
-	LDA 269+ADDPRC+ADDPRC,X
-	STA CURLIN
-	LDA 270+ADDPRC+ADDPRC,X
-	STA CURLIN+1
-	LDA 272+ADDPRC+ADDPRC,X
-	STA TXTPTR
-	LDA 271+ADDPRC+ADDPRC,X
-	STA TXTPTR+1
-NEWSGO	JMP NEWSTT
-LOOPDN	TXA
-	ADC #15+ADDPRC+ADDPRC
-	TAX
-	TXS 
-	JSR CHRGOT
-	CMP #44
-	BNE NEWSGO
-	JSR CHRGET
-	JSR GETFOR
-FRMNUM	JSR FRMEVL
-CHKNUM	CLC
-	.BYT $24
-CHKSTR	SEC
-CHKVAL	BIT VALTYP
-.END
+.pag 'code8'
+datbk1	jsr chrget
+	bit valtyp
+	bpl numins
+	bit inpflg
+	bvc setqut
+	inx
+	stx txtptr
+	lda #0
+	sta charac
+	beq resetc
+setqut	sta charac
+	cmp #34
+	beq nowget
+	lda #':
+	sta charac
+	lda #44
+resetc	clc
+nowget	sta endchr
+	lda txtptr
+	ldy txtptr+1
+	adc #0
+	bcc nowge1
+	iny
+nowge1	jsr strlt2
+	jsr st2txt
+	jsr inpcom
+	jmp strdn2
+numins	jsr fin
+	lda intflg
+	jsr qintgr
+strdn2	jsr chrgot
+	beq trmok
+	cmp #44
+	beq *+5
+	jmp trmnok
+trmok	lda txtptr
+	ldy txtptr+1
+	sta inpptr
+	sty inpptr+1
+	lda vartxt
+	ldy vartxt+1
+	sta txtptr
+	sty txtptr+1
+	jsr chrgot
+	beq varend
+	jsr chkcom
+	jmp inloop
+datlop	jsr datan
+	iny
+	tax
+	bne nowlin
+	ldx #errod
+	iny
+	lda (txtptr)y
+	beq errgo5
+	iny
+	lda (txtptr)y
+	sta datlin
+	iny
+	lda (txtptr)y
+	iny
+	sta datlin+1
+nowlin	jsr addon       ;txtptr+.y
+	jsr chrgot      ;span blanks
+	tax             ;used later
+	cpx #datatk
+	bne datlop
+	jmp datbk1
+varend	lda inpptr
+	ldy inpptr+1
+	ldx inpflg
+	bpl vary0
+	jmp resfin
+vary0	ldy #0
+	lda (inpptr)y
+	beq inprts
+	lda channl
+	bne inprts
+	lda #<exignt
+	ldy #>exignt
+	jmp strout
+inprts	rts
+exignt	.byt '?extra ignored'
+	.byt $d
+	.byt 0
+tryagn	.byt '?redo from start'
+	.byt $d
+	.byt 0
+next	bne getfor
+	ldy #0
+	beq stxfor
+getfor	jsr ptrget
+stxfor	sta forpnt
+	sty forpnt+1
+	jsr fndfor
+	beq havfor
+	ldx #errnf
+errgo5	jmp error       ;change
+havfor	txs
+	txa
+	clc
+	adc #4
+	pha
+	adc #5+addprc
+	sta index2
+	pla
+	ldy #1
+	jsr movfm
+	tsx
+	lda addprc+264,x
+	sta facsgn
+	lda forpnt
+	ldy forpnt+1
+	jsr fadd
+	jsr movvf
+	ldy #1
+	jsr fcompn
+	tsx
+	sec
+	sbc addprc+264,x
+	beq loopdn
+	lda 269+addprc+addprc,x
+	sta curlin
+	lda 270+addprc+addprc,x
+	sta curlin+1
+	lda 272+addprc+addprc,x
+	sta txtptr
+	lda 271+addprc+addprc,x
+	sta txtptr+1
+newsgo	jmp newstt
+loopdn	txa
+	adc #15+addprc+addprc
+	tax
+	txs 
+	jsr chrgot
+	cmp #44
+	bne newsgo
+	jsr chrget
+	jsr getfor
+frmnum	jsr frmevl
+chknum	clc
+	.byt $24
+chkstr	sec
+chkval	bit valtyp
+.end

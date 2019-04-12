@@ -1,173 +1,173 @@
-.PAG 'CODE1'
-OMERR	LDX #ERROM
-ERROR	JMP (IERROR)
-NERROX	TXA
-	ASL A
-	TAX
-	LDA ERRTAB-2,X
-	STA INDEX1
-	LDA ERRTAB-1,X
-	STA INDEX1+1
-	JSR CLSCHN
-	LDA #0
-	STA CHANNL
-ERRCRD	JSR CRDO
-	JSR OUTQST
-	LDY #0
-GETERR	LDA (INDEX1)Y
-	PHA
-	AND #127
-	JSR OUTDO
-	INY
-	PLA
-	BPL GETERR
-	JSR STKINI
-	LDA #<ERR
-	LDY #>ERR
-ERRFIN	JSR STROUT
-	LDY CURLIN+1
-	INY
-	BEQ READYX
-	JSR INPRT
-.SKI 5
-READYX	LDA #<REDDY
-	LDY #>REDDY
-	JSR STROUT
-	LDA #$80        ;DIRECT MESSAGES ON
-	JSR SETMSG      ;FROM KERNAL
-.SKI 5
-MAIN	JMP (IMAIN)
-NMAIN	JSR INLIN
-	STX TXTPTR
-	STY TXTPTR+1
-	JSR CHRGET
-	TAX
-	BEQ MAIN
-	LDX #255
-	STX CURLIN+1
-	BCC MAIN1
-	JSR CRUNCH
-	JMP GONE
-MAIN1	JSR LINGET
-	JSR CRUNCH
-	STY COUNT
-	JSR FNDLIN
-	BCC NODEL
-	LDY #1
-	LDA (LOWTR)Y
-	STA INDEX1+1
-	LDA VARTAB
-	STA INDEX1
-	LDA LOWTR+1
-	STA INDEX2+1
-	LDA LOWTR
-	DEY
-	SBC (LOWTR)Y 
-	CLC
-	ADC VARTAB
-	STA VARTAB
-	STA INDEX2
-	LDA VARTAB+1
-	ADC #255
-	STA VARTAB+1
-	SBC LOWTR+1
-	TAX
-	SEC
-	LDA LOWTR
-	SBC VARTAB
-	TAY
-	BCS QDECT1
-	INX
-	DEC INDEX2+1
-QDECT1	CLC
-	ADC INDEX1
-	BCC MLOOP
-	DEC INDEX1+1
-	CLC
-MLOOP	LDA (INDEX1)Y
-	STA (INDEX2)Y
-	INY 
-	BNE MLOOP
-	INC INDEX1+1
-	INC INDEX2+1
-	DEX
-	BNE MLOOP
-NODEL	JSR RUNC
-	JSR LNKPRG
-	LDA BUF
-	BEQ MAIN
-	CLC
-	LDA VARTAB
-	STA HIGHTR 
-	ADC COUNT
-	STA HIGHDS
-	LDY VARTAB+1
-	STY HIGHTR+1
-	BCC NODELC
-	INY
-NODELC	STY HIGHDS+1
-	JSR BLTU
-	LDA LINNUM
-	LDY LINNUM+1
-	STA BUF-2
-	STY BUF-1
-	LDA STREND
-	LDY STREND+1
-	STA VARTAB
-	STY VARTAB+1
-	LDY COUNT
-	DEY
-STOLOP	LDA BUF-4,Y
-	STA (LOWTR)Y
-	DEY
-	BPL STOLOP
-FINI	JSR RUNC
-	JSR LNKPRG
-	JMP MAIN
-LNKPRG	LDA TXTTAB
-	LDY TXTTAB+1
-	STA INDEX
-	STY INDEX+1
-	CLC 
-CHEAD	LDY #1
-	LDA (INDEX)Y
-	BEQ LNKRTS
-	LDY #4
-CZLOOP	INY
-	LDA (INDEX)Y
-	BNE CZLOOP
-	INY
-	TYA
-	ADC INDEX
-	TAX
-	LDY #0
-	STA (INDEX)Y
-	LDA INDEX+1
-	ADC #0
-	INY
-	STA (INDEX)Y
-	STX INDEX
-	STA INDEX+1
-	BCC CHEAD
-LNKRTS	RTS
-.SKI 5
-;FUNCTION TO GET A LINE ONE CHARACTER AT
-;A TIME FROM THE INPUT CHANNEL AND
-;BUILD IT IN THE INPUT BUFFER.
+.pag 'code1'
+omerr	ldx #errom
+error	jmp (ierror)
+nerrox	txa
+	asl a
+	tax
+	lda errtab-2,x
+	sta index1
+	lda errtab-1,x
+	sta index1+1
+	jsr clschn
+	lda #0
+	sta channl
+errcrd	jsr crdo
+	jsr outqst
+	ldy #0
+geterr	lda (index1)y
+	pha
+	and #127
+	jsr outdo
+	iny
+	pla
+	bpl geterr
+	jsr stkini
+	lda #<err
+	ldy #>err
+errfin	jsr strout
+	ldy curlin+1
+	iny
+	beq readyx
+	jsr inprt
+.ski 5
+readyx	lda #<reddy
+	ldy #>reddy
+	jsr strout
+	lda #$80        ;direct messages on
+	jsr setmsg      ;from kernal
+.ski 5
+main	jmp (imain)
+nmain	jsr inlin
+	stx txtptr
+	sty txtptr+1
+	jsr chrget
+	tax
+	beq main
+	ldx #255
+	stx curlin+1
+	bcc main1
+	jsr crunch
+	jmp gone
+main1	jsr linget
+	jsr crunch
+	sty count
+	jsr fndlin
+	bcc nodel
+	ldy #1
+	lda (lowtr)y
+	sta index1+1
+	lda vartab
+	sta index1
+	lda lowtr+1
+	sta index2+1
+	lda lowtr
+	dey
+	sbc (lowtr)y 
+	clc
+	adc vartab
+	sta vartab
+	sta index2
+	lda vartab+1
+	adc #255
+	sta vartab+1
+	sbc lowtr+1
+	tax
+	sec
+	lda lowtr
+	sbc vartab
+	tay
+	bcs qdect1
+	inx
+	dec index2+1
+qdect1	clc
+	adc index1
+	bcc mloop
+	dec index1+1
+	clc
+mloop	lda (index1)y
+	sta (index2)y
+	iny 
+	bne mloop
+	inc index1+1
+	inc index2+1
+	dex
+	bne mloop
+nodel	jsr runc
+	jsr lnkprg
+	lda buf
+	beq main
+	clc
+	lda vartab
+	sta hightr 
+	adc count
+	sta highds
+	ldy vartab+1
+	sty hightr+1
+	bcc nodelc
+	iny
+nodelc	sty highds+1
+	jsr bltu
+	lda linnum
+	ldy linnum+1
+	sta buf-2
+	sty buf-1
+	lda strend
+	ldy strend+1
+	sta vartab
+	sty vartab+1
+	ldy count
+	dey
+stolop	lda buf-4,y
+	sta (lowtr)y
+	dey
+	bpl stolop
+fini	jsr runc
+	jsr lnkprg
+	jmp main
+lnkprg	lda txttab
+	ldy txttab+1
+	sta index
+	sty index+1
+	clc 
+chead	ldy #1
+	lda (index)y
+	beq lnkrts
+	ldy #4
+czloop	iny
+	lda (index)y
+	bne czloop
+	iny
+	tya
+	adc index
+	tax
+	ldy #0
+	sta (index)y
+	lda index+1
+	adc #0
+	iny
+	sta (index)y
+	stx index
+	sta index+1
+	bcc chead
+lnkrts	rts
+.ski 5
+;function to get a line one character at
+;a time from the input channel and
+;build it in the input buffer.
 ;
-INLIN	LDX #0
+inlin	ldx #0
 ;
-INLINC	JSR INCHR
-	CMP #13         ;A CARRIAGE RETURN?
-	BEQ FININ1      ;YES...DONE BUILD
+inlinc	jsr inchr
+	cmp #13         ;a carriage return?
+	beq finin1      ;yes...done build
 ;
-	STA BUF,X       ;PUT IT AWAY
-	INX
-	CPX #BUFLEN     ;MAX CHARACTER LINE?
-	BCC INLINC      ;NO...O.K.
+	sta buf,x       ;put it away
+	inx
+	cpx #buflen     ;max character line?
+	bcc inlinc      ;no...o.k.
 ;
-	LDX #ERRLS      ;STRING TOO LONG ERROR
-	JMP ERROR
+	ldx #errls      ;string too long error
+	jmp error
 ;
-FININ1	JMP FININL
-.END
+finin1	jmp fininl
+.end

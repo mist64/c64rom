@@ -1,243 +1,243 @@
-.PAG 'CODE26'
-;MOST REFERENCES TO KERNAL ARE DEFINED HERE
+.pag 'code26'
+;most references to kernal are defined here
 ;
-EREXIT	CMP #$F0        ;CHECK FOR SPECIAL CASE
-	BNE EREXIX
-; TOP OF MEMORY HAS CHANGED
-	STY MEMSIZ+1
-	STX MEMSIZ
-	JMP CLEART      ;ACT AS IF HE TYPED CLEAR
-EREXIX	TAX             ;SET TERMINATION FLAGS
-	BNE EREXIY
-	LDX #ERBRK      ;BREAK ERROR
-EREXIY	JMP ERROR       ;NORMAL ERROR
-.SKI 5
-CLSCHN	=$FFCC
-.SKI 5
-OUTCH	JSR $FFD2
-	BCS EREXIT
-	RTS
-.SKI 5
-INCHR	JSR $FFCF
-	BCS EREXIT
-	RTS
-.SKI 5
-CCALL	=$FFE7
-.SKI 5
-SETTIM	=$FFDB
-RDTIM	=$FFDE
-.SKI 5
-COOUT	JSR PPACH       ; GO OUT TO SAVE .A FOR PRINT# PATCH
-	BCS EREXIT
-	RTS
-.SKI 5
-COIN	JSR $FFC6
-	BCS EREXIT
-	RTS
-.SKI 5
-READST	=$FFB7
-.SKI 5
-CGETL	JSR $FFE4
-	BCS EREXIT
-	RTS
-.SKI 5
-RDBAS	=$FFF3
-.SKI 5
-SETMSG	=$FF90
-.SKI 5
-PLOT	=$FFF0
-.SKI 5
-CSYS	JSR FRMNUM      ;EVAL FORMULA
-	JSR GETADR      ;CONVERT TO INT. ADDR
-	LDA #>CSYSRZ    ;PUSH RETURN ADDRESS
-	PHA
-	LDA #<CSYSRZ
-	PHA
-	LDA SPREG       ;STATUS REG
-	PHA
-	LDA SAREG       ;LOAD 6502 REGS
-	LDX SXREG
-	LDY SYREG
-	PLP             ;LOAD 6502 STATUS REG
-	JMP (LINNUM)    ;GO DO IT
-CSYSRZ	=*-1            ;RETURN TO HERE
-	PHP             ;SAVE STATUS REG
-	STA SAREG       ;SAVE 6502 REGS
-	STX SXREG
-	STY SYREG
-	PLA             ;GET STATUS REG
-	STA SPREG
-	RTS             ;RETURN TO SYSTEM
-.SKI 5
-CSAVE	JSR PLSV        ;PARSE PARMS
-	LDX VARTAB      ;END SAVE ADDR
-	LDY VARTAB+1
-	LDA #<TXTTAB    ;INDIRECT WITH START ADDRESS
-	JSR $FFD8       ;SAVE IT
-	BCS EREXIT
-	RTS
-.SKI 5
-CVERF	LDA #1          ;VERIFY FLAG
-	.BYT $2C        ;SKIP TWO BYTES
-.SKI 5
-CLOAD	LDA #0          ;LOAD FLAG
-	STA VERCK
-	JSR PLSV        ;PARSE PARAMETERS
+erexit	cmp #$f0        ;check for special case
+	bne erexix
+; top of memory has changed
+	sty memsiz+1
+	stx memsiz
+	jmp cleart      ;act as if he typed clear
+erexix	tax             ;set termination flags
+	bne erexiy
+	ldx #erbrk      ;break error
+erexiy	jmp error       ;normal error
+.ski 5
+clschn	=$ffcc
+.ski 5
+outch	jsr $ffd2
+	bcs erexit
+	rts
+.ski 5
+inchr	jsr $ffcf
+	bcs erexit
+	rts
+.ski 5
+ccall	=$ffe7
+.ski 5
+settim	=$ffdb
+rdtim	=$ffde
+.ski 5
+coout	jsr ppach       ; go out to save .a for print# patch
+	bcs erexit
+	rts
+.ski 5
+coin	jsr $ffc6
+	bcs erexit
+	rts
+.ski 5
+readst	=$ffb7
+.ski 5
+cgetl	jsr $ffe4
+	bcs erexit
+	rts
+.ski 5
+rdbas	=$fff3
+.ski 5
+setmsg	=$ff90
+.ski 5
+plot	=$fff0
+.ski 5
+csys	jsr frmnum      ;eval formula
+	jsr getadr      ;convert to int. addr
+	lda #>csysrz    ;push return address
+	pha
+	lda #<csysrz
+	pha
+	lda spreg       ;status reg
+	pha
+	lda sareg       ;load 6502 regs
+	ldx sxreg
+	ldy syreg
+	plp             ;load 6502 status reg
+	jmp (linnum)    ;go do it
+csysrz	=*-1            ;return to here
+	php             ;save status reg
+	sta sareg       ;save 6502 regs
+	stx sxreg
+	sty syreg
+	pla             ;get status reg
+	sta spreg
+	rts             ;return to system
+.ski 5
+csave	jsr plsv        ;parse parms
+	ldx vartab      ;end save addr
+	ldy vartab+1
+	lda #<txttab    ;indirect with start address
+	jsr $ffd8       ;save it
+	bcs erexit
+	rts
+.ski 5
+cverf	lda #1          ;verify flag
+	.byt $2c        ;skip two bytes
+.ski 5
+cload	lda #0          ;load flag
+	sta verck
+	jsr plsv        ;parse parameters
 ;
-CLD10	; JSR $FFE1 ;CHECK RUN/STOP
-; CMP #$FF ;DONE YET?
-; BNE CLD10 ;STILL BOUNCING
-	LDA VERCK
-	LDX TXTTAB      ;.X AND .Y HAVE ALT...
-	LDY TXTTAB+1    ;...LOAD ADDRESS
-	JSR $FFD5       ;LOAD IT
-	BCS JERXIT      ;PROBLEMS
+cld10	; jsr $ffe1 ;check run/stop
+; cmp #$ff ;done yet?
+; bne cld10 ;still bouncing
+	lda verck
+	ldx txttab      ;.x and .y have alt...
+	ldy txttab+1    ;...load address
+	jsr $ffd5       ;load it
+	bcs jerxit      ;problems
 ;
-	LDA VERCK
-	BEQ CLD50       ;WAS LOAD
+	lda verck
+	beq cld50       ;was load
 ;
-;FINISH VERIFY
+;finish verify
 ;
-	LDX #ERVFY      ;ASSUME ERROR
-	JSR $FFB7       ;READ STATUS
-	AND #$10        ;CHECK ERROR
-	BNE CLD55       ;REPLACES BEQ *+5/JMP ERROR
+	ldx #ervfy      ;assume error
+	jsr $ffb7       ;read status
+	and #$10        ;check error
+	bne cld55       ;replaces beq *+5/jmp error
 ;
-;PRINT VERIFY 'OK' IF DIRECT
+;print verify 'ok' if direct
 ;
-	LDA TXTPTR
-	CMP #BUFPAG
-	BEQ CLD20
-	LDA #<OKMSG
-	LDY #>OKMSG
-	JMP STROUT
+	lda txtptr
+	cmp #bufpag
+	beq cld20
+	lda #<okmsg
+	ldy #>okmsg
+	jmp strout
 ;
-CLD20	RTS
-.SKI 5
+cld20	rts
+.ski 5
 ;
-;FINISH LOAD
+;finish load
 ;
-CLD50	JSR $FFB7       ;READ STATUS
-	AND #$FF-$40    ;CLEAR E.O.I.
-	BEQ CLD60       ;WAS O.K.
-	LDX #ERLOAD
-CLD55	JMP ERROR
+cld50	jsr $ffb7       ;read status
+	and #$ff-$40    ;clear e.o.i.
+	beq cld60       ;was o.k.
+	ldx #erload
+cld55	jmp error
 ;
-CLD60	LDA TXTPTR+1
-	CMP #BUFPAG     ;DIRECT?
-	BNE CLD70       ;NO...
+cld60	lda txtptr+1
+	cmp #bufpag     ;direct?
+	bne cld70       ;no...
 ;
-	STX VARTAB
-	STY VARTAB+1    ;END LOAD ADDRESS
-	LDA #<REDDY
-	LDY #>REDDY
-	JSR STROUT
-	JMP FINI
+	stx vartab
+	sty vartab+1    ;end load address
+	lda #<reddy
+	ldy #>reddy
+	jsr strout
+	jmp fini
 ;
-;PROGRAM LOAD
+;program load
 ;
-CLD70	JSR STXTPT
-	JSR LNKPRG
-	JMP FLOAD
-.SKI 5
-COPEN	JSR PAOC        ;PARSE STATEMENT
-	JSR $FFC0       ;OPEN IT
-	BCS JERXIT      ;BAD STUFF OR MEMSIZ CHANGE
-	RTS             ;A.O.K.
-.SKI 5
-CCLOS	JSR PAOC        ;PARSE STATEMENT
-	LDA ANDMSK      ;GET LA
-	JSR $FFC3       ;CLOSE IT
-	BCC CLD20       ;IT'S OKAY...NO MEMSIZE CHANGE
+cld70	jsr stxtpt
+	jsr lnkprg
+	jmp fload
+.ski 5
+copen	jsr paoc        ;parse statement
+	jsr $ffc0       ;open it
+	bcs jerxit      ;bad stuff or memsiz change
+	rts             ;a.o.k.
+.ski 5
+cclos	jsr paoc        ;parse statement
+	lda andmsk      ;get la
+	jsr $ffc3       ;close it
+	bcc cld20       ;it's okay...no memsize change
 ;
-JERXIT	JMP EREXIT
-.SKI 5
+jerxit	jmp erexit
+.ski 5
 ;
-;PARSE LOAD AND SAVE COMMANDS
+;parse load and save commands
 ;
-PLSV
-;DEFAULT FILE NAME
+plsv
+;default file name
 ;
-	LDA #0          ;LENGTH=0
-	JSR $FFBD
+	lda #0          ;length=0
+	jsr $ffbd
 ;
-;DEFAULT DEVICE #
+;default device #
 ;
-	LDX #1          ;DEVICE #1
-	LDY #0          ;COMMAND 0
-	JSR $FFBA
+	ldx #1          ;device #1
+	ldy #0          ;command 0
+	jsr $ffba
 ;
-	JSR PAOC20      ;BY-PASS JUNK
-	JSR PAOC15      ;GET/SET FILE NAME
-	JSR PAOC20      ;BY-PASS JUNK
-	JSR PLSV7       ;GET ',FA'
-	LDY #0          ;COMMAND 0
-	STX ANDMSK
-	JSR $FFBA
-	JSR PAOC20      ;BY-PASS JUNK
-	JSR PLSV7       ;GET ',SA'
-	TXA             ;NEW COMMAND
-	TAY
-	LDX ANDMSK      ;DEVICE #
-	JMP $FFBA
-.SKI 5
-;LOOK FOR COMMA FOLLOWED BY BYTE
-PLSV7	JSR PAOC30
-	JMP GETBYT
-.SKI 5
-;SKIP RETURN IF NEXT CHAR IS END
+	jsr paoc20      ;by-pass junk
+	jsr paoc15      ;get/set file name
+	jsr paoc20      ;by-pass junk
+	jsr plsv7       ;get ',fa'
+	ldy #0          ;command 0
+	stx andmsk
+	jsr $ffba
+	jsr paoc20      ;by-pass junk
+	jsr plsv7       ;get ',sa'
+	txa             ;new command
+	tay
+	ldx andmsk      ;device #
+	jmp $ffba
+.ski 5
+;look for comma followed by byte
+plsv7	jsr paoc30
+	jmp getbyt
+.ski 5
+;skip return if next char is end
 ;
-PAOC20	JSR CHRGOT
-	BNE PAOCX
-	PLA
-	PLA
-PAOCX	RTS
-.SKI 5
-;CHECK FOR COMMA AND GOOD STUFF
+paoc20	jsr chrgot
+	bne paocx
+	pla
+	pla
+paocx	rts
+.ski 5
+;check for comma and good stuff
 ;
-PAOC30	JSR CHKCOM      ;CHECK COMMA
-PAOC32	JSR CHRGOT      ;GET CURRENT
-	BNE PAOCX       ;IS O.K.
-PAOC40	JMP SNERR       ;BAD...END OF LINE
-.SKI 5
-;PARSE OPEN/CLOSE
+paoc30	jsr chkcom      ;check comma
+paoc32	jsr chrgot      ;get current
+	bne paocx       ;is o.k.
+paoc40	jmp snerr       ;bad...end of line
+.ski 5
+;parse open/close
 ;
-PAOC	LDA #0
-	JSR $FFBD       ;DEFAULT FILE NAME
+paoc	lda #0
+	jsr $ffbd       ;default file name
 ;
-	JSR PAOC32      ;MUST GOT SOMETHING
-	JSR GETBYT      ;GET LA
-	STX ANDMSK
-	TXA
-	LDX #1          ;DEFAULT DEVICE
-	LDY #0          ;DEFAULT COMMAND
-	JSR $FFBA       ;STORE IT
-	JSR PAOC20      ;SKIP JUNK
-	JSR PLSV7
-	STX EORMSK
-	LDY #0          ;DEFAULT COMMAND
-	LDA ANDMSK      ;GET LA
-	CPX #3
-	BCC PAOC5
-	DEY             ;DEFAULT IEEE TO $FF
-PAOC5	JSR $FFBA       ;STORE THEM
-	JSR PAOC20      ;SKIP JUNK
-	JSR PLSV7       ;GET SA
-	TXA
-	TAY
-	LDX EORMSK
-	LDA ANDMSK
-	JSR $FFBA       ;SET UP REAL EVEYTHING
-PAOC7	JSR PAOC20
-	JSR PAOC30
-PAOC15	JSR FRMEVL
-	JSR FRESTR      ;LENGTH IN .A
-	LDX INDEX1
-	LDY INDEX1+1
-	JMP $FFBD
-.END
-; RSR 8/10/80 - CHANGE SYS COMMAND
-; RSR 8/26/80 - ADD OPEN&CLOSE MEMSIZ DETECT
-; RSR 10/7/80 - CHANGE LOAD (REMOVE RUN WAIT)
-; RSR 4/10/82 - INLINE FIX PROGRAM LOAD
-; RSR 7/02/82 - FIX PRINT# PROBLEM
+	jsr paoc32      ;must got something
+	jsr getbyt      ;get la
+	stx andmsk
+	txa
+	ldx #1          ;default device
+	ldy #0          ;default command
+	jsr $ffba       ;store it
+	jsr paoc20      ;skip junk
+	jsr plsv7
+	stx eormsk
+	ldy #0          ;default command
+	lda andmsk      ;get la
+	cpx #3
+	bcc paoc5
+	dey             ;default ieee to $ff
+paoc5	jsr $ffba       ;store them
+	jsr paoc20      ;skip junk
+	jsr plsv7       ;get sa
+	txa
+	tay
+	ldx eormsk
+	lda andmsk
+	jsr $ffba       ;set up real eveything
+paoc7	jsr paoc20
+	jsr paoc30
+paoc15	jsr frmevl
+	jsr frestr      ;length in .a
+	ldx index1
+	ldy index1+1
+	jmp $ffbd
+.end
+; rsr 8/10/80 - change sys command
+; rsr 8/26/80 - add open&close memsiz detect
+; rsr 10/7/80 - change load (remove run wait)
+; rsr 4/10/82 - inline fix program load
+; rsr 7/02/82 - fix print# problem

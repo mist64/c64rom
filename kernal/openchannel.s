@@ -1,135 +1,135 @@
-.PAG 'OPEN CHANNEL'
+.pag 'open channel'
 ;***************************************
-;* CHKIN -- OPEN CHANNEL FOR INPUT     *
+;* chkin -- open channel for input     *
 ;*                                     *
-;* THE NUMBER OF THE LOGICAL FILE TO BE*
-;* OPENED FOR INPUT IS PASSED IN .X.   *
-;* CHKIN SEARCHES THE LOGICAL FILE     *
-;* TO LOOK UP DEVICE AND COMMAND INFO. *
-;* ERRORS ARE REPORTED IF THE DEVICE   *
-;* WAS NOT OPENED FOR INPUT ,(E.G.     *
-;* CASSETTE WRITE FILE), OR THE LOGICAL*
-;* FILE HAS NO REFERENCE IN THE TABLES.*
-;* DEVICE 0, (KEYBOARD), AND DEVICE 3  *
-;* (SCREEN), REQUIRE NO TABLE ENTRIES  *
-;* AND ARE HANDLED SEPARATE.           *
+;* the number of the logical file to be*
+;* opened for input is passed in .x.   *
+;* chkin searches the logical file     *
+;* to look up device and command info. *
+;* errors are reported if the device   *
+;* was not opened for input ,(e.g.     *
+;* cassette write file), or the logical*
+;* file has no reference in the tables.*
+;* device 0, (keyboard), and device 3  *
+;* (screen), require no table entries  *
+;* and are handled separate.           *
 ;***************************************
 ;
-NCHKIN	JSR LOOKUP      ;SEE IF FILE KNOWN
-	BEQ JX310       ;YUP...
+nchkin	jsr lookup      ;see if file known
+	beq jx310       ;yup...
 ;
-	JMP ERROR3      ;NO...FILE NOT OPEN
+	jmp error3      ;no...file not open
 ;
-JX310	JSR JZ100       ;EXTRACT FILE INFO
+jx310	jsr jz100       ;extract file info
 ;
-	LDA FA
-	BEQ JX320       ;IS KEYBOARD...DONE.
+	lda fa
+	beq jx320       ;is keyboard...done.
 ;
-;COULD BE SCREEN, KEYBOARD, OR SERIAL
+;could be screen, keyboard, or serial
 ;
-	CMP #3
-	BEQ JX320       ;IS SCREEN...DONE.
-	BCS JX330       ;IS SERIAL...ADDRESS IT
-	CMP #2          ;RS232?
-	BNE JX315       ;NO...
+	cmp #3
+	beq jx320       ;is screen...done.
+	bcs jx330       ;is serial...address it
+	cmp #2          ;rs232?
+	bne jx315       ;no...
 ;
-	JMP CKI232
+	jmp cki232
 ;
-;SOME EXTRA CHECKS FOR TAPE
+;some extra checks for tape
 ;
-JX315	LDX SA
-	CPX #$60        ;IS COMMAND A READ?
-	BEQ JX320       ;YES...O.K....DONE
+jx315	ldx sa
+	cpx #$60        ;is command a read?
+	beq jx320       ;yes...o.k....done
 ;
-	JMP ERROR6      ;NOT INPUT FILE
+	jmp error6      ;not input file
 ;
-JX320	STA DFLTN       ;ALL INPUT COME FROM HERE
+jx320	sta dfltn       ;all input come from here
 ;
-	CLC             ;GOOD EXIT
-	RTS
+	clc             ;good exit
+	rts
 ;
-;AN SERIAL DEVICE HAS TO BE A TALKER
+;an serial device has to be a talker
 ;
-JX330	TAX             ;DEVICE # FOR DFLTO
-	JSR TALK        ;TELL HIM TO TALK
+jx330	tax             ;device # for dflto
+	jsr talk        ;tell him to talk
 ;
-	LDA SA          ;A SECOND?
-	BPL JX340       ;YES...SEND IT
-	JSR TKATN       ;NO...LET GO
-	JMP JX350
+	lda sa          ;a second?
+	bpl jx340       ;yes...send it
+	jsr tkatn       ;no...let go
+	jmp jx350
 ;
-JX340	JSR TKSA        ;SEND SECOND
+jx340	jsr tksa        ;send second
 ;
-JX350	TXA
-	BIT STATUS      ;DID HE LISTEN?
-	BPL JX320       ;YES
+jx350	txa
+	bit status      ;did he listen?
+	bpl jx320       ;yes
 ;
-	JMP ERROR5      ;DEVICE NOT PRESENT
-.PAG 'OPEN CHANNEL OUT'
+	jmp error5      ;device not present
+.pag 'open channel out'
 ;***************************************
-;* CHKOUT -- OPEN CHANNEL FOR OUTPUT     *
+;* chkout -- open channel for output     *
 ;*                                     *
-;* THE NUMBER OF THE LOGICAL FILE TO BE*
-;* OPENED FOR OUTPUT IS PASSED IN .X.  *
-;* CHKOUT SEARCHES THE LOGICAL FILE    *
-;* TO LOOK UP DEVICE AND COMMAND INFO. *
-;* ERRORS ARE REPORTED IF THE DEVICE   *
-;* WAS NOT OPENED FOR INPUT ,(E.G.     *
-;* KEYBOARD), OR THE LOGICAL FILE HAS   *
-;* REFERENCE IN THE TABLES.             *
-;* DEVICE 0, (KEYBOARD), AND DEVICE 3  *
-;* (SCREEN), REQUIRE NO TABLE ENTRIES  *
-;* AND ARE HANDLED SEPARATE.           *
+;* the number of the logical file to be*
+;* opened for output is passed in .x.  *
+;* chkout searches the logical file    *
+;* to look up device and command info. *
+;* errors are reported if the device   *
+;* was not opened for input ,(e.g.     *
+;* keyboard), or the logical file has   *
+;* reference in the tables.             *
+;* device 0, (keyboard), and device 3  *
+;* (screen), require no table entries  *
+;* and are handled separate.           *
 ;***************************************
 ;
-NCKOUT	JSR LOOKUP      ;IS FILE IN TABLE?
-	BEQ CK5         ;YES...
+nckout	jsr lookup      ;is file in table?
+	beq ck5         ;yes...
 ;
-	JMP ERROR3      ;NO...FILE NOT OPEN
+	jmp error3      ;no...file not open
 ;
-CK5	JSR JZ100       ;EXTRACT TABLE INFO
+ck5	jsr jz100       ;extract table info
 ;
-	LDA FA          ;IS IT KEYBOARD?
-	BNE CK10        ;NO...SOMETHING ELSE.
+	lda fa          ;is it keyboard?
+	bne ck10        ;no...something else.
 ;
-CK20	JMP ERROR7      ;YES...NOT OUTPUT FILE
+ck20	jmp error7      ;yes...not output file
 ;
-;COULD BE SCREEN,SERIAL,OR TAPES
+;could be screen,serial,or tapes
 ;
-CK10	CMP #3
-	BEQ CK30        ;IS SCREEN...DONE
-	BCS CK40        ;IS SERIAL...ADDRESS IT
-	CMP #2          ;RS232?
-	BNE CK15
+ck10	cmp #3
+	beq ck30        ;is screen...done
+	bcs ck40        ;is serial...address it
+	cmp #2          ;rs232?
+	bne ck15
 ;
-	JMP CKO232
+	jmp cko232
 ;
 ;
-;SPECIAL TAPE CHANNEL HANDLING
+;special tape channel handling
 ;
-CK15	LDX SA
-	CPX #$60        ;IS COMMAND READ?
-	BEQ CK20        ;YES...ERROR
+ck15	ldx sa
+	cpx #$60        ;is command read?
+	beq ck20        ;yes...error
 ;
-CK30	STA DFLTO       ;ALL OUTPUT GOES HERE
+ck30	sta dflto       ;all output goes here
 ;
-	CLC             ;GOOD EXIT
-	RTS
+	clc             ;good exit
+	rts
 ;
-CK40	TAX             ;SAVE DEVICE FOR DFLTO
-	JSR LISTN       ;TELL HIM TO LISTEN
+ck40	tax             ;save device for dflto
+	jsr listn       ;tell him to listen
 ;
-	LDA SA          ;IS THERE A SECOND?
-	BPL CK50        ;YES...
+	lda sa          ;is there a second?
+	bpl ck50        ;yes...
 ;
-	JSR SCATN       ;NO...RELEASE LINES
-	BNE CK60        ;BRANCH ALWAYS
+	jsr scatn       ;no...release lines
+	bne ck60        ;branch always
 ;
-CK50	JSR SECND       ;SEND SECOND...
+ck50	jsr secnd       ;send second...
 ;
-CK60	TXA
-	BIT STATUS      ;DID HE LISTEN?
-	BPL CK30        ;YES...FINISH UP
+ck60	txa
+	bit status      ;did he listen?
+	bpl ck30        ;yes...finish up
 ;
-	JMP ERROR5      ;NO...DEVICE NOT PRESENT
-.END
+	jmp error5      ;no...device not present
+.end

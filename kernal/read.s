@@ -1,412 +1,412 @@
-.PAGE 'CASSETTE READ'
-; VARIABLES USED IN CASSETTE READ ROUTINES
+.page 'cassette read'
+; variables used in cassette read routines
 ;
-;  REZ - COUNTS ZEROS (IF Z THEN CORRECT # OF DIPOLES)
-;  RER - FLAGS ERRORS (IF Z THEN NO ERROR)
-;  DIFF - USED TO PRESERVE SYNO (OUTSIDE OF BIT ROUTINES)
-;  SYNO - FLAGS IF WE HAVE BLOCK SYNC (16 ZERO DIPOLES)
-;  SNSW1 - FLAGS IF WE HAVE BYTE SYNC (A LONGLONG)
-;  DATA - HOLDS MOST RECENT DIPOLE BIT VALUE
-;  MYCH - HOLDS INPUT BYTE BEING BUILT
-;  FIRT - USED TO INDICATE WHICH HALF OF DIPOLE WE'RE IN
-;  SVXT - TEMP USED TO ADJUST SOFTWARE SERVO
-;  TEMP - USED TO HOLD DIPOLE TIME DURING TYPE CALCULATIONS
-;  PRTY - HOLDS CURRENT CALCULATED PARITY BIT
-;  PRP - HAS COMBINED ERROR VALUES FROM BIT ROUTINES
-;  FSBLK - INDICATE WHICH BLOCK WE'RE LOOKING AT (0 TO EXIT)
-;  SHCNL - HOLDS FSBLK, USED TO DIRECT ROUTINES, BECAUSE OF EXIT CASE
-;  RDFLG - HOLDS FUNCTION MODE
-;     MI - WAITING FOR BLOCK SYNC
-;     VS - IN DATA BLOCK READING DATA
-;     NE - WAITING FOR BYTE SYNC
-;  SAL - INDIRECT TO DATA STORAGE AREA
-;  SHCNH - LEFT OVER FROM DEBUGGING
-;  BAD - STORAGE SPACE FOR BAD READ LOCATIONS (BOTTOM OF STACK)
-;  PTR1 - COUNT OF READ LOCATIONS IN ERROR (POINTER INTO BAD, MAX 61)
-;  PTR2 - COUNT OF RE-READ LOCATIONS (POINTER INTO BAD, DURING RE-READ)
-;  VERCHK - VERIFY OR LOAD FLAG (Z - LOADING)
-;  CMP0 - SOFTWARE SERVO (+/- ADJUST TO TIME CALCS)
-;  DPSW - IF NZ THEN EXPECTING LL/L COMBINATION THAT ENDS A BYTE
-;  PCNTR - COUNTS DOWN FROM 8-0 FOR DATA THEN TO FF FOR PARITY
-;  STUPID - HOLD INDICATOR (NZ - NO T1IRQ YET) FOR T1IRQ
-;  KIKA26 - HOLDS OLD D1ICR AFTER CLEAR ON READ
+;  rez - counts zeros (if z then correct # of dipoles)
+;  rer - flags errors (if z then no error)
+;  diff - used to preserve syno (outside of bit routines)
+;  syno - flags if we have block sync (16 zero dipoles)
+;  snsw1 - flags if we have byte sync (a longlong)
+;  data - holds most recent dipole bit value
+;  mych - holds input byte being built
+;  firt - used to indicate which half of dipole we're in
+;  svxt - temp used to adjust software servo
+;  temp - used to hold dipole time during type calculations
+;  prty - holds current calculated parity bit
+;  prp - has combined error values from bit routines
+;  fsblk - indicate which block we're looking at (0 to exit)
+;  shcnl - holds fsblk, used to direct routines, because of exit case
+;  rdflg - holds function mode
+;     mi - waiting for block sync
+;     vs - in data block reading data
+;     ne - waiting for byte sync
+;  sal - indirect to data storage area
+;  shcnh - left over from debugging
+;  bad - storage space for bad read locations (bottom of stack)
+;  ptr1 - count of read locations in error (pointer into bad, max 61)
+;  ptr2 - count of re-read locations (pointer into bad, during re-read)
+;  verchk - verify or load flag (z - loading)
+;  cmp0 - software servo (+/- adjust to time calcs)
+;  dpsw - if nz then expecting ll/l combination that ends a byte
+;  pcntr - counts down from 8-0 for data then to ff for parity
+;  stupid - hold indicator (nz - no t1irq yet) for t1irq
+;  kika26 - holds old d1icr after clear on read
 ;
-.PAG 'CASSETTE READ'
-READ	LDX D1T2H       ;GET TIME SINCE LAST INTERRUPT
-	LDY #$FF        ;COMPUTE COUNTER DIFFERENCE
-	TYA
-	SBC D1T2L
-	CPX D1T2H       ;CHECK FOR TIMER HIGH ROLLOVER...
-	BNE READ        ;...YES THEN RECOMPUTE
-	STX TEMP
-	TAX
-	STY D1T2L       ;RELOAD TIMER2 (COUNT DOWN FROM $FFFF)
-	STY D1T2H
-	LDA #$19        ;ENABLE TIMER
-	STA D1CRB
-	LDA D1ICR       ;CLEAR READ INTERRUPT
-	STA KIKA26      ;SAVE FOR LATTER
-	TYA
-	SBC TEMP        ;CALCULATE HIGH
-	STX TEMP
-	LSR A           ;MOVE TWO BITS FROM HIGH TO TEMP
-	ROR TEMP
-	LSR A
-	ROR TEMP
-	LDA CMP0        ;CALC MIN PULSE VALUE
-	CLC
-	ADC #60
-	CMP TEMP        ;IF PULSE LESS THAN MIN...
-	BCS RDBK        ;...THEN IGNORE AS NOISE
-	LDX DPSW        ;CHECK IF LAST BIT...
-	BEQ RJDJ        ;...NO THEN CONTINUE
-	JMP RADJ        ;...YES THEN GO FINISH BYTE
-.SKI 2
-RJDJ	LDX PCNTR       ;IF 9 BITS READ...
-	BMI JRAD2       ;... THEN GOTO ENDING
-	LDX #0          ;SET BIT VALUE TO ZERO
-	ADC #48         ;ADD UP TO HALF WAY BETWEEN...
-	ADC CMP0        ;...SHORT PULSE AND SYNC PULSE
-	CMP TEMP        ;CHECK FOR SHORT...
-	BCS RADX2       ;...YES IT'S A SHORT
-	INX             ;SET BIT VALUE TO ONE
-	ADC #38         ;MOVE TO MIDDLE OF HIGH
-	ADC CMP0
-	CMP TEMP        ;CHECK FOR ONE...
-	BCS RADL        ;...YES IT'S A ONE
-	ADC #44         ;MOVE TO LONGLONG
-	ADC CMP0
-	CMP TEMP        ;CHECK FOR LONGLONG...
-	BCC SRER        ;...GREATER THAN IS ERROR
-JRAD2	JMP RAD2        ;...IT'S A LONGLONG
-.SKI 2
-SRER	LDA SNSW1       ;IF NOT SYNCRONIZED...
-	BEQ RDBK        ;...THEN NO ERROR
-	STA RER         ;...ELSE FLAG RER
-	BNE RDBK        ;JMP
-.SKI 2
-RADX2	INC REZ         ;COUNT REZ UP ON ZEROS
-	BCS RAD5        ;JMP
-RADL	DEC REZ         ;COUNT REZ DOWN ON ONES
-RAD5	SEC             ;CALC ACTUAL VALUE FOR COMPARE STORE
-	SBC #19
-	SBC TEMP        ;SUBTRACT INPUT VALUE FROM CONSTANT...
-	ADC SVXT        ;...ADD DIFFERENCE TO TEMP STORAGE...
-	STA SVXT        ;...USED LATER TO ADJUST SOFT SERVO
-	LDA FIRT        ;FLIP DIPOLE FLAG
-	EOR #1
-	STA FIRT
-	BEQ RAD3        ;SECOND HALF OF DIPOLE
-	STX DATA        ;FIRST HALF SO STORE ITS VALUE
-.SKI 3
-RDBK	LDA SNSW1       ;IF NO BYTE START...
-	BEQ RADBK       ;...THEN RETURN
-	LDA KIKA26      ;CHECK TO SEE IF TIMER1 IRQD US...
-	AND #$01
-	BNE RADKX       ;...YES
-	LDA STUPID      ;CHECK FOR OLD T1IRQ
-	BNE RADBK       ;NO...SO EXIT
+.pag 'cassette read'
+read	ldx d1t2h       ;get time since last interrupt
+	ldy #$ff        ;compute counter difference
+	tya
+	sbc d1t2l
+	cpx d1t2h       ;check for timer high rollover...
+	bne read        ;...yes then recompute
+	stx temp
+	tax
+	sty d1t2l       ;reload timer2 (count down from $ffff)
+	sty d1t2h
+	lda #$19        ;enable timer
+	sta d1crb
+	lda d1icr       ;clear read interrupt
+	sta kika26      ;save for latter
+	tya
+	sbc temp        ;calculate high
+	stx temp
+	lsr a           ;move two bits from high to temp
+	ror temp
+	lsr a
+	ror temp
+	lda cmp0        ;calc min pulse value
+	clc
+	adc #60
+	cmp temp        ;if pulse less than min...
+	bcs rdbk        ;...then ignore as noise
+	ldx dpsw        ;check if last bit...
+	beq rjdj        ;...no then continue
+	jmp radj        ;...yes then go finish byte
+.ski 2
+rjdj	ldx pcntr       ;if 9 bits read...
+	bmi jrad2       ;... then goto ending
+	ldx #0          ;set bit value to zero
+	adc #48         ;add up to half way between...
+	adc cmp0        ;...short pulse and sync pulse
+	cmp temp        ;check for short...
+	bcs radx2       ;...yes it's a short
+	inx             ;set bit value to one
+	adc #38         ;move to middle of high
+	adc cmp0
+	cmp temp        ;check for one...
+	bcs radl        ;...yes it's a one
+	adc #44         ;move to longlong
+	adc cmp0
+	cmp temp        ;check for longlong...
+	bcc srer        ;...greater than is error
+jrad2	jmp rad2        ;...it's a longlong
+.ski 2
+srer	lda snsw1       ;if not syncronized...
+	beq rdbk        ;...then no error
+	sta rer         ;...else flag rer
+	bne rdbk        ;jmp
+.ski 2
+radx2	inc rez         ;count rez up on zeros
+	bcs rad5        ;jmp
+radl	dec rez         ;count rez down on ones
+rad5	sec             ;calc actual value for compare store
+	sbc #19
+	sbc temp        ;subtract input value from constant...
+	adc svxt        ;...add difference to temp storage...
+	sta svxt        ;...used later to adjust soft servo
+	lda firt        ;flip dipole flag
+	eor #1
+	sta firt
+	beq rad3        ;second half of dipole
+	stx data        ;first half so store its value
+.ski 3
+rdbk	lda snsw1       ;if no byte start...
+	beq radbk       ;...then return
+	lda kika26      ;check to see if timer1 irqd us...
+	and #$01
+	bne radkx       ;...yes
+	lda stupid      ;check for old t1irq
+	bne radbk       ;no...so exit
 ;
-RADKX	LDA #0          ;...YES, SET DIPOLE FLAG FOR FIRST HALF
-	STA FIRT
-	STA STUPID      ;SET T1IRQ FLAG
-	LDA PCNTR       ;CHECK WHERE WE ARE IN BYTE...
-	BPL RAD4        ;...DOING DATA
-	BMI JRAD2       ;...PROCESS PARITY
-.SKI 2
-RADP	LDX #166        ;SET UP FOR LONGLONG TIMEOUT
-	JSR STT1
-	LDA PRTY        ;IF PARITY NOT EVEN...
-	BNE SRER        ;...THEN GO SET ERROR
-RADBK	JMP PREND       ;GO RESTORE REGS AND RTI
-.SKI 3
-RAD3	LDA SVXT        ;ADJUST THE SOFTWARE SERVO (CMP0)
-	BEQ ROUT1       ;NO ADJUST
-	BMI ROUT2       ;ADJUST FOR MORE BASE TIME
-	DEC CMP0        ;ADJUST FOR LESS BASE TIME
-	.BYT $2C        ;SKIP TWO BYTES
-ROUT2	INC CMP0
-ROUT1	LDA #0          ;CLEAR DIFFERENCE VALUE
-	STA SVXT
-;CHECK FOR CONSECUTIVE LIKE VALUES IN DIPOLE...
-	CPX DATA
-	BNE RAD4        ;...NO, GO PROCESS INFO
-	TXA             ;...YES SO CHECK THE VALUES...
-	BNE SRER        ;IF THEY WERE ONES THEN  ERROR
-; CONSECUTIVE ZEROS
-	LDA REZ         ;...CHECK HOW MANY ZEROS HAVE HAPPENED
-	BMI RDBK        ;...IF MANY DON'T CHECK
-	CMP #16         ;... DO WE HAVE 16 YET?...
-	BCC RDBK        ;....NO SO CONTINUE
-	STA SYNO        ;....YES SO FLAG SYNO (BETWEEN BLOCKS)
-	BCS RDBK        ;JMP
-.SKI 3
-RAD4	TXA             ;MOVE READ DATA TO .A
-	EOR PRTY        ;CALCULATE PARITY
-	STA PRTY
-	LDA SNSW1       ;REAL DATA?...
-	BEQ RADBK       ;...NO SO FORGET BY EXITING
-	DEC PCNTR       ;DEC BIT COUNT
-	BMI RADP        ;IF MINUS THEN  TIME FOR PARITY
-	LSR DATA        ;SHIFT BIT FROM DATA...
-	ROR MYCH        ;...INTO BYTE STORAGE (MYCH) BUFFER
-	LDX #218        ;SET UP FOR NEXT DIPOLE
-	JSR STT1
-	JMP PREND       ;RESTORE REGS AND RTI
-.SKI 3
-; RAD2 - LONGLONG HANDLER (COULD BE A LONG ONE)
-RAD2	LDA SYNO        ;HAVE WE GOTTEN BLOCK SYNC...
-	BEQ RAD2Y       ;...NO
-	LDA SNSW1       ;CHECK IF WE'VE HAD A REAL BYTE START...
-	BEQ RAD2X       ;...NO
-RAD2Y	LDA PCNTR       ;ARE WE AT END OF BYTE...
-	BMI RAD2X       ;YES...GO ADJUST FOR LONGLONG
-	JMP RADL        ;...NO SO TREAT IT AS A LONG ONE READ
-.SKI 2
-RAD2X	LSR TEMP        ;ADJUST TIMEOUT FOR...
-	LDA #147        ;...LONGLONG PULSE VALUE
-	SEC
-	SBC TEMP
-	ADC CMP0
-	ASL A
-	TAX             ;AND SET TIMEOUT FOR LAST BIT
-	JSR STT1
-	INC DPSW        ;SET BIT THROW AWAY FLAG
-	LDA SNSW1       ;IF BYTE SYNCRONIZED....
-	BNE RADQ2       ;...THEN SKIP TO PASS CHAR
-	LDA SYNO        ;THROWS OUT DATA UNTILL BLOCK SYNC...
-	BEQ RDBK2       ;...NO BLOCK SYNC
-	STA RER         ;FLAG DATA AS ERROR
-	LDA #0          ;KILL 16 SYNC FLAG
-	STA SYNO
-	LDA #$81        ;SET UP FOR TIMER1 INTERRUPTS
-	STA D1ICR
-	STA SNSW1       ;FLAG THAT WE HAVE BYTE SYNCRONIZED
+radkx	lda #0          ;...yes, set dipole flag for first half
+	sta firt
+	sta stupid      ;set t1irq flag
+	lda pcntr       ;check where we are in byte...
+	bpl rad4        ;...doing data
+	bmi jrad2       ;...process parity
+.ski 2
+radp	ldx #166        ;set up for longlong timeout
+	jsr stt1
+	lda prty        ;if parity not even...
+	bne srer        ;...then go set error
+radbk	jmp prend       ;go restore regs and rti
+.ski 3
+rad3	lda svxt        ;adjust the software servo (cmp0)
+	beq rout1       ;no adjust
+	bmi rout2       ;adjust for more base time
+	dec cmp0        ;adjust for less base time
+	.byt $2c        ;skip two bytes
+rout2	inc cmp0
+rout1	lda #0          ;clear difference value
+	sta svxt
+;check for consecutive like values in dipole...
+	cpx data
+	bne rad4        ;...no, go process info
+	txa             ;...yes so check the values...
+	bne srer        ;if they were ones then  error
+; consecutive zeros
+	lda rez         ;...check how many zeros have happened
+	bmi rdbk        ;...if many don't check
+	cmp #16         ;... do we have 16 yet?...
+	bcc rdbk        ;....no so continue
+	sta syno        ;....yes so flag syno (between blocks)
+	bcs rdbk        ;jmp
+.ski 3
+rad4	txa             ;move read data to .a
+	eor prty        ;calculate parity
+	sta prty
+	lda snsw1       ;real data?...
+	beq radbk       ;...no so forget by exiting
+	dec pcntr       ;dec bit count
+	bmi radp        ;if minus then  time for parity
+	lsr data        ;shift bit from data...
+	ror mych        ;...into byte storage (mych) buffer
+	ldx #218        ;set up for next dipole
+	jsr stt1
+	jmp prend       ;restore regs and rti
+.ski 3
+; rad2 - longlong handler (could be a long one)
+rad2	lda syno        ;have we gotten block sync...
+	beq rad2y       ;...no
+	lda snsw1       ;check if we've had a real byte start...
+	beq rad2x       ;...no
+rad2y	lda pcntr       ;are we at end of byte...
+	bmi rad2x       ;yes...go adjust for longlong
+	jmp radl        ;...no so treat it as a long one read
+.ski 2
+rad2x	lsr temp        ;adjust timeout for...
+	lda #147        ;...longlong pulse value
+	sec
+	sbc temp
+	adc cmp0
+	asl a
+	tax             ;and set timeout for last bit
+	jsr stt1
+	inc dpsw        ;set bit throw away flag
+	lda snsw1       ;if byte syncronized....
+	bne radq2       ;...then skip to pass char
+	lda syno        ;throws out data untill block sync...
+	beq rdbk2       ;...no block sync
+	sta rer         ;flag data as error
+	lda #0          ;kill 16 sync flag
+	sta syno
+	lda #$81        ;set up for timer1 interrupts
+	sta d1icr
+	sta snsw1       ;flag that we have byte syncronized
 ;
-RADQ2	LDA SYNO        ;SAVE SYNO STATUS
-	STA DIFF
-	BEQ RADK        ;NO BLOCK SYNC, NO BYTE LOOKING
-	LDA #0          ;TURN OFF BYTE SYNC SWITCH
-	STA SNSW1
-	LDA #$01        ;DISABLE TIMER1 INTERRUPTS
-	STA D1ICR
-RADK	LDA MYCH        ;PASS CHARACTER TO BYTE ROUTINE
-	STA OCHAR
-	LDA RER         ;COMBINE ERROR VALUES WITH ZERO COUNT...
-	ORA REZ
-	STA PRP         ;...AND SAVE IN PRP
-RDBK2	JMP PREND       ;GO BACK AND GET LAST BYTE
-.SKI 2
-RADJ	JSR NEWCH       ;FINISH BYTE, CLR FLAGS
-	STA DPSW        ;CLEAR BIT THROW AWAY FLAG
-	LDX #218        ;INITILIZE FOR NEXT DIPOLE
-	JSR STT1
-	LDA FSBLK       ;CHECK FOR LAST VALUE
-	BEQ RD15
-	STA SHCNL
-.PAG 'BYTE HANDLER'
+radq2	lda syno        ;save syno status
+	sta diff
+	beq radk        ;no block sync, no byte looking
+	lda #0          ;turn off byte sync switch
+	sta snsw1
+	lda #$01        ;disable timer1 interrupts
+	sta d1icr
+radk	lda mych        ;pass character to byte routine
+	sta ochar
+	lda rer         ;combine error values with zero count...
+	ora rez
+	sta prp         ;...and save in prp
+rdbk2	jmp prend       ;go back and get last byte
+.ski 2
+radj	jsr newch       ;finish byte, clr flags
+	sta dpsw        ;clear bit throw away flag
+	ldx #218        ;initilize for next dipole
+	jsr stt1
+	lda fsblk       ;check for last value
+	beq rd15
+	sta shcnl
+.pag 'byte handler'
 ;*************************************************
-;* BYTE HANDLER OF CASSETTE READ                 *
+;* byte handler of cassette read                 *
 ;*                                               *
-;* THIS PORTION OF IN LINE CODE IS PASSED THE    *
-;* BYTE ASSEMBLED FROM READING TAPE IN OCHAR.    *
-;* RER IS SET IF THE BYTE READ IS IN ERROR.      *
-;* REZ IS SET IF THE INTERRUPT PROGRAM IS READING*
-;* ZEROS.  RDFLG TELLS US WHAT WE ARE DOING.     *
-;* BIT 7 SAYS TO IGNORE BYTES UNTIL REZ IS SET   *
-;* BIT 6 SAYS TO LOAD THE BYTE. OTHERWISE RDFLG  *
-;* IS A COUNTDOWN AFTER SYNC.  IF VERCK IS SET   *
-;* WE DO A COMPARE INSTEAD OF A STORE AND SET    *
-;* STATUS.  FSBLK COUNTS THE TWO BLOCKS. PTR1 IS *
-;* INDEX TO ERROR TABLE FOR PASS1.  PTR2 IS INDEX*
-;* TO CORRECTION TABLE FOR PASS2.                *
+;* this portion of in line code is passed the    *
+;* byte assembled from reading tape in ochar.    *
+;* rer is set if the byte read is in error.      *
+;* rez is set if the interrupt program is reading*
+;* zeros.  rdflg tells us what we are doing.     *
+;* bit 7 says to ignore bytes until rez is set   *
+;* bit 6 says to load the byte. otherwise rdflg  *
+;* is a countdown after sync.  if verck is set   *
+;* we do a compare instead of a store and set    *
+;* status.  fsblk counts the two blocks. ptr1 is *
+;* index to error table for pass1.  ptr2 is index*
+;* to correction table for pass2.                *
 ;*************************************************
 ;
-SPERR=16
-CKERR=32
-SBERR=4
-LBERR=8
+sperr=16
+ckerr=32
+sberr=4
+lberr=8
 ;
-RD15	LDA #$F
+rd15	lda #$f
 ;
-	BIT RDFLG       ;TEST FUNCTION MODE
-	BPL RD20        ;NOT WAITING FOR ZEROS
+	bit rdflg       ;test function mode
+	bpl rd20        ;not waiting for zeros
 ;
-	LDA DIFF        ;ZEROS YET?
-	BNE RD12        ;YES...WAIT FOR SYNC
-	LDX FSBLK       ;IS PASS OVER?
-	DEX             ;...IF FSBLK ZERO THEN NO ERROR (FIRST GOOD)
-	BNE RD10        ;NO...
+	lda diff        ;zeros yet?
+	bne rd12        ;yes...wait for sync
+	ldx fsblk       ;is pass over?
+	dex             ;...if fsblk zero then no error (first good)
+	bne rd10        ;no...
 ;
-	LDA #LBERR
-	JSR UDST        ;YES...LONG BLOCK ERROR
-	BNE RD10        ;BRANCH ALWAYS
+	lda #lberr
+	jsr udst        ;yes...long block error
+	bne rd10        ;branch always
 ;
-RD12	LDA #0
-	STA RDFLG       ;NEW MODE IS WAIT FOR SYNC
-RD10	JMP PREND       ;EXIT...DONE
+rd12	lda #0
+	sta rdflg       ;new mode is wait for sync
+rd10	jmp prend       ;exit...done
 ;
-RD20	BVS RD60        ;WE ARE LOADING
-	BNE RD200       ;WE ARE SYNCING
+rd20	bvs rd60        ;we are loading
+	bne rd200       ;we are syncing
 ;
-	LDA DIFF        ;DO WE HAVE BLOCK SYNC...
-	BNE RD10        ;...YES, EXIT
-	LDA PRP         ;IF FIRST BYTE HAS ERROR...
-	BNE RD10        ;...THEN SKIP (EXIT)
-	LDA SHCNL       ;MOVE FSBLK TO CARRY...
-	LSR A
-	LDA OCHAR       ; SHOULD BE A HEADER COUNT CHAR
-	BMI RD22        ;IF NEG THEN FIRSTBLOCK DATA
-	BCC RD40        ;...EXPECTING FIRSTBLOCK DATA...YES
-	CLC
-RD22	BCS RD40        ;EXPECTING SECOND BLOCK?...YES
-	AND #$F         ;MASK OFF HIGH STORE HEADER COUNT...
-	STA RDFLG       ;...IN MODE FLAG (HAVE CORRECT BLOCK)
-RD200	DEC RDFLG       ;WAIT UNTILL WE GET REAL DATA...
-	BNE RD10        ;...9876543210 REAL
-	LDA #$40        ;NEXT UP IS REAL DATA...
-	STA RDFLG       ;...SET DATA MODE
-	JSR RD300       ;GO SETUP ADDRESS POINTERS
-	LDA #0          ;DEBUG CODE##################################################
-	STA SHCNH
-	BEQ RD10        ;JMP TO CONTINUE
-.SKI 2
-RD40	LDA #$80        ;WE WANT TO...
-	STA RDFLG       ;IGNORE BYTES MODE
-	BNE RD10        ;JMP
-.SKI 2
-RD60	LDA DIFF        ;CHECK FOR END OF BLOCK...
-	BEQ RD70        ;...OKAY
+	lda diff        ;do we have block sync...
+	bne rd10        ;...yes, exit
+	lda prp         ;if first byte has error...
+	bne rd10        ;...then skip (exit)
+	lda shcnl       ;move fsblk to carry...
+	lsr a
+	lda ochar       ; should be a header count char
+	bmi rd22        ;if neg then firstblock data
+	bcc rd40        ;...expecting firstblock data...yes
+	clc
+rd22	bcs rd40        ;expecting second block?...yes
+	and #$f         ;mask off high store header count...
+	sta rdflg       ;...in mode flag (have correct block)
+rd200	dec rdflg       ;wait untill we get real data...
+	bne rd10        ;...9876543210 real
+	lda #$40        ;next up is real data...
+	sta rdflg       ;...set data mode
+	jsr rd300       ;go setup address pointers
+	lda #0          ;debug code##################################################
+	sta shcnh
+	beq rd10        ;jmp to continue
+.ski 2
+rd40	lda #$80        ;we want to...
+	sta rdflg       ;ignore bytes mode
+	bne rd10        ;jmp
+.ski 2
+rd60	lda diff        ;check for end of block...
+	beq rd70        ;...okay
 ;
-	LDA #SBERR      ;SHORT BLOCK ERROR
-	JSR UDST
-	LDA #0          ;FORCE RDFLG FOR AN END
-	JMP RD161
-.SKI 2
-RD70	JSR CMPSTE      ;CHECK FOR END OF STORAGE AREA
-	BCC *+5         ;NOT DONE YET
-	JMP RD160
-	LDX SHCNL       ;CHECK WHICH PASS...
-	DEX
-	BEQ RD58        ;...SECOND PASS
-	LDA VERCK       ;CHECK IF LOAD OR VERIFY...
-	BEQ RD80        ;...LOADING
-	LDY #0          ;...JUST VERIFYING
-	LDA OCHAR
-	CMP (SAL)Y      ;COMPARE WITH DATA IN PET
-	BEQ RD80        ;...GOOD SO CONTINUE
-	LDA #1          ;...BAD SO FLAG...
-	STA PRP         ;...AS AN ERROR
-.SKI 1
-; STORE BAD LOCATIONS FOR SECOND PASS RE-TRY
-RD80	LDA PRP         ;CHK FOR ERRORS...
-	BEQ RD59        ;...NO ERRORS
-	LDX #61         ;MAX ALLOWED IS 30
-	CPX PTR1        ;ARE WE AT MAX?...
-	BCC RD55        ;...YES, FLAG AS SECOND PASS ERROR
-	LDX PTR1        ;GET INDEX INTO BAD...
-	LDA SAH         ;...AND STORE THE BAD LOCATION
-	STA BAD+1,X     ;...IN BAD TABLE
-	LDA SAL
-	STA BAD,X
-	INX             ;ADVANCE POINTER TO NEXT
-	INX
-	STX PTR1
-	JMP RD59        ;GO STORE CHARACTER
-.SKI 2
-; CHECK BAD TABLE FOR RE-TRY (SECOND PASS)
-RD58	LDX PTR2        ;HAVE WE DONE ALL IN THE TABLE?...
-	CPX PTR1
-	BEQ RD90        ;...YES
-	LDA SAL         ;SEE IF THIS IS NEXT IN THE TABLE...
-	CMP BAD,X
-	BNE RD90        ;...NO
-	LDA SAH
-	CMP BAD+1,X
-	BNE RD90        ;...NO
-	INC PTR2        ;WE FOUND NEXT ONE, SO ADVANCE POINTER
-	INC PTR2
-	LDA VERCK       ;DOING A LOAD OR VERIFY?...
-	BEQ RD52        ;...LOADING
-	LDA OCHAR       ;...VERIFYING, SO CHECK
-	LDY #0
-	CMP (SAL)Y
-	BEQ RD90        ;...OKAY
-	INY             ;MAKE .Y= 1
-	STY PRP         ;FLAG IT AS AN ERROR
-.SKI 2
-RD52	LDA PRP         ;A SECOND PASS ERROR?...
-	BEQ RD59        ;...NO
-;SECOND PASS ERR
-RD55	LDA #SPERR
-	JSR UDST
-	BNE RD90        ;JMP
-.SKI 2
-RD59	LDA VERCK       ;LOAD OR VERIFY?...
-	BNE RD90        ;...VERIFY, DON'T STORE
-	TAY             ;MAKE Y ZERO
-	LDA OCHAR
-	STA (SAL)Y      ;STORE CHARACTER
-RD90	JSR INCSAL      ;INCREMENT ADDR.
-	BNE RD180       ;BRANCH ALWAYS
-.SKI 3
-RD160	LDA #$80        ;SET MODE SKIP NEXT DATA
-RD161	STA RDFLG
+	lda #sberr      ;short block error
+	jsr udst
+	lda #0          ;force rdflg for an end
+	jmp rd161
+.ski 2
+rd70	jsr cmpste      ;check for end of storage area
+	bcc *+5         ;not done yet
+	jmp rd160
+	ldx shcnl       ;check which pass...
+	dex
+	beq rd58        ;...second pass
+	lda verck       ;check if load or verify...
+	beq rd80        ;...loading
+	ldy #0          ;...just verifying
+	lda ochar
+	cmp (sal)y      ;compare with data in pet
+	beq rd80        ;...good so continue
+	lda #1          ;...bad so flag...
+	sta prp         ;...as an error
+.ski 1
+; store bad locations for second pass re-try
+rd80	lda prp         ;chk for errors...
+	beq rd59        ;...no errors
+	ldx #61         ;max allowed is 30
+	cpx ptr1        ;are we at max?...
+	bcc rd55        ;...yes, flag as second pass error
+	ldx ptr1        ;get index into bad...
+	lda sah         ;...and store the bad location
+	sta bad+1,x     ;...in bad table
+	lda sal
+	sta bad,x
+	inx             ;advance pointer to next
+	inx
+	stx ptr1
+	jmp rd59        ;go store character
+.ski 2
+; check bad table for re-try (second pass)
+rd58	ldx ptr2        ;have we done all in the table?...
+	cpx ptr1
+	beq rd90        ;...yes
+	lda sal         ;see if this is next in the table...
+	cmp bad,x
+	bne rd90        ;...no
+	lda sah
+	cmp bad+1,x
+	bne rd90        ;...no
+	inc ptr2        ;we found next one, so advance pointer
+	inc ptr2
+	lda verck       ;doing a load or verify?...
+	beq rd52        ;...loading
+	lda ochar       ;...verifying, so check
+	ldy #0
+	cmp (sal)y
+	beq rd90        ;...okay
+	iny             ;make .y= 1
+	sty prp         ;flag it as an error
+.ski 2
+rd52	lda prp         ;a second pass error?...
+	beq rd59        ;...no
+;second pass err
+rd55	lda #sperr
+	jsr udst
+	bne rd90        ;jmp
+.ski 2
+rd59	lda verck       ;load or verify?...
+	bne rd90        ;...verify, don't store
+	tay             ;make y zero
+	lda ochar
+	sta (sal)y      ;store character
+rd90	jsr incsal      ;increment addr.
+	bne rd180       ;branch always
+.ski 3
+rd160	lda #$80        ;set mode skip next data
+rd161	sta rdflg
 ;
-; MODIFY FOR C64 6526'S
+; modify for c64 6526's
 ;
-	SEI             ;PROTECT CLEARING OF T1 INFORMATION
-	LDX #$01
-	STX D1ICR       ;CLEAR T1 ENABLE...
-	LDX D1ICR       ;CLEAR THE INTERRUPT
-	LDX FSBLK       ;DEC FSBLK FOR NEXT PASS...
-	DEX
-	BMI RD167       ;WE ARE DONE...FSBLK=0
-	STX FSBLK       ;...ELSE FSBLK=NEXT
-RD167	DEC SHCNL       ;DEC PASS CALC...
-	BEQ RD175       ;...ALL DONE
-	LDA PTR1        ;CHECK FOR FIRST PASS ERRORS...
-	BNE RD180       ;...YES SO CONTINUE
-	STA FSBLK       ;CLEAR FSBLK IF NO ERRORS...
-	BEQ RD180       ;JMP TO EXIT
-.SKI 2
-RD175	JSR TNIF        ;READ IT ALL...EXIT
-	JSR RD300       ;RESTORE SAL & SAH
-	LDY #0          ;SET SHCNH TO ZERO...
-	STY SHCNH       ;...USED TO CALC PARITY BYTE
+	sei             ;protect clearing of t1 information
+	ldx #$01
+	stx d1icr       ;clear t1 enable...
+	ldx d1icr       ;clear the interrupt
+	ldx fsblk       ;dec fsblk for next pass...
+	dex
+	bmi rd167       ;we are done...fsblk=0
+	stx fsblk       ;...else fsblk=next
+rd167	dec shcnl       ;dec pass calc...
+	beq rd175       ;...all done
+	lda ptr1        ;check for first pass errors...
+	bne rd180       ;...yes so continue
+	sta fsblk       ;clear fsblk if no errors...
+	beq rd180       ;jmp to exit
+.ski 2
+rd175	jsr tnif        ;read it all...exit
+	jsr rd300       ;restore sal & sah
+	ldy #0          ;set shcnh to zero...
+	sty shcnh       ;...used to calc parity byte
 ;
-;COMPUTE PARITY OVER LOAD
+;compute parity over load
 ;
-VPRTY	LDA (SAL)Y      ;CALC BLOCK BCC
-	EOR SHCNH
-	STA SHCNH
-	JSR INCSAL      ;INCREMENT ADDRESS
-	JSR CMPSTE      ;TEST AGAINST END
-	BCC VPRTY       ;NOT DONE YET...
-	LDA SHCNH       ;CHECK FOR BCC CHAR MATCH...
-	EOR OCHAR
-	BEQ RD180       ;...YES, EXIT
-;CHKSUM ERROR
-	LDA #CKERR
-	JSR UDST
-RD180	JMP PREND
-.SKI 4
-RD300	LDA STAH        ; RESTORE STARTING ADDRESS...
-	STA SAH         ;...POINTERS (SAH & SAL)
-	LDA STAL
-	STA SAL
-	RTS
-.SKI 4
-NEWCH	LDA #8          ;SET UP FOR 8 BITS+PARITY
-	STA PCNTR
-	LDA #0          ;INITILIZE...
-	STA FIRT        ;..DIPOLE COUNTER
-	STA RER         ;..ERROR FLAG
-	STA PRTY        ;..PARITY BIT
-	STA REZ         ;..ZERO COUNT
-	RTS             ;.A=0 ON RETURN
-.END
-; RSR 7/31/80 ADD COMMENTS
-; RSR 3/28/82 MODIFY FOR C64 (ADD STUPID/COMMENTS)
-; RSR 3/29/82 PUT BLOCK T1IRQ CONTROL
-; RSR 5/11/82 MODIFY C64 STUPID CODE
+vprty	lda (sal)y      ;calc block bcc
+	eor shcnh
+	sta shcnh
+	jsr incsal      ;increment address
+	jsr cmpste      ;test against end
+	bcc vprty       ;not done yet...
+	lda shcnh       ;check for bcc char match...
+	eor ochar
+	beq rd180       ;...yes, exit
+;chksum error
+	lda #ckerr
+	jsr udst
+rd180	jmp prend
+.ski 4
+rd300	lda stah        ; restore starting address...
+	sta sah         ;...pointers (sah & sal)
+	lda stal
+	sta sal
+	rts
+.ski 4
+newch	lda #8          ;set up for 8 bits+parity
+	sta pcntr
+	lda #0          ;initilize...
+	sta firt        ;..dipole counter
+	sta rer         ;..error flag
+	sta prty        ;..parity bit
+	sta rez         ;..zero count
+	rts             ;.a=0 on return
+.end
+; rsr 7/31/80 add comments
+; rsr 3/28/82 modify for c64 (add stupid/comments)
+; rsr 3/29/82 put block t1irq control
+; rsr 5/11/82 modify c64 stupid code

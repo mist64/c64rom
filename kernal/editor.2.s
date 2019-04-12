@@ -1,406 +1,406 @@
-.PAG 'EDITOR.2'
-;SCREEN SCROLL ROUTINE
+.pag 'editor.2'
+;screen scroll routine
 ;
-SCROL	LDA SAL
-	PHA
-	LDA SAH
-	PHA
-	LDA EAL
-	PHA
-	LDA EAH
-	PHA
+scrol	lda sal
+	pha
+	lda sah
+	pha
+	lda eal
+	pha
+	lda eah
+	pha
 ;
-;   S C R O L L   U P
+;   s c r o l l   u p
 ;
-SCRO0	LDX #$FF
-	DEC TBLX
-	DEC LSXP
-	DEC LINTMP
-SCR10	INX             ;GOTO NEXT LINE
-	JSR SETPNT      ;POINT TO 'TO' LINE
-	CPX #NLINES-1   ;DONE?
-	BCS SCR41       ;BRANCH IF SO
+scro0	ldx #$ff
+	dec tblx
+	dec lsxp
+	dec lintmp
+scr10	inx             ;goto next line
+	jsr setpnt      ;point to 'to' line
+	cpx #nlines-1   ;done?
+	bcs scr41       ;branch if so
 ;
-	LDA LDTB2+1,X   ;SETUP FROM PNTR
-	STA SAL
-	LDA LDTB1+1,X
-	JSR SCRLIN      ;SCROLL THIS LINE UP1
-	BMI SCR10
+	lda ldtb2+1,x   ;setup from pntr
+	sta sal
+	lda ldtb1+1,x
+	jsr scrlin      ;scroll this line up1
+	bmi scr10
 ;
-SCR41
-	JSR CLRLN
+scr41
+	jsr clrln
 ;
-	LDX #0          ;SCROLL HI BYTE POINTERS
-SCRL5	LDA LDTB1,X
-	AND #$7F
-	LDY LDTB1+1,X
-	BPL SCRL3
-	ORA #$80
-SCRL3	STA LDTB1,X
-	INX
-	CPX #NLINES-1
-	BNE SCRL5
+	ldx #0          ;scroll hi byte pointers
+scrl5	lda ldtb1,x
+	and #$7f
+	ldy ldtb1+1,x
+	bpl scrl3
+	ora #$80
+scrl3	sta ldtb1,x
+	inx
+	cpx #nlines-1
+	bne scrl5
 ;
-	LDA LDTB1+NLINES-1
-	ORA #$80
-	STA LDTB1+NLINES-1
-	LDA LDTB1       ;DOUBLE LINE?
-	BPL SCRO0       ;YES...SCROLL AGAIN
+	lda ldtb1+nlines-1
+	ora #$80
+	sta ldtb1+nlines-1
+	lda ldtb1       ;double line?
+	bpl scro0       ;yes...scroll again
 ;
-	INC TBLX
-	INC LINTMP
-	LDA #$7F        ;CHECK FOR CONTROL KEY
-	STA COLM        ;DROP LINE 2 ON PORT B
-	LDA ROWS
-	CMP #$FB        ;SLOW SCROLL KEY?(CONTROL)
-	PHP             ;SAVE STATUS. RESTORE PORT B
-	LDA #$7F        ;FOR STOP KEY CHECK
-	STA COLM
-	PLP
-	BNE MLP42
+	inc tblx
+	inc lintmp
+	lda #$7f        ;check for control key
+	sta colm        ;drop line 2 on port b
+	lda rows
+	cmp #$fb        ;slow scroll key?(control)
+	php             ;save status. restore port b
+	lda #$7f        ;for stop key check
+	sta colm
+	plp
+	bne mlp42
 ;
-	LDY #0
-MLP4	NOP             ;DELAY
-	DEX
-	BNE MLP4
-	DEY
-	BNE MLP4
-	STY NDX         ;CLEAR KEY QUEUE BUFFER
+	ldy #0
+mlp4	nop             ;delay
+	dex
+	bne mlp4
+	dey
+	bne mlp4
+	sty ndx         ;clear key queue buffer
 ;
-MLP42	LDX TBLX
+mlp42	ldx tblx
 ;
-PULIND	PLA             ;RESTORE OLD INDIRECTS
-	STA EAH
-	PLA
-	STA EAL
-	PLA
-	STA SAH
-	PLA
-	STA SAL
-	RTS
-.PAGE
-NEWLIN
-	LDX TBLX
-BMT1	INX
-; CPX #NLINES ;EXCEDED THE NUMBER OF LINES ???
-; BEQ BMT2 ;VIC-40 CODE
-	LDA LDTB1,X     ;FIND LAST DISPLAY LINE OF THIS LINE
-	BPL BMT1        ;TABLE END MARK=>$FF WILL ABORT...ALSO
-BMT2	STX LINTMP      ;FOUND IT
-;GENERATE A NEW LINE
-	CPX #NLINES-1   ;IS ONE LINE FROM BOTTOM?
-	BEQ NEWLX       ;YES...JUST CLEAR LAST
-	BCC NEWLX       ;<NLINES...INSERT LINE
-	JSR SCROL       ;SCROLL EVERYTHING
-	LDX LINTMP
-	DEX
-	DEC TBLX
-	JMP WLOG30
-NEWLX	LDA SAL
-	PHA
-	LDA SAH
-	PHA
-	LDA EAL
-	PHA
-	LDA EAH
-	PHA
-	LDX #NLINES
-SCD10	DEX
-	JSR SETPNT      ;SET UP TO ADDR
-	CPX LINTMP
-	BCC SCR40
-	BEQ SCR40       ;BRANCH IF FINISHED
-	LDA LDTB2-1,X   ;SET FROM ADDR
-	STA SAL
-	LDA LDTB1-1,X
-	JSR SCRLIN      ;SCROLL THIS LINE DOWN
-	BMI SCD10
-SCR40
-	JSR CLRLN
-	LDX #NLINES-2
-SCRD21
-	CPX LINTMP      ;DONE?
-	BCC SCRD22      ;BRANCH IF SO
-	LDA LDTB1+1,X
-	AND #$7F
-	LDY LDTB1,X     ;WAS IT CONTINUED
-	BPL SCRD19      ;BRANCH IF SO
-	ORA #$80
-SCRD19	STA LDTB1+1,X
-	DEX
-	BNE SCRD21
-SCRD22
-	LDX LINTMP
-	JSR WLOG30
+pulind	pla             ;restore old indirects
+	sta eah
+	pla
+	sta eal
+	pla
+	sta sah
+	pla
+	sta sal
+	rts
+.page
+newlin
+	ldx tblx
+bmt1	inx
+; cpx #nlines ;exceded the number of lines ???
+; beq bmt2 ;vic-40 code
+	lda ldtb1,x     ;find last display line of this line
+	bpl bmt1        ;table end mark=>$ff will abort...also
+bmt2	stx lintmp      ;found it
+;generate a new line
+	cpx #nlines-1   ;is one line from bottom?
+	beq newlx       ;yes...just clear last
+	bcc newlx       ;<nlines...insert line
+	jsr scrol       ;scroll everything
+	ldx lintmp
+	dex
+	dec tblx
+	jmp wlog30
+newlx	lda sal
+	pha
+	lda sah
+	pha
+	lda eal
+	pha
+	lda eah
+	pha
+	ldx #nlines
+scd10	dex
+	jsr setpnt      ;set up to addr
+	cpx lintmp
+	bcc scr40
+	beq scr40       ;branch if finished
+	lda ldtb2-1,x   ;set from addr
+	sta sal
+	lda ldtb1-1,x
+	jsr scrlin      ;scroll this line down
+	bmi scd10
+scr40
+	jsr clrln
+	ldx #nlines-2
+scrd21
+	cpx lintmp      ;done?
+	bcc scrd22      ;branch if so
+	lda ldtb1+1,x
+	and #$7f
+	ldy ldtb1,x     ;was it continued
+	bpl scrd19      ;branch if so
+	ora #$80
+scrd19	sta ldtb1+1,x
+	dex
+	bne scrd21
+scrd22
+	ldx lintmp
+	jsr wlog30
 ;
-	JMP PULIND      ;GO PUL OLD INDIRECTS AND RETURN
+	jmp pulind      ;go pul old indirects and return
 ;
-; SCROLL LINE FROM SAL TO PNT
-; AND COLORS FROM EAL TO USER
+; scroll line from sal to pnt
+; and colors from eal to user
 ;
-SCRLIN
-	AND #$03        ;CLEAR ANY GARBAGE STUFF
-	ORA HIBASE      ;PUT IN HIORDER BITS
-	STA SAL+1
-	JSR TOFROM      ;COLOR TO & FROM ADDRS
-	LDY #LLEN-1
-SCD20
-	LDA (SAL)Y
-	STA (PNT)Y
-	LDA (EAL)Y
-	STA (USER)Y
-	DEY
-	BPL SCD20
-	RTS
+scrlin
+	and #$03        ;clear any garbage stuff
+	ora hibase      ;put in hiorder bits
+	sta sal+1
+	jsr tofrom      ;color to & from addrs
+	ldy #llen-1
+scd20
+	lda (sal)y
+	sta (pnt)y
+	lda (eal)y
+	sta (user)y
+	dey
+	bpl scd20
+	rts
 ;
-; DO COLOR TO AND FROM ADDRESSES
-; FROM CHARACTER TO AND FROM ADRS
+; do color to and from addresses
+; from character to and from adrs
 ;
-TOFROM
-	JSR SCOLOR
-	LDA SAL         ;CHARACTER FROM
-	STA EAL         ;MAKE COLOR FROM
-	LDA SAL+1
-	AND #$03
-	ORA #>VICCOL
-	STA EAL+1
-	RTS
+tofrom
+	jsr scolor
+	lda sal         ;character from
+	sta eal         ;make color from
+	lda sal+1
+	and #$03
+	ora #>viccol
+	sta eal+1
+	rts
 ;
-; SET UP PNT AND Y
-; FROM .X
+; set up pnt and y
+; from .x
 ;
-SETPNT	LDA LDTB2,X
-	STA PNT
-	LDA LDTB1,X
-	AND #$03
-	ORA HIBASE
-	STA PNT+1
-	RTS
+setpnt	lda ldtb2,x
+	sta pnt
+	lda ldtb1,x
+	and #$03
+	ora hibase
+	sta pnt+1
+	rts
 ;
-; CLEAR THE LINE POINTED TO BY .X
+; clear the line pointed to by .x
 ;
-CLRLN	LDY #LLEN-1
-	JSR SETPNT
-	JSR SCOLOR
-CLR10	JSR CPATCH      ;REVERSED ORDER FROM 901227-02
-	LDA #$20        ;STORE A SPACE
-	STA (PNT)Y     ;TO DISPLAY
-	DEY
-	BPL CLR10
-	RTS
-	NOP
-.SKI 5
+clrln	ldy #llen-1
+	jsr setpnt
+	jsr scolor
+clr10	jsr cpatch      ;reversed order from 901227-02
+	lda #$20        ;store a space
+	sta (pnt)y     ;to display
+	dey
+	bpl clr10
+	rts
+	nop
+.ski 5
 ;
-;PUT A CHAR ON THE SCREEN
+;put a char on the screen
 ;
-DSPP	TAY             ;SAVE CHAR
-	LDA #2
-	STA BLNCT       ;BLINK CURSOR
-	JSR SCOLOR      ;SET COLOR PTR
-	TYA             ;RESTORE COLOR
-DSPP2	LDY PNTR        ;GET COLUMN
-	STA (PNT)Y      ;CHAR TO SCREEN
-	TXA
-	STA (USER)Y     ;COLOR TO SCREEN
-	RTS
-.SKI 5
-SCOLOR	LDA PNT         ;GENERATE COLOR PTR
-	STA USER
-	LDA PNT+1
-	AND #$03
-	ORA #>VICCOL    ;VIC COLOR RAM
-	STA USER+1
-	RTS
-.PAG
-KEY	JSR $FFEA       ;UPDATE JIFFY CLOCK
-	LDA BLNSW       ;BLINKING CRSR ?
-	BNE KEY4        ;NO
-	DEC BLNCT       ;TIME TO BLINK ?
-	BNE KEY4        ;NO
-	LDA #20         ;RESET BLINK COUNTER
-REPDO	STA BLNCT
-	LDY PNTR        ;CURSOR POSITION
-	LSR BLNON       ;CARRY SET IF ORIGINAL CHAR
-	LDX GDCOL       ;GET CHAR ORIGINAL COLOR
-	LDA (PNT)Y      ;GET CHARACTER
-	BCS KEY5        ;BRANCH IF NOT NEEDED
+dspp	tay             ;save char
+	lda #2
+	sta blnct       ;blink cursor
+	jsr scolor      ;set color ptr
+	tya             ;restore color
+dspp2	ldy pntr        ;get column
+	sta (pnt)y      ;char to screen
+	txa
+	sta (user)y     ;color to screen
+	rts
+.ski 5
+scolor	lda pnt         ;generate color ptr
+	sta user
+	lda pnt+1
+	and #$03
+	ora #>viccol    ;vic color ram
+	sta user+1
+	rts
+.pag
+key	jsr $ffea       ;update jiffy clock
+	lda blnsw       ;blinking crsr ?
+	bne key4        ;no
+	dec blnct       ;time to blink ?
+	bne key4        ;no
+	lda #20         ;reset blink counter
+repdo	sta blnct
+	ldy pntr        ;cursor position
+	lsr blnon       ;carry set if original char
+	ldx gdcol       ;get char original color
+	lda (pnt)y      ;get character
+	bcs key5        ;branch if not needed
 ;
-	INC BLNON       ;SET TO 1
-	STA GDBLN       ;SAVE ORIGINAL CHAR
-	JSR SCOLOR
-	LDA (USER)Y     ;GET ORIGINAL COLOR
-	STA GDCOL       ;SAVE IT
-	LDX COLOR       ;BLINK IN THIS COLOR
-	LDA GDBLN       ;WITH ORIGINAL CHARACTER
+	inc blnon       ;set to 1
+	sta gdbln       ;save original char
+	jsr scolor
+	lda (user)y     ;get original color
+	sta gdcol       ;save it
+	ldx color       ;blink in this color
+	lda gdbln       ;with original character
 ;
-KEY5	EOR #$80        ;BLINK IT
-	JSR DSPP2       ;DISPLAY IT
+key5	eor #$80        ;blink it
+	jsr dspp2       ;display it
 ;
-KEY4	LDA R6510       ;GET CASSETTE SWITCHES
-	AND #$10        ;IS SWITCH DOWN ?
-	BEQ KEY3        ;BRANCH IF SO
+key4	lda r6510       ;get cassette switches
+	and #$10        ;is switch down ?
+	beq key3        ;branch if so
 ;
-	LDY #0
-	STY CAS1        ;CASSETTE OFF SWITCH
+	ldy #0
+	sty cas1        ;cassette off switch
 ;
-	LDA R6510
-	ORA #$20
-	BNE KL24        ;BRANCH IF MOTOR IS OFF
+	lda r6510
+	ora #$20
+	bne kl24        ;branch if motor is off
 ;
-KEY3	LDA CAS1
-	BNE KL2
+key3	lda cas1
+	bne kl2
 ;
-	LDA R6510
-	AND #%011111    ;TURN MOTOR ON
+	lda r6510
+	and #%011111    ;turn motor on
 ;
-KL24
-	STA R6510
+kl24
+	sta r6510
 ;
-KL2	JSR SCNKEY      ;SCAN KEYBOARD
+kl2	jsr scnkey      ;scan keyboard
 ;
-KPREND	LDA D1ICR       ;CLEAR INTERUPT FLAGS
-	PLA             ;RESTORE REGISTERS
-	TAY
-	PLA
-	TAX
-	PLA
-	RTI             ;EXIT FROM IRQ ROUTINES
-.SKI 3
-; ****** GENERAL KEYBOARD SCAN ******
+kprend	lda d1icr       ;clear interupt flags
+	pla             ;restore registers
+	tay
+	pla
+	tax
+	pla
+	rti             ;exit from irq routines
+.ski 3
+; ****** general keyboard scan ******
 ;
-SCNKEY	LDA #$00
-	STA SHFLAG
-	LDY #64         ;LAST KEY INDEX
-	STY SFDX        ;NULL KEY FOUND
-	STA COLM        ;RAISE ALL LINES
-	LDX ROWS        ;CHECK FOR A KEY DOWN
-	CPX #$FF        ;NO KEYS DOWN?
-	BEQ SCNOUT      ;BRANCH IF NONE
-	TAY             ;.A=0 LDY #0
-	LDA #<MODE1
-	STA KEYTAB
-	LDA #>MODE1
-	STA KEYTAB+1
-	LDA #$FE        ;START WITH 1ST COLUMN
-	STA COLM
-SCN20	LDX #8          ;8 ROW KEYBOARD
-	PHA             ;SAVE COLUMN OUTPUT INFO
-SCN22	LDA ROWS
-	CMP ROWS        ;DEBOUNCE KEYBOARD
-	BNE SCN22
-SCN30	LSR A           ;LOOK FOR KEY DOWN
-	BCS CKIT        ;NONE
-	PHA
-	LDA (KEYTAB),Y  ;GET CHAR CODE
-	CMP #$05
-	BCS SPCK2       ;IF NOT SPECIAL KEY GO ON
-	CMP #$03        ;COULD IT BE A STOP KEY?
-	BEQ SPCK2       ;BRANCH IF SO
-	ORA SHFLAG
-	STA SHFLAG      ;PUT SHIFT BIT IN FLAG BYTE
-	BPL CKUT
-SPCK2
-	STY SFDX        ;SAVE KEY NUMBER
-CKUT	PLA
-CKIT	INY
-	CPY #65
-	BCS CKIT1       ;BRANCH IF FINISHED
-	DEX
-	BNE SCN30
-	SEC
-	PLA             ;RELOAD COLUMN INFO
-	ROL A
-	STA COLM        ;NEXT COLUMN ON KEYBOARD
-	BNE SCN20       ;ALWAYS BRANCH
-CKIT1	PLA             ;DUMP COLUMN OUTPUT...ALL DONE
-	JMP (KEYLOG)    ;EVALUATE SHIFT FUNCTIONS
-REKEY	LDY SFDX        ;GET KEY INDEX
-	LDA (KEYTAB)Y   ;GET CHAR CODE
-	TAX             ;SAVE THE CHAR
-	CPY LSTX        ;SAME AS PREV CHAR INDEX?
-	BEQ RPT10       ;YES
-	LDY #$10        ;NO - RESET DELAY BEFORE REPEAT
-	STY DELAY
-	BNE CKIT2       ;ALWAYS
-RPT10	AND #$7F        ;UNSHIFT IT
-	BIT RPTFLG      ;CHECK FOR REPEAT DISABLE
-	BMI RPT20       ;YES
-	BVS SCNRTS
-	CMP #$7F        ;NO KEYS ?
-SCNOUT	BEQ CKIT2       ;YES - GET OUT
-	CMP #$14        ;AN INST/DEL KEY ?
-	BEQ RPT20       ;YES - REPEAT IT
-	CMP #$20        ;A SPACE KEY ?
-	BEQ RPT20       ;YES
-	CMP #$1D        ;A CRSR LEFT/RIGHT ?
-	BEQ RPT20       ;YES
-	CMP #$11        ;A CRSR UP/DWN ?
-	BNE SCNRTS      ;NO - EXIT
-RPT20	LDY DELAY       ;TIME TO REPEAT ?
-	BEQ RPT40       ;YES
-	DEC DELAY
-	BNE SCNRTS
-RPT40	DEC KOUNT       ;TIME FOR NEXT REPEAT ?
-	BNE SCNRTS      ;NO
-	LDY #4          ;YES - RESET CTR
-	STY KOUNT
-	LDY NDX         ;NO REPEAT IF QUEUE FULL
-	DEY
-	BPL SCNRTS
-CKIT2
-	LDY SFDX        ;GET INDEX OF KEY
-	STY LSTX        ;SAVE THIS INDEX TO KEY FOUND
-	LDY SHFLAG      ;UPDATE SHIFT STATUS
-	STY LSTSHF
-CKIT3	CPX #$FF        ;A NULL KEY OR NO KEY ?
-	BEQ SCNRTS      ;BRANCH IF SO
-	TXA             ;NEED X AS INDEX SO...
-	LDX NDX         ;GET # OF CHARS IN KEY QUEUE
-	CPX XMAX        ;IRQ BUFFER FULL ?
-	BCS SCNRTS      ;YES - NO MORE INSERT
-PUTQUE
-	STA KEYD,X      ;PUT RAW DATA HERE
-	INX
-	STX NDX         ;UPDATE KEY QUEUE COUNT
-SCNRTS	LDA #$7F        ;SETUP PB7 FOR STOP KEY SENSE
-	STA COLM
-	RTS
-.PAG
+scnkey	lda #$00
+	sta shflag
+	ldy #64         ;last key index
+	sty sfdx        ;null key found
+	sta colm        ;raise all lines
+	ldx rows        ;check for a key down
+	cpx #$ff        ;no keys down?
+	beq scnout      ;branch if none
+	tay             ;.a=0 ldy #0
+	lda #<mode1
+	sta keytab
+	lda #>mode1
+	sta keytab+1
+	lda #$fe        ;start with 1st column
+	sta colm
+scn20	ldx #8          ;8 row keyboard
+	pha             ;save column output info
+scn22	lda rows
+	cmp rows        ;debounce keyboard
+	bne scn22
+scn30	lsr a           ;look for key down
+	bcs ckit        ;none
+	pha
+	lda (keytab),y  ;get char code
+	cmp #$05
+	bcs spck2       ;if not special key go on
+	cmp #$03        ;could it be a stop key?
+	beq spck2       ;branch if so
+	ora shflag
+	sta shflag      ;put shift bit in flag byte
+	bpl ckut
+spck2
+	sty sfdx        ;save key number
+ckut	pla
+ckit	iny
+	cpy #65
+	bcs ckit1       ;branch if finished
+	dex
+	bne scn30
+	sec
+	pla             ;reload column info
+	rol a
+	sta colm        ;next column on keyboard
+	bne scn20       ;always branch
+ckit1	pla             ;dump column output...all done
+	jmp (keylog)    ;evaluate shift functions
+rekey	ldy sfdx        ;get key index
+	lda (keytab)y   ;get char code
+	tax             ;save the char
+	cpy lstx        ;same as prev char index?
+	beq rpt10       ;yes
+	ldy #$10        ;no - reset delay before repeat
+	sty delay
+	bne ckit2       ;always
+rpt10	and #$7f        ;unshift it
+	bit rptflg      ;check for repeat disable
+	bmi rpt20       ;yes
+	bvs scnrts
+	cmp #$7f        ;no keys ?
+scnout	beq ckit2       ;yes - get out
+	cmp #$14        ;an inst/del key ?
+	beq rpt20       ;yes - repeat it
+	cmp #$20        ;a space key ?
+	beq rpt20       ;yes
+	cmp #$1d        ;a crsr left/right ?
+	beq rpt20       ;yes
+	cmp #$11        ;a crsr up/dwn ?
+	bne scnrts      ;no - exit
+rpt20	ldy delay       ;time to repeat ?
+	beq rpt40       ;yes
+	dec delay
+	bne scnrts
+rpt40	dec kount       ;time for next repeat ?
+	bne scnrts      ;no
+	ldy #4          ;yes - reset ctr
+	sty kount
+	ldy ndx         ;no repeat if queue full
+	dey
+	bpl scnrts
+ckit2
+	ldy sfdx        ;get index of key
+	sty lstx        ;save this index to key found
+	ldy shflag      ;update shift status
+	sty lstshf
+ckit3	cpx #$ff        ;a null key or no key ?
+	beq scnrts      ;branch if so
+	txa             ;need x as index so...
+	ldx ndx         ;get # of chars in key queue
+	cpx xmax        ;irq buffer full ?
+	bcs scnrts      ;yes - no more insert
+putque
+	sta keyd,x      ;put raw data here
+	inx
+	stx ndx         ;update key queue count
+scnrts	lda #$7f        ;setup pb7 for stop key sense
+	sta colm
+	rts
+.pag
 ;
-; SHIFT LOGIC
+; shift logic
 ;
-SHFLOG
-	LDA SHFLAG
-	CMP #$03        ;COMMODORE SHIFT COMBINATION?
-	BNE KEYLG2      ;BRANCH IF NOT
-	CMP LSTSHF      ;DID I DO THIS ALREADY
-	BEQ SCNRTS      ;BRANCH IF SO
-	LDA MODE
-	BMI SHFOUT      ;DONT SHIFT IF ITS MINUS
-.SKI
-SWITCH	LDA VICREG+24   ;**********************************:
-	EOR #$02        ;TURN ON OTHER CASE
-	STA VICREG+24   ;POINT THE VIC THERE
-	JMP SHFOUT
-.SKI
+shflog
+	lda shflag
+	cmp #$03        ;commodore shift combination?
+	bne keylg2      ;branch if not
+	cmp lstshf      ;did i do this already
+	beq scnrts      ;branch if so
+	lda mode
+	bmi shfout      ;dont shift if its minus
+.ski
+switch	lda vicreg+24   ;**********************************:
+	eor #$02        ;turn on other case
+	sta vicreg+24   ;point the vic there
+	jmp shfout
+.ski
 ;
-KEYLG2
-	ASL A
-	CMP #$08        ;WAS IT A CONTROL KEY
-	BCC NCTRL       ;BRANCH IF NOT
-	LDA #6          ;ELSE USE TABLE #4
+keylg2
+	asl a
+	cmp #$08        ;was it a control key
+	bcc nctrl       ;branch if not
+	lda #6          ;else use table #4
 ;
-NCTRL
-NOTKAT
-	TAX
-	LDA KEYCOD,X
-	STA KEYTAB
-	LDA KEYCOD+1,X
-	STA KEYTAB+1
-SHFOUT
-	JMP REKEY
-.END
-; RSR 12/08/81 MODIFY FOR VIC-40
-; RSR  2/18/82 MODIFY FOR 6526 INPUT PAD SENSE
-; RSR  3/11/82 FIX KEYBOARD DEBOUNCE, REPAIR FILE
-; RSR  3/11/82 MODIFY FOR COMMODORE 64
+nctrl
+notkat
+	tax
+	lda keycod,x
+	sta keytab
+	lda keycod+1,x
+	sta keytab+1
+shfout
+	jmp rekey
+.end
+; rsr 12/08/81 modify for vic-40
+; rsr  2/18/82 modify for 6526 input pad sense
+; rsr  3/11/82 fix keyboard debounce, repair file
+; rsr  3/11/82 modify for commodore 64

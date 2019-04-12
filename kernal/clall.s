@@ -1,37 +1,37 @@
-.PAG 'CLOSE ALL FILES'
+.pag 'close all files'
 ;***************************************
-;* CLALL -- CLOSE ALL LOGICAL FILES  *
-;*      DELETES ALL TABLE ENTRIES AND*
-;* RESTORES DEFAULT I/O CHANNELS     *
-;* AND CLEARS IEEE PORT DEVICES      *
+;* clall -- close all logical files  *
+;*      deletes all table entries and*
+;* restores default i/o channels     *
+;* and clears ieee port devices      *
 ;*************************************
 ;
-NCLALL	LDA #0
-	STA LDTND       ;FORGET ALL FILES
-.SKI 3
+nclall	lda #0
+	sta ldtnd       ;forget all files
+.ski 3
 ;********************************************
-;* CLRCH -- CLEAR CHANNELS                  *
-;*   UNLISTEN OR UNTALK IEEE DEVICES, BUT   *
-;* LEAVE OTHERS ALONE.  DEFAULT CHANNELS    *
-;* ARE RESTORED.                            *
+;* clrch -- clear channels                  *
+;*   unlisten or untalk ieee devices, but   *
+;* leave others alone.  default channels    *
+;* are restored.                            *
 ;********************************************
 ;
-NCLRCH	LDX #3
-	CPX DFLTO       ;IS OUTPUT CHANNEL IEEE?
-	BCS JX750       ;NO...
+nclrch	ldx #3
+	cpx dflto       ;is output channel ieee?
+	bcs jx750       ;no...
 ;
-	JSR UNLSN       ;YES...UNLISTEN IT
+	jsr unlsn       ;yes...unlisten it
 ;
-JX750	CPX DFLTN       ;IS INPUT CHANNEL IEEE?
-	BCS CLALL2      ;NO...
+jx750	cpx dfltn       ;is input channel ieee?
+	bcs clall2      ;no...
 ;
-	JSR UNTLK       ;YES...UNTALK IT
+	jsr untlk       ;yes...untalk it
 ;
-;RESTORE DEFAULT VALUES
+;restore default values
 ;
 ;
-CLALL2	STX DFLTO       ;OUTPUT CHAN=3=SCREEN
-	LDA #0
-	STA DFLTN       ;INPUT CHAN=0=KEYBOARD
-	RTS
-.END
+clall2	stx dflto       ;output chan=3=screen
+	lda #0
+	sta dfltn       ;input chan=0=keyboard
+	rts
+.end

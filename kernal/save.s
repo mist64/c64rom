@@ -1,119 +1,119 @@
-.PAG 'SAVE FUNCTION'
+.pag 'save function'
 ;***********************************
-;* SAVE                            *
+;* save                            *
 ;*                                 *
-;* SAVES TO CASSETTE 1 OR 2, OR    *
-;* IEEE DEVICES 4>=N>=31 AS SELECT-*
-;* ED BY VARIABLE FA.              *
+;* saves to cassette 1 or 2, or    *
+;* ieee devices 4>=n>=31 as select-*
+;* ed by variable fa.              *
 ;*                                 *
-;*START OF SAVE IS INDIRECT AT .A  *
-;*END OF SAVE IS .X,.Y             *
+;*start of save is indirect at .a  *
+;*end of save is .x,.y             *
 ;***********************************
-.SKI 3
-SAVESP	STX EAL
-	STY EAH
-	TAX             ;SET UP START
-	LDA $00,X
-	STA STAL
-	LDA $01,X
-	STA STAH
+.ski 3
+savesp	stx eal
+	sty eah
+	tax             ;set up start
+	lda $00,x
+	sta stal
+	lda $01,x
+	sta stah
 ;
-SAVE	JMP (ISAVE)
-NSAVE	LDA FA  ***MONITOR ENTRY
-	BNE SV20
+save	jmp (isave)
+nsave	lda fa  ***monitor entry
+	bne sv20
 ;
-SV10	JMP ERROR9      ;BAD DEVICE #
+sv10	jmp error9      ;bad device #
 ;
-SV20	CMP #3
-	BEQ SV10
-	BCC SV100
-	LDA #$61
-	STA SA
-	LDY FNLEN
-	BNE SV25
+sv20	cmp #3
+	beq sv10
+	bcc sv100
+	lda #$61
+	sta sa
+	ldy fnlen
+	bne sv25
 ;
-	JMP ERROR8      ;MISSING FILE NAME
+	jmp error8      ;missing file name
 ;
-SV25	JSR OPENI
-	JSR SAVING
-	LDA FA
-	JSR LISTN
-	LDA SA
-	JSR SECND
-	LDY #0
-	JSR RD300
-	LDA SAL
-	JSR CIOUT
-	LDA SAH
-	JSR CIOUT
-SV30	JSR CMPSTE      ;COMPARE START TO END
-	BCS SV50        ;HAVE REACHED END
-	LDA (SAL)Y
-	JSR CIOUT
-	JSR STOP
-	BNE SV40
+sv25	jsr openi
+	jsr saving
+	lda fa
+	jsr listn
+	lda sa
+	jsr secnd
+	ldy #0
+	jsr rd300
+	lda sal
+	jsr ciout
+	lda sah
+	jsr ciout
+sv30	jsr cmpste      ;compare start to end
+	bcs sv50        ;have reached end
+	lda (sal)y
+	jsr ciout
+	jsr stop
+	bne sv40
 ;
-BREAK	JSR CLSEI
-	LDA #0
-	SEC
-	RTS
+break	jsr clsei
+	lda #0
+	sec
+	rts
 ;
-SV40	JSR INCSAL      ;INCREMENT CURRENT ADDR.
-	BNE SV30
-SV50	JSR UNLSN
-.SKI 5
-CLSEI	BIT SA
-	BMI CLSEI2
-	LDA FA
-	JSR LISTN
-	LDA SA
-	AND #$EF
-	ORA #$E0
-	JSR SECND
+sv40	jsr incsal      ;increment current addr.
+	bne sv30
+sv50	jsr unlsn
+.ski 5
+clsei	bit sa
+	bmi clsei2
+	lda fa
+	jsr listn
+	lda sa
+	and #$ef
+	ora #$e0
+	jsr secnd
 ;
-CUNLSN	JSR UNLSN       ;ENTRY FOR OPENI
+cunlsn	jsr unlsn       ;entry for openi
 ;
-CLSEI2	CLC
-	RTS
-.SKI 5
-SV100	LSR A
-	BCS SV102       ;IF C-SET THEN IT'S CASSETTE
+clsei2	clc
+	rts
+.ski 5
+sv100	lsr a
+	bcs sv102       ;if c-set then it's cassette
 ;
-	JMP ERROR9      ;BAD DEVICE #
+	jmp error9      ;bad device #
 ;
-SV102	JSR ZZZ         ;GET ADDR OF TAPE
-	BCC SV10        ;BUFFER IS DEALLOCATED
-	JSR CSTE2
-	BCS SV115       ;STOP KEY PRESSED
-	JSR SAVING      ;TELL USER 'SAVING'
-SV105	LDX #PLF        ;DECIDE TYPE TO SAVE
-	LDA SA          ;1-PLF 0-BLF
-	AND #01
-	BNE SV106
-	LDX #BLF
-SV106	TXA
-	JSR TAPEH
-	BCS SV115       ;STOP KEY PRESSED
-	JSR TWRT
-	BCS SV115       ;STOP KEY PRESSED
-	LDA SA
-	AND #2          ;WRITE END OF TAPE?
-	BEQ SV110       ;NO...
+sv102	jsr zzz         ;get addr of tape
+	bcc sv10        ;buffer is deallocated
+	jsr cste2
+	bcs sv115       ;stop key pressed
+	jsr saving      ;tell user 'saving'
+sv105	ldx #plf        ;decide type to save
+	lda sa          ;1-plf 0-blf
+	and #01
+	bne sv106
+	ldx #blf
+sv106	txa
+	jsr tapeh
+	bcs sv115       ;stop key pressed
+	jsr twrt
+	bcs sv115       ;stop key pressed
+	lda sa
+	and #2          ;write end of tape?
+	beq sv110       ;no...
 ;
-	LDA #EOT
-	JSR TAPEH
-	.BYT $24        ;SKIP 1 BYTE
+	lda #eot
+	jsr tapeh
+	.byt $24        ;skip 1 byte
 ;
-SV110	CLC
-SV115	RTS
-.SKI 3
-;SUBROUTINE TO OUTPUT:
-;'SAVING <FILE NAME>'
+sv110	clc
+sv115	rts
+.ski 3
+;subroutine to output:
+;'saving <file name>'
 ;
-SAVING	LDA MSGFLG
-	BPL SV115       ;NO PRINT
+saving	lda msgflg
+	bpl sv115       ;no print
 ;
-	LDY #MS11-MS1   ;'SAVING'
-	JSR MSG
-	JMP OUTFN       ;<FILE NAME>
-.END
+	ldy #ms11-ms1   ;'saving'
+	jsr msg
+	jmp outfn       ;<file name>
+.end

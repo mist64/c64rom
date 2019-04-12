@@ -1,63 +1,63 @@
-.PAG 'ERROR HANDLER'
+.pag 'error handler'
 ;***************************************
-;* STOP -- CHECK STOP KEY FLAG AND     *
-;* RETURN Z FLAG SET IF FLAG TRUE.     *
-;* ALSO CLOSES ACTIVE CHANNELS AND     *
-;* FLUSHES KEYBOARD QUEUE.             *
-;* ALSO RETURNS KEY DOWNS FROM LAST    *
-;* KEYBOARD ROW IN .A.                 *
+;* stop -- check stop key flag and     *
+;* return z flag set if flag true.     *
+;* also closes active channels and     *
+;* flushes keyboard queue.             *
+;* also returns key downs from last    *
+;* keyboard row in .a.                 *
 ;***************************************
-NSTOP	LDA STKEY       ;VALUE OF LAST ROW
-	CMP #$7F        ;CHECK STOP KEY POSITION
-	BNE STOP2       ;NOT DOWN
-	PHP
-	JSR CLRCH       ;CLEAR CHANNELS
-	STA NDX         ;FLUSH QUEUE
-	PLP
-STOP2	RTS
-.SKI 5
+nstop	lda stkey       ;value of last row
+	cmp #$7f        ;check stop key position
+	bne stop2       ;not down
+	php
+	jsr clrch       ;clear channels
+	sta ndx         ;flush queue
+	plp
+stop2	rts
+.ski 5
 ;************************************
 ;*                                  *
-;* ERROR HANDLER                    *
+;* error handler                    *
 ;*                                  *
-;* PRINTS KERNAL ERROR MESSAGE IF   *
-;* BIT 6 OF MSGFLG SET.  RETURNS    *
-;* WITH ERROR # IN .A AND CARRY.    *
+;* prints kernal error message if   *
+;* bit 6 of msgflg set.  returns    *
+;* with error # in .a and carry.    *
 ;*                                  *
 ;************************************
 ;
-ERROR1	LDA #1          ;TOO MANY FILES
-	.BYT $2C
-ERROR2	LDA #2          ;FILE OPEN
-	.BYT $2C
-ERROR3	LDA #3          ;FILE NOT OPEN
-	.BYT $2C
-ERROR4	LDA #4          ;FILE NOT FOUND
-	.BYT $2C
-ERROR5	LDA #5          ;DEVICE NOT PRESENT
-	.BYT $2C
-ERROR6	LDA #6          ;NOT INPUT FILE
-	.BYT $2C
-ERROR7	LDA #7          ;NOT OUTPUT FILE
-	.BYT $2C
-ERROR8	LDA #8          ;MISSING FILE NAME
-	.BYT $2C
-ERROR9	LDA #9          ;BAD DEVICE #
+error1	lda #1          ;too many files
+	.byt $2c
+error2	lda #2          ;file open
+	.byt $2c
+error3	lda #3          ;file not open
+	.byt $2c
+error4	lda #4          ;file not found
+	.byt $2c
+error5	lda #5          ;device not present
+	.byt $2c
+error6	lda #6          ;not input file
+	.byt $2c
+error7	lda #7          ;not output file
+	.byt $2c
+error8	lda #8          ;missing file name
+	.byt $2c
+error9	lda #9          ;bad device #
 ;
-	PHA             ;ERROR NUMBER ON STACK
-	JSR CLRCH       ;RESTORE I/O CHANNELS
+	pha             ;error number on stack
+	jsr clrch       ;restore i/o channels
 ;
-	LDY #MS1-MS1
-	BIT MSGFLG      ;ARE WE PRINTING ERROR?
-	BVC EREXIT      ;NO...
+	ldy #ms1-ms1
+	bit msgflg      ;are we printing error?
+	bvc erexit      ;no...
 ;
-	JSR MSG         ;PRINT "CBM I/O ERROR #"
-	PLA
-	PHA
-	ORA #$30        ;MAKE ERROR # ASCII
-	JSR BSOUT       ;PRINT IT
+	jsr msg         ;print "cbm i/o error #"
+	pla
+	pha
+	ora #$30        ;make error # ascii
+	jsr bsout       ;print it
 ;
-EREXIT	PLA
-	SEC
-	RTS
-.END
+erexit	pla
+	sec
+	rts
+.end

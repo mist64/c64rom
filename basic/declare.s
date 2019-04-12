@@ -1,144 +1,144 @@
-.PAG 'DECLARATIONS'
-ADDPRC	=1
-ROMLOC	=$A000          ;VIC-40 BASIC ROM
-LINLEN	=40             ;VIC SCREEN SIZE ?WHY?
-BUFLEN	=89             ;VIC BUFFER
-BUFPAG	=2
-BUF	=512
-STKEND	=507
-CLMWID	=10             ;PRINT WINDOW 10 CHARS
-PI	=255
-NUMLEV	=23
-STRSIZ	=3
-BLANK0	*=*+3           ;6510 REGISTER AREA
-ADRAY1	*=*+2           ;CONVERT FLOAT->INTEGER
-ADRAY2	*=*+2           ;CONVERT INTEGER->FLOAT
-INTEGR
-CHARAC	*=*+1
-ENDCHR	*=*+1
-TRMPOS	*=*+1
-VERCK	*=*+1
-COUNT	*=*+1
-DIMFLG	*=*+1
-VALTYP	*=*+1
-INTFLG	*=*+1
-GARBFL
-DORES	*=*+1
-SUBFLG	*=*+1
-INPFLG	*=*+1
-DOMASK
-TANSGN	*=*+1
-CHANNL	*=*+1
-POKER
-LINNUM	*=*+2
-TEMPPT	*=*+1
-LASTPT	*=*+2
-TEMPST	*=*+9
-INDEX
-INDEX1	*=*+2
-INDEX2	*=*+2
-RESHO	*=*+1
-RESMOH	*=*+1
-ADDEND
-RESMO	*=*+1
-RESLO	*=*+1
+.pag 'declarations'
+addprc	=1
+romloc	=$a000          ;vic-40 basic rom
+linlen	=40             ;vic screen size ?why?
+buflen	=89             ;vic buffer
+bufpag	=2
+buf	=512
+stkend	=507
+clmwid	=10             ;print window 10 chars
+pi	=255
+numlev	=23
+strsiz	=3
+blank0	*=*+3           ;6510 register area
+adray1	*=*+2           ;convert float->integer
+adray2	*=*+2           ;convert integer->float
+integr
+charac	*=*+1
+endchr	*=*+1
+trmpos	*=*+1
+verck	*=*+1
+count	*=*+1
+dimflg	*=*+1
+valtyp	*=*+1
+intflg	*=*+1
+garbfl
+dores	*=*+1
+subflg	*=*+1
+inpflg	*=*+1
+domask
+tansgn	*=*+1
+channl	*=*+1
+poker
+linnum	*=*+2
+temppt	*=*+1
+lastpt	*=*+2
+tempst	*=*+9
+index
+index1	*=*+2
+index2	*=*+2
+resho	*=*+1
+resmoh	*=*+1
+addend
+resmo	*=*+1
+reslo	*=*+1
 	*=*+1
-TXTTAB	*=*+2
-VARTAB	*=*+2
-ARYTAB	*=*+2
-STREND	*=*+2
-FRETOP	*=*+2
-FRESPC	*=*+2
-MEMSIZ	*=*+2
-CURLIN	*=*+2
-OLDLIN	*=*+2
-OLDTXT	*=*+2
-DATLIN	*=*+2
-DATPTR	*=*+2
-INPPTR	*=*+2
-VARNAM	*=*+2
-FDECPT	
-VARPNT	*=*+2
-LSTPNT
-ANDMSK
-FORPNT	*=*+2
-EORMSK	=FORPNT+1
-VARTXT
-OPPTR	*=*+2
-OPMASK	*=*+1
-GRBPNT
-TEMPF3
-DEFPNT	*=*+2
-DSCPNT	*=*+2
+txttab	*=*+2
+vartab	*=*+2
+arytab	*=*+2
+strend	*=*+2
+fretop	*=*+2
+frespc	*=*+2
+memsiz	*=*+2
+curlin	*=*+2
+oldlin	*=*+2
+oldtxt	*=*+2
+datlin	*=*+2
+datptr	*=*+2
+inpptr	*=*+2
+varnam	*=*+2
+fdecpt	
+varpnt	*=*+2
+lstpnt
+andmsk
+forpnt	*=*+2
+eormsk	=forpnt+1
+vartxt
+opptr	*=*+2
+opmask	*=*+1
+grbpnt
+tempf3
+defpnt	*=*+2
+dscpnt	*=*+2
 	*=*+1
-FOUR6	*=*+1
-JMPER	*=*+1
-SIZE	*=*+1
-OLDOV	*=*+1
-TEMPF1	*=*+1
-ARYPNT
-HIGHDS	*=*+2
-HIGHTR	*=*+2
-TEMPF2
+four6	*=*+1
+jmper	*=*+1
+size	*=*+1
+oldov	*=*+1
+tempf1	*=*+1
+arypnt
+highds	*=*+2
+hightr	*=*+2
+tempf2
 	*=*+1
-DECCNT
-LOWDS	*=*+2
-GRBTOP
-DPTFLG
-LOWTR	*=*+1
-EXPSGN	*=*+1
-TENEXP	=LOWDS+1
-EPSGN	=LOWTR+1
-DSCTMP
-FAC
-FACEXP	*=*+1
-FACHO	*=*+1
-FACMOH	*=*+1
-INDICE
-FACMO	*=*+1
-FACLO	*=*+1
-FACSGN	*=*+1
-DEGREE
-SGNFLG	*=*+1
-BITS	*=*+1
-ARGEXP	*=*+1
-ARGHO	*=*+1
-ARGMOH	*=*+1
-ARGMO	*=*+1
-ARGLO	*=*+1
-ARGSGN	*=*+1
-STRNGI
-ARISGN	*=*+1
-FACOV	*=*+1
-BUFPTR
-STRNG2
-POLYPT
-CURTOL
-FBUFPT	*=*+2
-CHRGET	*=*+6
-CHRGOT	*=*+1
-TXTPTR	*=*+6
-QNUM	*=*+10
-CHRRTS	*=*+1
-RNDX	*=*+5
+deccnt
+lowds	*=*+2
+grbtop
+dptflg
+lowtr	*=*+1
+expsgn	*=*+1
+tenexp	=lowds+1
+epsgn	=lowtr+1
+dsctmp
+fac
+facexp	*=*+1
+facho	*=*+1
+facmoh	*=*+1
+indice
+facmo	*=*+1
+faclo	*=*+1
+facsgn	*=*+1
+degree
+sgnflg	*=*+1
+bits	*=*+1
+argexp	*=*+1
+argho	*=*+1
+argmoh	*=*+1
+argmo	*=*+1
+arglo	*=*+1
+argsgn	*=*+1
+strngi
+arisgn	*=*+1
+facov	*=*+1
+bufptr
+strng2
+polypt
+curtol
+fbufpt	*=*+2
+chrget	*=*+6
+chrgot	*=*+1
+txtptr	*=*+6
+qnum	*=*+10
+chrrts	*=*+1
+rndx	*=*+5
 	*=255
-LOFBUF	*=*+1
-FBUFFR	*=*+1
-STRNG1	=ARISGN
+lofbuf	*=*+1
+fbuffr	*=*+1
+strng1	=arisgn
 ;
-	*=$0300         ;BASIC INDIRECTS
-IERROR	*=*+2           ;INDIRECT ERROR (OUTPUT ERROR IN .X)
-IMAIN	*=*+2           ;INDIRECT MAIN (SYSTEM DIRECT LOOP)
-ICRNCH	*=*+2           ;INDIRECT CRUNCH (TOKENIZATION ROUTINE)
-IQPLOP	*=*+2           ;INDIRECT LIST (CHAR LIST)
-IGONE	*=*+2           ;INDIRECT GONE (CHAR DISPATCH)
-IEVAL	*=*+2           ;INDIRECT EVAL (SYMBOL EVALUATION)
-;TEMP STORAGE UNTILL SYSTEM INTERGRATION
-; SYS 6502 REGS
-SAREG	*=*+1           ;.A REG
-SXREG	*=*+1           ;.X REG
-SYREG	*=*+1           ;.Y REG
-SPREG	*=*+1           ;.P REG
-USRPOK	*=*+3           ;USER FUNCTION DISPATCH
-	*=$0300+20      ;SYSTEM INDIRECTS FOLLOW
-.END
+	*=$0300         ;basic indirects
+ierror	*=*+2           ;indirect error (output error in .x)
+imain	*=*+2           ;indirect main (system direct loop)
+icrnch	*=*+2           ;indirect crunch (tokenization routine)
+iqplop	*=*+2           ;indirect list (char list)
+igone	*=*+2           ;indirect gone (char dispatch)
+ieval	*=*+2           ;indirect eval (symbol evaluation)
+;temp storage untill system intergration
+; sys 6502 regs
+sareg	*=*+1           ;.a reg
+sxreg	*=*+1           ;.x reg
+syreg	*=*+1           ;.y reg
+spreg	*=*+1           ;.p reg
+usrpok	*=*+3           ;user function dispatch
+	*=$0300+20      ;system indirects follow
+.end

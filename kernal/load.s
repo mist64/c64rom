@@ -1,227 +1,227 @@
-.PAG 'LOAD FUNCTION'
+.pag 'load function'
 ;**********************************
-;* LOAD RAM FUNCTION              *
+;* load ram function              *
 ;*                                *
-;* LOADS FROM CASSETTE 1 OR 2, OR *
-;* SERIAL BUS DEVICES >=4 TO 31   *
-;* AS DETERMINED BY CONTENTS OF   *
-;* VARIABLE FA. VERIFY FLAG IN .A *
+;* loads from cassette 1 or 2, or *
+;* serial bus devices >=4 to 31   *
+;* as determined by contents of   *
+;* variable fa. verify flag in .a *
 ;*                                *
-;* ALT LOAD IF SA=0, NORMAL SA=1  *
-;* .X , .Y LOAD ADDRESS IF SA=0   *
-;* .A=0 PERFORMS LOAD,<> IS VERIFY*
+;* alt load if sa=0, normal sa=1  *
+;* .x , .y load address if sa=0   *
+;* .a=0 performs load,<> is verify*
 ;*                                *
-;* HIGH LOAD RETURN IN X,Y.       *
+;* high load return in x,y.       *
 ;*                                *
 ;**********************************
-.SKI 3
-LOADSP	STX MEMUSS      ;.X HAS LOW ALT START
-	STY MEMUSS+1
-LOAD	JMP (ILOAD)     ;MONITOR LOAD ENTRY
+.ski 3
+loadsp	stx memuss      ;.x has low alt start
+	sty memuss+1
+load	jmp (iload)     ;monitor load entry
 ;
-NLOAD	STA VERCK       ;STORE VERIFY FLAG
-	LDA #0
-	STA STATUS
+nload	sta verck       ;store verify flag
+	lda #0
+	sta status
 ;
-	LDA FA          ;CHECK DEVICE NUMBER
-	BNE LD20
+	lda fa          ;check device number
+	bne ld20
 ;
-LD10	JMP ERROR9      ;BAD DEVICE #-KEYBOARD
+ld10	jmp error9      ;bad device #-keyboard
 ;
-LD20	CMP #3
-	BEQ LD10        ;DISALLOW SCREEN LOAD
-	BCC LD100       ;HANDLE TAPES DIFFERENT
+ld20	cmp #3
+	beq ld10        ;disallow screen load
+	bcc ld100       ;handle tapes different
 ;
-;LOAD FROM CBM IEEE DEVICE
+;load from cbm ieee device
 ;
-	LDY FNLEN       ;MUST HAVE FILE NAME
-	BNE LD25        ;YES...OK
+	ldy fnlen       ;must have file name
+	bne ld25        ;yes...ok
 ;
-	JMP ERROR8      ;MISSING FILE NAME
+	jmp error8      ;missing file name
 ;
-LD25	LDX SA          ;SAVE SA IN .X
-	JSR LUKING      ;TELL USER LOOKING
-	LDA #$60        ;SPECIAL LOAD COMMAND
-	STA SA
-	JSR OPENI       ;OPEN THE FILE
+ld25	ldx sa          ;save sa in .x
+	jsr luking      ;tell user looking
+	lda #$60        ;special load command
+	sta sa
+	jsr openi       ;open the file
 ;
-	LDA FA
-	JSR TALK        ;ESTABLISH THE CHANNEL
-	LDA SA
-	JSR TKSA        ;TELL IT TO LOAD
+	lda fa
+	jsr talk        ;establish the channel
+	lda sa
+	jsr tksa        ;tell it to load
 ;
-	JSR ACPTR       ;GET FIRST BYTE
-	STA EAL
+	jsr acptr       ;get first byte
+	sta eal
 ;
-	LDA STATUS      ;TEST STATUS FOR ERROR
-	LSR A
-	LSR A
-	BCS LD90        ;FILE NOT FOUND...
-	JSR ACPTR
-	STA EAH
+	lda status      ;test status for error
+	lsr a
+	lsr a
+	bcs ld90        ;file not found...
+	jsr acptr
+	sta eah
 ;
-	TXA             ;FIND OUT OLD SA
-	BNE LD30        ;SA<>0 USE DISK ADDRESS
-	LDA MEMUSS      ;ELSE LOAD WHERE USER WANTS
-	STA EAL
-	LDA MEMUSS+1
-	STA EAH
-LD30	JSR LODING      ;TELL USER LOADING
+	txa             ;find out old sa
+	bne ld30        ;sa<>0 use disk address
+	lda memuss      ;else load where user wants
+	sta eal
+	lda memuss+1
+	sta eah
+ld30	jsr loding      ;tell user loading
 ;
-LD40	LDA #$FD        ;MASK OFF TIMEOUT
-	AND STATUS
-	STA STATUS
+ld40	lda #$fd        ;mask off timeout
+	and status
+	sta status
 ;
-	JSR STOP        ;STOP KEY?
-	BNE LD45        ;NO...
+	jsr stop        ;stop key?
+	bne ld45        ;no...
 ;
-	JMP BREAK       ;STOP KEY PRESSED
+	jmp break       ;stop key pressed
 ;
-LD45	JSR ACPTR       ;GET BYTE OFF IEEE
-	TAX
-	LDA STATUS      ;WAS THERE A TIMEOUT?
-	LSR A
-	LSR A
-	BCS LD40        ;YES...TRY AGAIN
-	TXA
-	LDY VERCK       ;PERFORMING VERIFY?
-	BEQ LD50        ;NO...LOAD
-	LDY #0
-	CMP (EAL)Y      ;VERIFY IT
-	BEQ LD60        ;O.K....
-	LDA #SPERR      ;NO GOOD...VERIFY ERROR
-	JSR UDST        ;UPDATE STATUS
-	.BYT $2C        ;SKIP NEXT STORE
+ld45	jsr acptr       ;get byte off ieee
+	tax
+	lda status      ;was there a timeout?
+	lsr a
+	lsr a
+	bcs ld40        ;yes...try again
+	txa
+	ldy verck       ;performing verify?
+	beq ld50        ;no...load
+	ldy #0
+	cmp (eal)y      ;verify it
+	beq ld60        ;o.k....
+	lda #sperr      ;no good...verify error
+	jsr udst        ;update status
+	.byt $2c        ;skip next store
 ;
-LD50	STA (EAL)Y
-LD60	INC EAL         ;INCREMENT STORE ADDR
-	BNE LD64
-	INC EAH
-LD64	BIT STATUS      ;EOI?
-	BVC LD40        ;NO...CONTINUE LOAD
+ld50	sta (eal)y
+ld60	inc eal         ;increment store addr
+	bne ld64
+	inc eah
+ld64	bit status      ;eoi?
+	bvc ld40        ;no...continue load
 ;
-	JSR UNTLK       ;CLOSE CHANNEL
-	JSR CLSEI       ;CLOSE THE FILE
-	BCC LD180       ;BRANCH ALWAYS
+	jsr untlk       ;close channel
+	jsr clsei       ;close the file
+	bcc ld180       ;branch always
 ;
-LD90	JMP ERROR4      ;FILE NOT FOUND
+ld90	jmp error4      ;file not found
 ;
-;LOAD FROM TAPE
+;load from tape
 ;
-LD100	LSR A
-	BCS LD102       ;IF C-SET THEN IT'S CASSETTE
+ld100	lsr a
+	bcs ld102       ;if c-set then it's cassette
 ;
-	JMP ERROR9      ;BAD DEVICE #
+	jmp error9      ;bad device #
 ;
-LD102	JSR ZZZ         ;SET POINTERS AT TAPE
-	BCS LD104
-	JMP ERROR9      ;DEALLOCATED...
-LD104	JSR CSTE1       ;TELL USER ABOUT BUTTONS
-	BCS LD190       ;STOP KEY PRESSED?
-	JSR LUKING      ;TELL USER SEARCHING
+ld102	jsr zzz         ;set pointers at tape
+	bcs ld104
+	jmp error9      ;deallocated...
+ld104	jsr cste1       ;tell user about buttons
+	bcs ld190       ;stop key pressed?
+	jsr luking      ;tell user searching
 ;
-LD112	LDA FNLEN       ;IS THERE A NAME?
-	BEQ LD150       ;NONE...LOAD ANYTHING
-	JSR FAF         ;FIND A FILE ON TAPE
-	BCC LD170       ;GOT IT!
-	BEQ LD190       ;STOP KEY PRESSED
-	BCS LD90        ;NOPE...END OF TAPE
+ld112	lda fnlen       ;is there a name?
+	beq ld150       ;none...load anything
+	jsr faf         ;find a file on tape
+	bcc ld170       ;got it!
+	beq ld190       ;stop key pressed
+	bcs ld90        ;nope...end of tape
 ;
-LD150	JSR FAH         ;FIND ANY HEADER
-	BEQ LD190       ;STOP KEY PRESSED
-	BCS LD90        ;NO HEADER
+ld150	jsr fah         ;find any header
+	beq ld190       ;stop key pressed
+	bcs ld90        ;no header
 ;
-LD170	LDA STATUS
-	AND #SPERR      ;MUST GOT HEADER RIGHT
-	SEC
-	BNE LD190       ;IS BAD
+ld170	lda status
+	and #sperr      ;must got header right
+	sec
+	bne ld190       ;is bad
 ;
-	CPX #BLF        ;IS IT A MOVABLE PROGRAM...
-	BEQ LD178       ;YES
+	cpx #blf        ;is it a movable program...
+	beq ld178       ;yes
 ;
-	CPX #PLF        ;IS IT A PROGRAM
-	BNE LD112       ;NO...ITS SOMETHING ELSE
+	cpx #plf        ;is it a program
+	bne ld112       ;no...its something else
 ;
-LD177	LDY #1          ;FIXED LOAD...
-	LDA (TAPE1)Y    ;...THE ADDRESS IN THE...
-	STA MEMUSS      ;...BUFFER IS THE START ADDRESS
-	INY
-	LDA (TAPE1)Y
-	STA MEMUSS+1
-	BCS LD179       ;JMP ..CARRY SET BY CPX'S
+ld177	ldy #1          ;fixed load...
+	lda (tape1)y    ;...the address in the...
+	sta memuss      ;...buffer is the start address
+	iny
+	lda (tape1)y
+	sta memuss+1
+	bcs ld179       ;jmp ..carry set by cpx's
 ;
-LD178	LDA SA          ;CHECK FOR MONITOR LOAD...
-	BNE LD177       ;...YES WE WANT FIXED TYPE
+ld178	lda sa          ;check for monitor load...
+	bne ld177       ;...yes we want fixed type
 ;
-LD179	LDY #3          ;TAPEA - TAPESTA
-;CARRY SET BY CPX'S
-	LDA (TAPE1)Y
-	LDY #1
-	SBC (TAPE1)Y
-	TAX             ;LOW TO .X
-	LDY #4
-	LDA (TAPE1)Y
-	LDY #2
-	SBC (TAPE1)Y
-	TAY             ;HIGH TO .Y
+ld179	ldy #3          ;tapea - tapesta
+;carry set by cpx's
+	lda (tape1)y
+	ldy #1
+	sbc (tape1)y
+	tax             ;low to .x
+	ldy #4
+	lda (tape1)y
+	ldy #2
+	sbc (tape1)y
+	tay             ;high to .y
 ;
-	CLC             ;EA = STA+(TAPEA-TAPESTA)
-	TXA
-	ADC MEMUSS      ;
-	STA EAL
-	TYA
-	ADC MEMUSS+1
-	STA EAH
-	LDA MEMUSS      ;SET UP STARTING ADDRESS
-	STA STAL
-	LDA MEMUSS+1
-	STA STAH
-	JSR LODING      ;TELL USER LOADING
-	JSR TRD         ;DO TAPE BLOCK LOAD
-	.BYT $24        ;CARRY FROM TRD
+	clc             ;ea = sta+(tapea-tapesta)
+	txa
+	adc memuss      ;
+	sta eal
+	tya
+	adc memuss+1
+	sta eah
+	lda memuss      ;set up starting address
+	sta stal
+	lda memuss+1
+	sta stah
+	jsr loding      ;tell user loading
+	jsr trd         ;do tape block load
+	.byt $24        ;carry from trd
 ;
-LD180	CLC             ;GOOD EXIT
+ld180	clc             ;good exit
 ;
-; SET UP END LOAD ADDRESS
+; set up end load address
 ;
-	LDX EAL
-	LDY EAH
+	ldx eal
+	ldy eah
 ;
-LD190	RTS
-.SKI 5
-;SUBROUTINE TO PRINT TO CONSOLE:
+ld190	rts
+.ski 5
+;subroutine to print to console:
 ;
-;SEARCHING [FOR NAME]
+;searching [for name]
 ;
-LUKING	LDA MSGFLG      ;SUPPOSED TO PRINT?
-	BPL LD115       ;...NO
-	LDY #MS5-MS1    ;"SEARCHING"
-	JSR MSG
-	LDA FNLEN
-	BEQ LD115
-	LDY #MS6-MS1    ;"FOR"
-	JSR MSG
-.SKI 3
-;SUBROUTINE TO OUTPUT FILE NAME
+luking	lda msgflg      ;supposed to print?
+	bpl ld115       ;...no
+	ldy #ms5-ms1    ;"searching"
+	jsr msg
+	lda fnlen
+	beq ld115
+	ldy #ms6-ms1    ;"for"
+	jsr msg
+.ski 3
+;subroutine to output file name
 ;
-OUTFN	LDY FNLEN       ;IS THERE A NAME?
-	BEQ LD115       ;NO...DONE
-	LDY #0
-LD110	LDA (FNADR)Y
-	JSR BSOUT
-	INY
-	CPY FNLEN
-	BNE LD110
+outfn	ldy fnlen       ;is there a name?
+	beq ld115       ;no...done
+	ldy #0
+ld110	lda (fnadr)y
+	jsr bsout
+	iny
+	cpy fnlen
+	bne ld110
 ;
-LD115	RTS
-.SKI 3
-;SUBROUTINE TO PRINT:
+ld115	rts
+.ski 3
+;subroutine to print:
 ;
-;LOADING/VERIFING
+;loading/verifing
 ;
-LODING	LDY #MS10-MS1   ;ASSUME 'LOADING'
-	LDA VERCK       ;CHECK FLAG
-	BEQ LD410       ;ARE DOING LOAD
-	LDY #MS21-MS1   ;ARE 'VERIFYING'
-LD410	JMP SPMSG
-.END
+loding	ldy #ms10-ms1   ;assume 'loading'
+	lda verck       ;check flag
+	beq ld410       ;are doing load
+	ldy #ms21-ms1   ;are 'verifying'
+ld410	jmp spmsg
+.end

@@ -1,207 +1,207 @@
-.PAGE 'NMI HANDLER'
-NMI	SEI             ;NO IRQ'S ALLOWED...
-	JMP (NMINV)     ;...COULD MESS UP CASSETTES
-NNMI	PHA
-	TXA
-	PHA
-	TYA
-	PHA
-NNMI10	LDA #$7F        ;DISABLE ALL NMI'S
-	STA D2ICR
-	LDY D2ICR       ;CHECK IF REAL NMI...
-	BMI NNMI20      ;NO...RS232/OTHER
+.page 'nmi handler'
+nmi	sei             ;no irq's allowed...
+	jmp (nminv)     ;...could mess up cassettes
+nnmi	pha
+	txa
+	pha
+	tya
+	pha
+nnmi10	lda #$7f        ;disable all nmi's
+	sta d2icr
+	ldy d2icr       ;check if real nmi...
+	bmi nnmi20      ;no...rs232/other
 ;
-NNMI18	JSR A0INT       ;CHECK IF $A0 IN...NO .Y
-	BNE NNMI19      ;...NO
-	JMP ($8002)     ;...YES
+nnmi18	jsr a0int       ;check if $a0 in...no .y
+	bne nnmi19      ;...no
+	jmp ($8002)     ;...yes
 ;
-; CHECK FOR STOP KEY DOWN
+; check for stop key down
 ;
-NNMI19
-	JSR UD60        ;NO .Y
-	JSR STOP        ;NO .Y
-	BNE NNMI20      ;NO STOP KEY...TEST FOR RS232
+nnmi19
+	jsr ud60        ;no .y
+	jsr stop        ;no .y
+	bne nnmi20      ;no stop key...test for rs232
 ;
-; TIMB - WHERE SYSTEM GOES ON A BRK INSTRUCTION
+; timb - where system goes on a brk instruction
 ;
-TIMB	JSR RESTOR      ;RESTORE SYSTEM INDIRECTS
-	JSR IOINIT      ;RESTORE I/O FOR BASIC
-	JSR CINT        ;RESTORE SCREEN FOR BASIC
-	JMP ($A002)     ;...NO, SO BASIC WARM START
-.SKI 2
-; DISABLE NMI'S UNTILL READY
-;  SAVE ON STACK
+timb	jsr restor      ;restore system indirects
+	jsr ioinit      ;restore i/o for basic
+	jsr cint        ;restore screen for basic
+	jmp ($a002)     ;...no, so basic warm start
+.ski 2
+; disable nmi's untill ready
+;  save on stack
 ;
-NNMI20	TYA             ;.Y SAVED THROUGH RESTORE
-	AND ENABL       ;SHOW ONLY ENABLES
-	TAX             ;SAVE IN .X FOR LATTER
+nnmi20	tya             ;.y saved through restore
+	and enabl       ;show only enables
+	tax             ;save in .x for latter
 ;
-; T1 NMI CHECK - TRANSMITT A BIT
+; t1 nmi check - transmitt a bit
 ;
-	AND #$01        ;CHECK FOR T1
-	BEQ NNMI30      ;NO...
+	and #$01        ;check for t1
+	beq nnmi30      ;no...
 ;
-	LDA D2PRA
-	AND #$FF-$04    ;FIX FOR CURRENT I/O
-	ORA NXTBIT      ;LOAD DATA AND...
-	STA D2PRA       ;...SEND IT
+	lda d2pra
+	and #$ff-$04    ;fix for current i/o
+	ora nxtbit      ;load data and...
+	sta d2pra       ;...send it
 ;
-	LDA ENABL       ;RESTORE NMI'S
-	STA D2ICR       ;READY FOR NEXT...
+	lda enabl       ;restore nmi's
+	sta d2icr       ;ready for next...
 ;
-; BECAUSE OF 6526 ICR STRUCTURE...
-;  HANDLE ANOTHER NMI AS A SUBROUTINE
+; because of 6526 icr structure...
+;  handle another nmi as a subroutine
 ;
-	TXA             ;TEST FOR ANOTHER NMI
-	AND #$12        ;TEST FOR T2 OR FLAG
-	BEQ NNMI25
-	AND #$02        ;CHECK FOR T2
-	BEQ NNMI22      ;MUST BE A FLAG
+	txa             ;test for another nmi
+	and #$12        ;test for t2 or flag
+	beq nnmi25
+	and #$02        ;check for t2
+	beq nnmi22      ;must be a flag
 ;
-	JSR T2NMI       ;HANDLE A NORMAL BIT IN...
-	JMP NNMI25      ;...THEN CONTINUE OUTPUT
+	jsr t2nmi       ;handle a normal bit in...
+	jmp nnmi25      ;...then continue output
 ;
-NNMI22	JSR FLNMI       ;HANDLE A START BIT...
+nnmi22	jsr flnmi       ;handle a start bit...
 ;
-NNMI25	JSR RSTRAB      ;GO CALC INFO (CODE COULD BE IN LINE)
-	JMP NMIRTI
+nnmi25	jsr rstrab      ;go calc info (code could be in line)
+	jmp nmirti
 ;
-.SKI 2
-; T2 NMI CHECK - RECIEVE A BIT
+.ski 2
+; t2 nmi check - recieve a bit
 ;
-NNMI30	TXA
-	AND #$02        ;MASK TO T2
-	BEQ NNMI40      ;NO...
+nnmi30	txa
+	and #$02        ;mask to t2
+	beq nnmi40      ;no...
 ;
-	JSR T2NMI       ;HANDLE INTERRUPT
-	JMP NMIRTI
-.SKI 2
-; FLAG NMI HANDLER - RECIEVE A START BIT
+	jsr t2nmi       ;handle interrupt
+	jmp nmirti
+.ski 2
+; flag nmi handler - recieve a start bit
 ;
-NNMI40	TXA             ;CHECK FOR EDGE
-	AND #$10        ;ON FLAG...
-	BEQ NMIRTI      ;NO...
+nnmi40	txa             ;check for edge
+	and #$10        ;on flag...
+	beq nmirti      ;no...
 ;
-	JSR FLNMI       ;START BIT ROUTINE
-.SKI 2
-NMIRTI	LDA ENABL       ;RESTORE NMI'S
-	STA D2ICR
-PREND	PLA             ;BECAUSE OF MISSING SCREEN EDITOR
-	TAY
-	PLA
-	TAX
-	PLA
-	RTI
-.SKI 4
-; BAUDO TABLE CONTAINS VALUES
-;  FOR 14.31818E6/14/BAUD RATE/2 (NTSC)
+	jsr flnmi       ;start bit routine
+.ski 2
+nmirti	lda enabl       ;restore nmi's
+	sta d2icr
+prend	pla             ;because of missing screen editor
+	tay
+	pla
+	tax
+	pla
+	rti
+.ski 4
+; baudo table contains values
+;  for 14.31818e6/14/baud rate/2 (ntsc)
 ;
-BAUDO	.WOR 10277-CBIT ; 50 BAUD
-	.WOR 6818-CBIT  ;   75   BAUD
-	.WOR 4649-CBIT  ;  110   BAUD
-	.WOR 3800-CBIT  ;  134.6 BAUD
-	.WOR 3409-CBIT  ;  150   BAUD
-	.WOR 1705-CBIT  ;  300   BAUD
-	.WOR 852-CBIT   ;  600   BAUD
-	.WOR 426-CBIT   ; 1200   BAUD
-	.WOR 284-CBIT   ; 1800   BAUD
-	.WOR 213-CBIT   ; 2400   BAUD
+baudo	.wor 10277-cbit ; 50 baud
+	.wor 6818-cbit  ;   75   baud
+	.wor 4649-cbit  ;  110   baud
+	.wor 3800-cbit  ;  134.6 baud
+	.wor 3409-cbit  ;  150   baud
+	.wor 1705-cbit  ;  300   baud
+	.wor 852-cbit   ;  600   baud
+	.wor 426-cbit   ; 1200   baud
+	.wor 284-cbit   ; 1800   baud
+	.wor 213-cbit   ; 2400   baud
 ;
-; CBIT - AN ADJUSTMENT TO MAKE NEXT T2 HIT NEAR CENTER
-;   OF THE NEXT BIT.
-;   APROX THE TIME TO SERVICE A CB1 NMI
-CBIT	=100            ;CYCLES
-.PAG 'NMI - SUBROUTINES'
-; T2NMI - SUBROUTINE TO HANDLE AN RS232
-;  BIT INPUT.
+; cbit - an adjustment to make next t2 hit near center
+;   of the next bit.
+;   aprox the time to service a cb1 nmi
+cbit	=100            ;cycles
+.pag 'nmi - subroutines'
+; t2nmi - subroutine to handle an rs232
+;  bit input.
 ;
-T2NMI	LDA D2PRB       ;GET DATA IN
-	AND #01         ;MASK OFF...
-	STA INBIT       ;...SAVE FOR LATTER
+t2nmi	lda d2prb       ;get data in
+	and #01         ;mask off...
+	sta inbit       ;...save for latter
 ;
-; UPDATE T2 FOR MID BIT CHECK
-;   (WORST CASE <213 CYCLES TO HERE)
-;   (CALC 125 CYCLES+43-66 DEAD)
+; update t2 for mid bit check
+;   (worst case <213 cycles to here)
+;   (calc 125 cycles+43-66 dead)
 ;
-	LDA D2T2L       ;CALC NEW TIME & CLR NMI
-	SBC #22+6
-	ADC BAUDOF
-	STA D2T2L
-	LDA D2T2H
-	ADC BAUDOF+1
-	STA D2T2H
+	lda d2t2l       ;calc new time & clr nmi
+	sbc #22+6
+	adc baudof
+	sta d2t2l
+	lda d2t2h
+	adc baudof+1
+	sta d2t2h
 ;
-	LDA #$11        ;ENABLE TIMER
-	STA D2CRB
+	lda #$11        ;enable timer
+	sta d2crb
 ;
-	LDA ENABL       ;RESTORE NMI'S EARLY...
-	STA D2ICR
+	lda enabl       ;restore nmi's early...
+	sta d2icr
 ;
-	LDA #$FF        ;ENABLE COUNT FROM $FFFF
-	STA D2T2L
-	STA D2T2H
+	lda #$ff        ;enable count from $ffff
+	sta d2t2l
+	sta d2t2h
 ;
-	JMP RSRCVR      ;GO SHIFT IN...
-.SKI 3
-; FLNMI - SUBROUTINE TO HANDLE THE
-;  START BIT TIMING..
+	jmp rsrcvr      ;go shift in...
+.ski 3
+; flnmi - subroutine to handle the
+;  start bit timing..
 ;
-; CHECK FOR NOISE ?
+; check for noise ?
 ;
-FLNMI
+flnmi
 ;
-; GET HALF BIT RATE VALUE
+; get half bit rate value
 ;
-	LDA M51AJB
-	STA D2T2L
-	LDA M51AJB+1
-	STA D2T2H
+	lda m51ajb
+	sta d2t2l
+	lda m51ajb+1
+	sta d2t2h
 ;
-	LDA #$11        ;ENABLE TIMER
-	STA D2CRB
+	lda #$11        ;enable timer
+	sta d2crb
 ;
-	LDA #$12        ;DISABLE FLAG, ENABLE T2
-	EOR ENABL
-	STA ENABL
-;ORA #$82
-;STA D2ICR
+	lda #$12        ;disable flag, enable t2
+	eor enabl
+	sta enabl
+;ora #$82
+;sta d2icr
 ;
-	LDA #$FF        ;PRESET FOR COUNT DOWN
-	STA D2T2L
-	STA D2T2H
+	lda #$ff        ;preset for count down
+	sta d2t2l
+	sta d2t2h
 ;
-	LDX BITNUM      ;GET #OF BITS IN
-	STX BITCI       ;PUT IN RCVRCNT
-	RTS
+	ldx bitnum      ;get #of bits in
+	stx bitci       ;put in rcvrcnt
+	rts
 ;
-; POPEN - PATCHES OPEN RS232 FOR UNIVERSAL KERNAL
+; popen - patches open rs232 for universal kernal
 ;
-POPEN	TAX             ;WE'RE CALCULATING BAUD RATE
-	LDA M51AJB+1    ; M51AJB=FREQ/BAUD/2-100
-	ROL A
-	TAY
-	TXA
-	ADC #CBIT+CBIT
-	STA BAUDOF
-	TYA
-	ADC #0
-	STA BAUDOF+1
-	RTS
-	NOP
-	NOP
-.END
-; RSR  8/02/80 - ROUTINE FOR PANIC
-; RSR  8/08/80 - PANIC & STOP KEY
-; RSR  8/12/80 - CHANGE FOR A0INT A SUBROUTINE
-; RSR  8/19/80 - ADD RS-232 CHECKS
-; RSR  8/21/80 - MODIFY RS-232
-; RSR  8/29/80 - CHANGE PANIC ORDER FOR JACK
-; RSR  8/30/80 - ADD T2
-; RSR  9/22/80 - ADD 1800 BAUD OPPS!
-; RSR 12/08/81 - MODIFY FOR VIC-40 SYSTEM
-; RSR 12/11/81 - CONTINUE MODIFICATIONS (VIC-40)
-; RSR 12/14/81 - MODIFY FOR 6526 TIMER ADJUST
-; RSR  2/09/82 - FIX ENABLE FOR FLAG NMI
-; RSR  2/16/82 - REWRITE FOR 6526 PROBLEMS
-; RSR  3/11/82 - CHANGE NMI RENABLE, FIX RESTORE
-; RSR  3/29/82 - ENABLES ARE ALWAYS OR'ED WITH $80
+popen	tax             ;we're calculating baud rate
+	lda m51ajb+1    ; m51ajb=freq/baud/2-100
+	rol a
+	tay
+	txa
+	adc #cbit+cbit
+	sta baudof
+	tya
+	adc #0
+	sta baudof+1
+	rts
+	nop
+	nop
+.end
+; rsr  8/02/80 - routine for panic
+; rsr  8/08/80 - panic & stop key
+; rsr  8/12/80 - change for a0int a subroutine
+; rsr  8/19/80 - add rs-232 checks
+; rsr  8/21/80 - modify rs-232
+; rsr  8/29/80 - change panic order for jack
+; rsr  8/30/80 - add t2
+; rsr  9/22/80 - add 1800 baud opps!
+; rsr 12/08/81 - modify for vic-40 system
+; rsr 12/11/81 - continue modifications (vic-40)
+; rsr 12/14/81 - modify for 6526 timer adjust
+; rsr  2/09/82 - fix enable for flag nmi
+; rsr  2/16/82 - rewrite for 6526 problems
+; rsr  3/11/82 - change nmi renable, fix restore
+; rsr  3/29/82 - enables are always or'ed with $80

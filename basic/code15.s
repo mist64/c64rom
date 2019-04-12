@@ -1,158 +1,158 @@
-.PAG 'CODE15'
-	STA INDEX1
-	STX INDEX1+1
-SVAR	CPX ARYTAB+1
-	BNE SVARGO
-	CMP ARYTAB
-	BEQ ARYVAR
-SVARGO	JSR DVARS
-	BEQ SVAR
-ARYVAR	STA ARYPNT
-	STX ARYPNT+1
-	LDA #STRSIZ
-	STA FOUR6
-ARYVA2	LDA ARYPNT
-	LDX ARYPNT+1
-ARYVA3	CPX STREND+1
-	BNE ARYVGO
-	CMP STREND
-	BNE *+5
-	JMP GRBPAS
-ARYVGO	STA INDEX1
-	STX INDEX1+1
-	LDY #1-ADDPRC
-	LDA (INDEX1)Y
-	TAX
-	INY
-	LDA (INDEX1)Y
-	PHP
-	INY
-	LDA (INDEX1)Y
-	ADC ARYPNT
-	STA ARYPNT
-	INY
-	LDA (INDEX1)Y
-	ADC ARYPNT+1
-	STA ARYPNT+1
-	PLP
-	BPL ARYVA2
-	TXA
-	BMI ARYVA2
-	INY
-	LDA (INDEX1)Y
-	LDY #0
-	ASL A
-	ADC #5
-	ADC INDEX1
-	STA INDEX1
-	BCC ARYGET
-	INC INDEX1+1
-ARYGET	LDX INDEX1+1
-ARYSTR	CPX ARYPNT+1
-	BNE GOGO
-	CMP ARYPNT
-	BEQ ARYVA3
-GOGO	JSR DVAR
-	BEQ ARYSTR
-DVARS	LDA (INDEX1)Y
-	BMI DVARTS
-	INY
-	LDA (INDEX1)Y
-	BPL DVARTS
-	INY
-DVAR	LDA (INDEX1)Y
-	BEQ DVARTS
-	INY
-	LDA (INDEX1)Y
-	TAX
-	INY
-	LDA (INDEX1)Y
-	CMP FRETOP+1
-	BCC DVAR2
-	BNE DVARTS
-	CPX FRETOP
-	BCS DVARTS
-DVAR2	CMP GRBTOP+1
-	BCC DVARTS
-	BNE DVAR3
-	CPX GRBTOP
-	BCC DVARTS
-DVAR3	STX GRBTOP
-	STA GRBTOP+1
-	LDA INDEX1
-	LDX INDEX1+1
-	STA GRBPNT
-	STX GRBPNT+1
-	LDA FOUR6
-	STA SIZE
-DVARTS	LDA FOUR6
-	CLC
-	ADC INDEX1
-	STA INDEX1
-	BCC GRBRTS
-	INC INDEX1+1
-GRBRTS	LDX INDEX1+1
-	LDY #0
-	RTS
-GRBPAS	LDA GRBPNT+1
-	ORA GRBPNT
-	BEQ GRBRTS
-	LDA SIZE
-	AND #4
-	LSR A
-	TAY
-	STA SIZE
-	LDA (GRBPNT)Y
-	ADC LOWTR
-	STA HIGHTR
-	LDA LOWTR+1
-	ADC #0
-	STA HIGHTR+1
-	LDA FRETOP
-	LDX FRETOP+1
-	STA HIGHDS
-	STX HIGHDS+1
-	JSR BLTUC
-	LDY SIZE
-	INY
-	LDA HIGHDS
-	STA (GRBPNT)Y
-	TAX
-	INC HIGHDS+1
-	LDA HIGHDS+1
-	INY
-	STA (GRBPNT)Y
-	JMP FNDVAR
-CAT	LDA FACLO
-	PHA
-	LDA FACMO
-	PHA
-	JSR EVAL
-	JSR CHKSTR
-	PLA
-	STA STRNG1
-	PLA
-	STA STRNG1+1
-	LDY #0
-	LDA (STRNG1)Y
-	CLC
-	ADC (FACMO)Y
-	BCC SIZEOK
-	LDX #ERRLS
-	JMP ERROR
-SIZEOK	JSR STRINI
-	JSR MOVINS
-	LDA DSCPNT
-	LDY DSCPNT+1
-	JSR FRETMP
-	JSR MOVDO
-	LDA STRNG1
-	LDY STRNG1+1
-	JSR FRETMP
-	JSR PUTNEW
-	JMP TSTOP
-MOVINS	LDY #0
-	LDA (STRNG1)Y
-	PHA
-	INY
-.END
+.pag 'code15'
+	sta index1
+	stx index1+1
+svar	cpx arytab+1
+	bne svargo
+	cmp arytab
+	beq aryvar
+svargo	jsr dvars
+	beq svar
+aryvar	sta arypnt
+	stx arypnt+1
+	lda #strsiz
+	sta four6
+aryva2	lda arypnt
+	ldx arypnt+1
+aryva3	cpx strend+1
+	bne aryvgo
+	cmp strend
+	bne *+5
+	jmp grbpas
+aryvgo	sta index1
+	stx index1+1
+	ldy #1-addprc
+	lda (index1)y
+	tax
+	iny
+	lda (index1)y
+	php
+	iny
+	lda (index1)y
+	adc arypnt
+	sta arypnt
+	iny
+	lda (index1)y
+	adc arypnt+1
+	sta arypnt+1
+	plp
+	bpl aryva2
+	txa
+	bmi aryva2
+	iny
+	lda (index1)y
+	ldy #0
+	asl a
+	adc #5
+	adc index1
+	sta index1
+	bcc aryget
+	inc index1+1
+aryget	ldx index1+1
+arystr	cpx arypnt+1
+	bne gogo
+	cmp arypnt
+	beq aryva3
+gogo	jsr dvar
+	beq arystr
+dvars	lda (index1)y
+	bmi dvarts
+	iny
+	lda (index1)y
+	bpl dvarts
+	iny
+dvar	lda (index1)y
+	beq dvarts
+	iny
+	lda (index1)y
+	tax
+	iny
+	lda (index1)y
+	cmp fretop+1
+	bcc dvar2
+	bne dvarts
+	cpx fretop
+	bcs dvarts
+dvar2	cmp grbtop+1
+	bcc dvarts
+	bne dvar3
+	cpx grbtop
+	bcc dvarts
+dvar3	stx grbtop
+	sta grbtop+1
+	lda index1
+	ldx index1+1
+	sta grbpnt
+	stx grbpnt+1
+	lda four6
+	sta size
+dvarts	lda four6
+	clc
+	adc index1
+	sta index1
+	bcc grbrts
+	inc index1+1
+grbrts	ldx index1+1
+	ldy #0
+	rts
+grbpas	lda grbpnt+1
+	ora grbpnt
+	beq grbrts
+	lda size
+	and #4
+	lsr a
+	tay
+	sta size
+	lda (grbpnt)y
+	adc lowtr
+	sta hightr
+	lda lowtr+1
+	adc #0
+	sta hightr+1
+	lda fretop
+	ldx fretop+1
+	sta highds
+	stx highds+1
+	jsr bltuc
+	ldy size
+	iny
+	lda highds
+	sta (grbpnt)y
+	tax
+	inc highds+1
+	lda highds+1
+	iny
+	sta (grbpnt)y
+	jmp fndvar
+cat	lda faclo
+	pha
+	lda facmo
+	pha
+	jsr eval
+	jsr chkstr
+	pla
+	sta strng1
+	pla
+	sta strng1+1
+	ldy #0
+	lda (strng1)y
+	clc
+	adc (facmo)y
+	bcc sizeok
+	ldx #errls
+	jmp error
+sizeok	jsr strini
+	jsr movins
+	lda dscpnt
+	ldy dscpnt+1
+	jsr fretmp
+	jsr movdo
+	lda strng1
+	ldy strng1+1
+	jsr fretmp
+	jsr putnew
+	jmp tstop
+movins	ldy #0
+	lda (strng1)y
+	pha
+	iny
+.end

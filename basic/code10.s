@@ -1,181 +1,181 @@
-.PAG 'CODE10'
-;TEST POINTER TO VARIABLE TO SEE
-;IF CONSTANT IS CONTAINED IN BASIC.
-;ARRAY VARIABLES HAVE ZEROES PLACED
-;IN RAM. UNDEFINED SIMPLE VARIABLES
-;HAVE POINTER T ZERO IN BASIC.
+.pag 'code10'
+;test pointer to variable to see
+;if constant is contained in basic.
+;array variables have zeroes placed
+;in ram. undefined simple variables
+;have pointer t zero in basic.
 ;
-TSTROM	SEC
-	LDA FACMO
-	SBC #<ROMLOC
-	LDA FACLO
-	SBC #>ROMLOC
-	BCC TSTR10
+tstrom	sec
+	lda facmo
+	sbc #<romloc
+	lda faclo
+	sbc #>romloc
+	bcc tstr10
 ;
-	LDA #<INITAT
-	SBC FACMO
-	LDA #>INITAT
-	SBC FACLO
+	lda #<initat
+	sbc facmo
+	lda #>initat
+	sbc faclo
 ;
-TSTR10	RTS
-.SKI 5
-ISVAR	JSR PTRGET
-ISVRET	STA FACMO
-	STY FACMO+1
-	LDX VARNAM
-	LDY VARNAM+1
-	LDA VALTYP
-	BEQ GOOO
-	LDA #0
-	STA FACOV
-	JSR TSTROM      ;SEE IF AN ARRAY
-	BCC STRRTS      ;DON'T TEST ST(I),TI(I)
-	CPX #'T
-	BNE STRRTS
-	CPY #$C9
-	BNE STRRTS
-	JSR GETTIM
-	STY TENEXP
-	DEY
-	STY FBUFPT
-	LDY #6
-	STY DECCNT
-	LDY #FDCEND-FOUTBL
-	JSR FOUTIM
-	JMP TIMSTR
-STRRTS	RTS
-GOOO	BIT INTFLG
-	BPL GOOOOO
-	LDY #0
-	LDA (FACMO)Y
-	TAX
-	INY
-	LDA (FACMO)Y
-	TAY
-	TXA
-	JMP GIVAYF
-GOOOOO	JSR TSTROM      ;SEE IF ARRAY
-	BCC GOMOVF      ;DON'T TEST ST(I),TI(I)
-	CPX #'T
-	BNE QSTATV
-	CPY #'I
-	BNE GOMOVF
-	JSR GETTIM
-	TYA
-	LDX #160
-	JMP FLOATB
-GETTIM	JSR RDTIM
-	STX FACMO
-	STY FACMOH
-	STA FACLO
-	LDY #0
-	STY FACHO
-	RTS
-QSTATV	CPX #'S
-	BNE GOMOVF
-	CPY #'T
-	BNE GOMOVF
-	JSR READST
-	JMP FLOAT
-GOMOVF	LDA FACMO
-	LDY FACMO+1
-	JMP MOVFM
-ISFUN	ASL A
-	PHA
-	TAX
-	JSR CHRGET
-	CPX #LASNUM+LASNUM-255
-	BCC OKNORM
-	JSR CHKOPN
-	JSR FRMEVL
-	JSR CHKCOM
-	JSR CHKSTR
-	PLA
-	TAX
-	LDA FACMO+1
-	PHA
-	LDA FACMO
-	PHA
-	TXA
-	PHA
-	JSR GETBYT
-	PLA
-	TAY
-	TXA
-	PHA
-	JMP FINGO
-OKNORM	JSR PARCHK
-	PLA
-	TAY
-FINGO	LDA FUNDSP-ONEFUN-ONEFUN+256,Y
-	STA JMPER+1
-	LDA FUNDSP-ONEFUN-ONEFUN+257,Y
-	STA JMPER+2
-	JSR JMPER
-	JMP CHKNUM
-OROP	LDY #255
-	.BYT $2C
-ANDOP	LDY #0
-	STY COUNT
-	JSR AYINT
-	LDA FACMO
-	EOR COUNT
-	STA INTEGR
-	LDA FACLO
-	EOR COUNT
-	STA INTEGR+1
-	JSR MOVFA
-	JSR AYINT
-	LDA FACLO
-	EOR COUNT
-	AND INTEGR+1
-	EOR COUNT
-	TAY
-	LDA FACMO
-	EOR COUNT
-	AND INTEGR
-	EOR COUNT
-	JMP GIVAYF
-DOREL	JSR CHKVAL
-	BCS STRCMP
-	LDA ARGSGN
-	ORA #127
-	AND ARGHO
-	STA ARGHO
-	LDA #<ARGEXP
-	LDY #>ARGEXP
-	JSR FCOMP
-	TAX
-	JMP QCOMP
-STRCMP	LDA #0
-	STA VALTYP
-	DEC OPMASK
-	JSR FREFAC
-	STA DSCTMP
-	STX DSCTMP+1
-	STY DSCTMP+2
-	LDA ARGMO
-	LDY ARGMO+1
-	JSR FRETMP
-	STX ARGMO
-	STY ARGMO+1
-	TAX
-	SEC
-	SBC DSCTMP
-	BEQ STASGN
-	LDA #1
-	BCC STASGN
-	LDX DSCTMP
-	LDA #$FF
-STASGN	STA FACSGN
-	LDY #255
-	INX
-NXTCMP	INY
-	DEX
-	BNE GETCMP
-	LDX FACSGN
-QCOMP	BMI DOCMP
-	CLC
-	BCC DOCMP
-GETCMP	LDA (ARGMO)Y
-.END
+tstr10	rts
+.ski 5
+isvar	jsr ptrget
+isvret	sta facmo
+	sty facmo+1
+	ldx varnam
+	ldy varnam+1
+	lda valtyp
+	beq gooo
+	lda #0
+	sta facov
+	jsr tstrom      ;see if an array
+	bcc strrts      ;don't test st(i),ti(i)
+	cpx #'t
+	bne strrts
+	cpy #$c9
+	bne strrts
+	jsr gettim
+	sty tenexp
+	dey
+	sty fbufpt
+	ldy #6
+	sty deccnt
+	ldy #fdcend-foutbl
+	jsr foutim
+	jmp timstr
+strrts	rts
+gooo	bit intflg
+	bpl gooooo
+	ldy #0
+	lda (facmo)y
+	tax
+	iny
+	lda (facmo)y
+	tay
+	txa
+	jmp givayf
+gooooo	jsr tstrom      ;see if array
+	bcc gomovf      ;don't test st(i),ti(i)
+	cpx #'t
+	bne qstatv
+	cpy #'i
+	bne gomovf
+	jsr gettim
+	tya
+	ldx #160
+	jmp floatb
+gettim	jsr rdtim
+	stx facmo
+	sty facmoh
+	sta faclo
+	ldy #0
+	sty facho
+	rts
+qstatv	cpx #'s
+	bne gomovf
+	cpy #'t
+	bne gomovf
+	jsr readst
+	jmp float
+gomovf	lda facmo
+	ldy facmo+1
+	jmp movfm
+isfun	asl a
+	pha
+	tax
+	jsr chrget
+	cpx #lasnum+lasnum-255
+	bcc oknorm
+	jsr chkopn
+	jsr frmevl
+	jsr chkcom
+	jsr chkstr
+	pla
+	tax
+	lda facmo+1
+	pha
+	lda facmo
+	pha
+	txa
+	pha
+	jsr getbyt
+	pla
+	tay
+	txa
+	pha
+	jmp fingo
+oknorm	jsr parchk
+	pla
+	tay
+fingo	lda fundsp-onefun-onefun+256,y
+	sta jmper+1
+	lda fundsp-onefun-onefun+257,y
+	sta jmper+2
+	jsr jmper
+	jmp chknum
+orop	ldy #255
+	.byt $2c
+andop	ldy #0
+	sty count
+	jsr ayint
+	lda facmo
+	eor count
+	sta integr
+	lda faclo
+	eor count
+	sta integr+1
+	jsr movfa
+	jsr ayint
+	lda faclo
+	eor count
+	and integr+1
+	eor count
+	tay
+	lda facmo
+	eor count
+	and integr
+	eor count
+	jmp givayf
+dorel	jsr chkval
+	bcs strcmp
+	lda argsgn
+	ora #127
+	and argho
+	sta argho
+	lda #<argexp
+	ldy #>argexp
+	jsr fcomp
+	tax
+	jmp qcomp
+strcmp	lda #0
+	sta valtyp
+	dec opmask
+	jsr frefac
+	sta dsctmp
+	stx dsctmp+1
+	sty dsctmp+2
+	lda argmo
+	ldy argmo+1
+	jsr fretmp
+	stx argmo
+	sty argmo+1
+	tax
+	sec
+	sbc dsctmp
+	beq stasgn
+	lda #1
+	bcc stasgn
+	ldx dsctmp
+	lda #$ff
+stasgn	sta facsgn
+	ldy #255
+	inx
+nxtcmp	iny
+	dex
+	bne getcmp
+	ldx facsgn
+qcomp	bmi docmp
+	clc
+	bcc docmp
+getcmp	lda (argmo)y
+.end

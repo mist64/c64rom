@@ -1,131 +1,131 @@
-.PAG 'INIT'
-PANIC	JSR CLSCHN      ;WARM START BASIC...
-	LDA #0          ;CLEAR CHANNELS
-	STA CHANNL
-	JSR STKINI      ;RESTORE STACK
-	CLI             ;ENABLE IRQ'S
-.SKI 2
-READY	LDX #$80
-	JMP (IERROR)
-NERROR	TXA             ;GET  HIGH BIT
-	BMI NREADY
-	JMP NERROX
-NREADY	JMP READYX
-.SKI 2
-INIT	JSR INITV       ;GO INIT VECTORS
-	JSR INITCZ      ;GO INIT CHARGET & Z-PAGE
-	JSR INITMS      ;GO PRINT INITILIZATION MESSAGES
-	LDX #STKEND-256 ;SET UP END OF STACK
-	TXS
-	BNE READY       ;JMP...READY
-.SKI 4
-INITAT	INC CHRGET+7
-	BNE CHDGOT
-	INC CHRGET+8
-CHDGOT	LDA 60000
-	CMP #':
-	BCS CHDRTS
-	CMP #' 
-	BEQ INITAT
-	SEC
-	SBC #'0
-	SEC
-	SBC #$D0
-CHDRTS	RTS
-	.BYT 128,79,199,82,88
-.SKI 6
-INITCZ	LDA #76
-	STA JMPER
-	STA USRPOK
-	LDA #<FCERR
-	LDY #>FCERR
-	STA USRPOK+1
-	STY USRPOK+2
-	LDA #<GIVAYF
-	LDY #>GIVAYF
-	STA ADRAY2
-	STY ADRAY2+1
-	LDA #<FLPINT
-	LDY #>FLPINT
-	STA ADRAY1
-	STY ADRAY1+1
-	LDX #INITCZ-INITAT-1
-MOVCHG	LDA INITAT,X
-	STA CHRGET,X
-	DEX
-	BPL MOVCHG
-	LDA #STRSIZ
-	STA FOUR6
-	LDA #0
-	STA BITS
-	STA CHANNL
-	STA LASTPT+1
-	LDX #1
-	STX BUF-3
-	STX BUF-4
-	LDX #TEMPST
-	STX TEMPPT
-	SEC             ;READ BOTTOM OF MEMORY
-	JSR $FF9C
-	STX TXTTAB      ;NOW TXTAB HAS IT
-	STY TXTTAB+1
-	SEC
-	JSR $FF99       ;READ TOP OF MEMORY
-USEDEF	STX MEMSIZ
-	STY MEMSIZ+1
-	STX FRETOP
-	STY FRETOP+1
-	LDY #0
-	TYA
-	STA (TXTTAB)Y
-	INC TXTTAB
-	BNE INIT20
-	INC TXTTAB+1
-INIT20	RTS
-.SKI 6
-INITMS	LDA TXTTAB
-	LDY TXTTAB+1
-	JSR REASON
-	LDA #<FREMES
-	LDY #>FREMES
-	JSR STROUT
-	LDA MEMSIZ
-	SEC
-	SBC TXTTAB
-	TAX
-	LDA MEMSIZ+1
-	SBC TXTTAB+1
-	JSR LINPRT
-	LDA #<WORDS
-	LDY #>WORDS
-	JSR STROUT
-	JMP SCRTCH
-.SKI 4
-BVTRS	.WOR NERROR,NMAIN,NCRNCH,NQPLOP,NGONE,NEVAL
+.pag 'init'
+panic	jsr clschn      ;warm start basic...
+	lda #0          ;clear channels
+	sta channl
+	jsr stkini      ;restore stack
+	cli             ;enable irq's
+.ski 2
+ready	ldx #$80
+	jmp (ierror)
+nerror	txa             ;get  high bit
+	bmi nready
+	jmp nerrox
+nready	jmp readyx
+.ski 2
+init	jsr initv       ;go init vectors
+	jsr initcz      ;go init charget & z-page
+	jsr initms      ;go print initilization messages
+	ldx #stkend-256 ;set up end of stack
+	txs
+	bne ready       ;jmp...ready
+.ski 4
+initat	inc chrget+7
+	bne chdgot
+	inc chrget+8
+chdgot	lda 60000
+	cmp #':
+	bcs chdrts
+	cmp #' 
+	beq initat
+	sec
+	sbc #'0
+	sec
+	sbc #$d0
+chdrts	rts
+	.byt 128,79,199,82,88
+.ski 6
+initcz	lda #76
+	sta jmper
+	sta usrpok
+	lda #<fcerr
+	ldy #>fcerr
+	sta usrpok+1
+	sty usrpok+2
+	lda #<givayf
+	ldy #>givayf
+	sta adray2
+	sty adray2+1
+	lda #<flpint
+	ldy #>flpint
+	sta adray1
+	sty adray1+1
+	ldx #initcz-initat-1
+movchg	lda initat,x
+	sta chrget,x
+	dex
+	bpl movchg
+	lda #strsiz
+	sta four6
+	lda #0
+	sta bits
+	sta channl
+	sta lastpt+1
+	ldx #1
+	stx buf-3
+	stx buf-4
+	ldx #tempst
+	stx temppt
+	sec             ;read bottom of memory
+	jsr $ff9c
+	stx txttab      ;now txtab has it
+	sty txttab+1
+	sec
+	jsr $ff99       ;read top of memory
+usedef	stx memsiz
+	sty memsiz+1
+	stx fretop
+	sty fretop+1
+	ldy #0
+	tya
+	sta (txttab)y
+	inc txttab
+	bne init20
+	inc txttab+1
+init20	rts
+.ski 6
+initms	lda txttab
+	ldy txttab+1
+	jsr reason
+	lda #<fremes
+	ldy #>fremes
+	jsr strout
+	lda memsiz
+	sec
+	sbc txttab
+	tax
+	lda memsiz+1
+	sbc txttab+1
+	jsr linprt
+	lda #<words
+	ldy #>words
+	jsr strout
+	jmp scrtch
+.ski 4
+bvtrs	.wor nerror,nmain,ncrnch,nqplop,ngone,neval
 ;
-INITV	LDX #INITV-BVTRS-1 ;INIT VECTORS
-INITV1	LDA BVTRS,X
-	STA IERROR,X
-	DEX
-	BPL INITV1
-	RTS
-CHKE0	.BYT $00
-.SKI 4
-WORDS	.BYT ' BASIC BYTES FREE',13,0
-FREMES	.BYT 147,13,'    **** COMMODORE 64 BASIC V2 ****'
-	.BYT 13,13,' 64K RAM SYSTEM  ',0
-	.BYT 0
-; PPACH - PRINT# PATCH TO COOUT (SAVE .A)
+initv	ldx #initv-bvtrs-1 ;init vectors
+initv1	lda bvtrs,x
+	sta ierror,x
+	dex
+	bpl initv1
+	rts
+chke0	.byt $00
+.ski 4
+words	.byt ' basic bytes free',13,0
+fremes	.byt 147,13,'    **** commodore 64 basic v2 ****'
+	.byt 13,13,' 64k ram system  ',0
+	.byt 0
+; ppach - print# patch to coout (save .a)
 ;
-PPACH	PHA
-	JSR $FFC9
-	TAX             ;SAVE ERROR CODE
-	PLA
-	BCC PPACH0      ;NO ERROR....
-	TXA             ;ERROR CODE
-PPACH0	RTS
-.END
-;RSR 8/10/80 UPDATE PANIC :REM COULD USE IN ERROR ROUTINE
-;RSR 2/08/82 MODIFY FOR VIC-40 RELEASE
-;RSR 4/15/82 ADD ADVERTISING SIGN-ON
-;RSR 7/02/82 ADD PRINT# PATCH
+ppach	pha
+	jsr $ffc9
+	tax             ;save error code
+	pla
+	bcc ppach0      ;no error....
+	txa             ;error code
+ppach0	rts
+.end
+;rsr 8/10/80 update panic :rem could use in error routine
+;rsr 2/08/82 modify for vic-40 release
+;rsr 4/15/82 add advertising sign-on
+>>>>>>> 5537213... converted all text to lower case

@@ -1,150 +1,150 @@
-.PAG 'CODE22'
-N0999	.BYT @233,@76,@274,@37,@375
-N9999	.BYT @236,@156,@153,@47,@375
-NMIL	.BYT @236,@156,@153,@50,0
-INPRT	LDA #<INTXT
-	LDY #>INTXT
-	JSR STROU2
-	LDA CURLIN+1
-	LDX CURLIN
-LINPRT	STA FACHO
-	STX FACHO+1
-	LDX #@220
-	SEC
-	JSR FLOATC
-	JSR FOUTC
-STROU2	JMP STROUT
-FOUT	LDY #1
-FOUTC	LDA #' 
-	BIT FACSGN
-	BPL FOUT1
-	LDA #'-
-FOUT1	STA FBUFFR-1,Y
-	STA FACSGN
-	STY FBUFPT
-	INY
-	LDA #'0
-	LDX FACEXP
-	BNE *+5
-	JMP FOUT19
-	LDA #0
-	CPX #@200
-	BEQ FOUT37
-	BCS FOUT7
-FOUT37	LDA #<NMIL
-	LDY #>NMIL
-	JSR FMULT
-	LDA #250-ADDPR2-ADDPRC
-FOUT7	STA DECCNT
-FOUT4	LDA #<N9999
-	LDY #>N9999
-	JSR FCOMP
-	BEQ BIGGES
-	BPL FOUT9
-FOUT3	LDA #<N0999
-	LDY #>N0999
-	JSR FCOMP
-	BEQ FOUT38
-	BPL FOUT5
-FOUT38	JSR MUL10
-	DEC DECCNT
-	BNE FOUT3
-FOUT9	JSR DIV10
-	INC DECCNT
-	BNE FOUT4
-FOUT5	JSR FADDH
-BIGGES	JSR QINT
-	LDX #1
-	LDA DECCNT
-	CLC
-	ADC #ADDPR2+ADDPRC+7
-	BMI FOUTPI
-	CMP #ADDPR2+ADDPRC+@10
-	BCS FOUT6
-	ADC #$FF
-	TAX
-	LDA #2
-FOUTPI	SEC
-FOUT6	SBC #2
-	STA TENEXP
-	STX DECCNT
-	TXA
-	BEQ FOUT39
-	BPL FOUT8
-FOUT39	LDY FBUFPT
-	LDA #'.
-	INY
-	STA FBUFFR-1,Y
-	TXA
-	BEQ FOUT16
-	LDA #'0
-	INY
-	STA FBUFFR-1,Y
-FOUT16	STY FBUFPT
-FOUT8	LDY #0
-FOUTIM	LDX #@200
-FOUT2	LDA FACLO
-	CLC
-	ADC FOUTBL+2+ADDPRC,Y
-	STA FACLO
-	LDA FACMO
-	ADC FOUTBL+1+ADDPRC,Y
-	STA FACMO
-	LDA FACMOH
-	ADC FOUTBL+1,Y
-	STA FACMOH
-	LDA FACHO
-	ADC FOUTBL,Y
-	STA FACHO
-	INX
-	BCS FOUT41
-	BPL FOUT2
-	BMI FOUT40
-FOUT41	BMI FOUT2
-FOUT40	TXA
-	BCC FOUTYP
-	EOR #@377
-	ADC #@12
-FOUTYP	ADC #@57
-	INY
-	INY
-	INY
-	INY
-	STY FDECPT
-	LDY FBUFPT
-	INY
-	TAX
-	AND #@177
-	STA FBUFFR-1,Y
-	DEC DECCNT
-	BNE STXBUF
-	LDA #'.
-	INY
-	STA FBUFFR-1,Y
-STXBUF	STY FBUFPT
-	LDY FDECPT
-	TXA
-	EOR #@377
-	AND #@200
-	TAX
-	CPY #FDCEND-FOUTBL
-	BEQ FOULDY
-	CPY #TIMEND-FOUTBL
-	BNE FOUT2
-FOULDY	LDY FBUFPT
-FOUT11	LDA FBUFFR-1,Y
-	DEY
-	CMP #'0
-	BEQ FOUT11
-	CMP #'.
-	BEQ FOUT12
-	INY
-FOUT12	LDA #'+
-	LDX TENEXP
-	BEQ FOUT17
-	BPL FOUT14
-	LDA #0
-	SEC
-	SBC TENEXP
-	TAX
-.END
+.pag 'code22'
+n0999	.byt @233,@76,@274,@37,@375
+n9999	.byt @236,@156,@153,@47,@375
+nmil	.byt @236,@156,@153,@50,0
+inprt	lda #<intxt
+	ldy #>intxt
+	jsr strou2
+	lda curlin+1
+	ldx curlin
+linprt	sta facho
+	stx facho+1
+	ldx #@220
+	sec
+	jsr floatc
+	jsr foutc
+strou2	jmp strout
+fout	ldy #1
+foutc	lda #' 
+	bit facsgn
+	bpl fout1
+	lda #'-
+fout1	sta fbuffr-1,y
+	sta facsgn
+	sty fbufpt
+	iny
+	lda #'0
+	ldx facexp
+	bne *+5
+	jmp fout19
+	lda #0
+	cpx #@200
+	beq fout37
+	bcs fout7
+fout37	lda #<nmil
+	ldy #>nmil
+	jsr fmult
+	lda #250-addpr2-addprc
+fout7	sta deccnt
+fout4	lda #<n9999
+	ldy #>n9999
+	jsr fcomp
+	beq bigges
+	bpl fout9
+fout3	lda #<n0999
+	ldy #>n0999
+	jsr fcomp
+	beq fout38
+	bpl fout5
+fout38	jsr mul10
+	dec deccnt
+	bne fout3
+fout9	jsr div10
+	inc deccnt
+	bne fout4
+fout5	jsr faddh
+bigges	jsr qint
+	ldx #1
+	lda deccnt
+	clc
+	adc #addpr2+addprc+7
+	bmi foutpi
+	cmp #addpr2+addprc+@10
+	bcs fout6
+	adc #$ff
+	tax
+	lda #2
+foutpi	sec
+fout6	sbc #2
+	sta tenexp
+	stx deccnt
+	txa
+	beq fout39
+	bpl fout8
+fout39	ldy fbufpt
+	lda #'.
+	iny
+	sta fbuffr-1,y
+	txa
+	beq fout16
+	lda #'0
+	iny
+	sta fbuffr-1,y
+fout16	sty fbufpt
+fout8	ldy #0
+foutim	ldx #@200
+fout2	lda faclo
+	clc
+	adc foutbl+2+addprc,y
+	sta faclo
+	lda facmo
+	adc foutbl+1+addprc,y
+	sta facmo
+	lda facmoh
+	adc foutbl+1,y
+	sta facmoh
+	lda facho
+	adc foutbl,y
+	sta facho
+	inx
+	bcs fout41
+	bpl fout2
+	bmi fout40
+fout41	bmi fout2
+fout40	txa
+	bcc foutyp
+	eor #@377
+	adc #@12
+foutyp	adc #@57
+	iny
+	iny
+	iny
+	iny
+	sty fdecpt
+	ldy fbufpt
+	iny
+	tax
+	and #@177
+	sta fbuffr-1,y
+	dec deccnt
+	bne stxbuf
+	lda #'.
+	iny
+	sta fbuffr-1,y
+stxbuf	sty fbufpt
+	ldy fdecpt
+	txa
+	eor #@377
+	and #@200
+	tax
+	cpy #fdcend-foutbl
+	beq fouldy
+	cpy #timend-foutbl
+	bne fout2
+fouldy	ldy fbufpt
+fout11	lda fbuffr-1,y
+	dey
+	cmp #'0
+	beq fout11
+	cmp #'.
+	beq fout12
+	iny
+fout12	lda #'+
+	ldx tenexp
+	beq fout17
+	bpl fout14
+	lda #0
+	sec
+	sbc tenexp
+	tax
+.end

@@ -1,50 +1,50 @@
-.PAG 'JUMP TABLE/VECTORS'
-	*=$FF8A-9
-	JMP PCINT
-	JMP IOINIT
-	JMP RAMTAS
-	*=$FF8A         ;NEW VECTORS FOR BASIC
-	JMP RESTOR      ;RESTORE VECTORS TO INITIAL SYSTEM
-	JMP VECTOR      ;CHANGE VECTORS FOR USER
-	* =$FF90
-	JMP SETMSG      ;CONTROL O.S. MESSAGES
-	JMP SECND       ;SEND SA AFTER LISTEN
-	JMP TKSA        ;SEND SA AFTER TALK
-	JMP MEMTOP      ;SET/READ TOP OF MEMORY
-	JMP MEMBOT      ;SET/READ BOTTOM OF MEMORY
-	JMP SCNKEY      ;SCAN KEYBOARD
-	JMP SETTMO      ;SET TIMEOUT IN IEEE
-	JMP ACPTR       ;HANDSHAKE IEEE BYTE IN
-	JMP CIOUT       ;HANDSHAKE IEEE BYTE OUT
-	JMP UNTLK       ;SEND UNTALK OUT IEEE
-	JMP UNLSN       ;SEND UNLISTEN OUT IEEE
-	JMP LISTN       ;SEND LISTEN OUT IEEE
-	JMP TALK        ;SEND TALK OUT IEEE
-	JMP READSS      ;RETURN I/O STATUS BYTE
-	JMP SETLFS      ;SET LA, FA, SA
-	JMP SETNAM      ;SET LENGTH AND FN ADR
-OPEN	JMP (IOPEN)     ;OPEN LOGICAL FILE
-CLOSE	JMP (ICLOSE)    ;CLOSE LOGICAL FILE
-CHKIN	JMP (ICHKIN)    ;OPEN CHANNEL IN
-CKOUT	JMP (ICKOUT)    ;OPEN CHANNEL OUT
-CLRCH	JMP (ICLRCH)    ;CLOSE I/O CHANNEL
-BASIN	JMP (IBASIN)    ;INPUT FROM CHANNEL
-BSOUT	JMP (IBSOUT)    ;OUTPUT TO CHANNEL
-	JMP LOADSP      ;LOAD FROM FILE
-	JMP SAVESP      ;SAVE TO FILE
-	JMP SETTIM      ;SET INTERNAL CLOCK
-	JMP RDTIM       ;READ INTERNAL CLOCK
-STOP	JMP (ISTOP)     ;SCAN STOP KEY
-GETIN	JMP (IGETIN)    ;GET CHAR FROM Q
-CLALL	JMP (ICLALL)    ;CLOSE ALL FILES
-	JMP UDTIM       ;INCREMENT CLOCK
-JSCROG	JMP SCRORG      ;SCREEN ORG
-JPLOT	JMP PLOT        ;READ/SET X,Y COORD
-JIOBAS	JMP IOBASE      ;RETURN I/O BASE
-.SKI 5
-.PAG 'JUMP TABLE/VECTORS'
-	*=$FFFA
-	.WOR NMI        ;PROGRAM DEFINEABLE
-	.WOR START      ;INITIALIZATION CODE
-	.WOR PULS       ;INTERRUPT HANDLER
-.END
+.pag 'jump table/vectors'
+	*=$ff8a-9
+	jmp pcint
+	jmp ioinit
+	jmp ramtas
+	*=$ff8a         ;new vectors for basic
+	jmp restor      ;restore vectors to initial system
+	jmp vector      ;change vectors for user
+	* =$ff90
+	jmp setmsg      ;control o.s. messages
+	jmp secnd       ;send sa after listen
+	jmp tksa        ;send sa after talk
+	jmp memtop      ;set/read top of memory
+	jmp membot      ;set/read bottom of memory
+	jmp scnkey      ;scan keyboard
+	jmp settmo      ;set timeout in ieee
+	jmp acptr       ;handshake ieee byte in
+	jmp ciout       ;handshake ieee byte out
+	jmp untlk       ;send untalk out ieee
+	jmp unlsn       ;send unlisten out ieee
+	jmp listn       ;send listen out ieee
+	jmp talk        ;send talk out ieee
+	jmp readss      ;return i/o status byte
+	jmp setlfs      ;set la, fa, sa
+	jmp setnam      ;set length and fn adr
+open	jmp (iopen)     ;open logical file
+close	jmp (iclose)    ;close logical file
+chkin	jmp (ichkin)    ;open channel in
+ckout	jmp (ickout)    ;open channel out
+clrch	jmp (iclrch)    ;close i/o channel
+basin	jmp (ibasin)    ;input from channel
+bsout	jmp (ibsout)    ;output to channel
+	jmp loadsp      ;load from file
+	jmp savesp      ;save to file
+	jmp settim      ;set internal clock
+	jmp rdtim       ;read internal clock
+stop	jmp (istop)     ;scan stop key
+getin	jmp (igetin)    ;get char from q
+clall	jmp (iclall)    ;close all files
+	jmp udtim       ;increment clock
+jscrog	jmp scrorg      ;screen org
+jplot	jmp plot        ;read/set x,y coord
+jiobas	jmp iobase      ;return i/o base
+.ski 5
+.pag 'jump table/vectors'
+	*=$fffa
+	.wor nmi        ;program defineable
+	.wor start      ;initialization code
+	.wor puls       ;interrupt handler
+.end

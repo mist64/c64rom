@@ -1,78 +1,78 @@
-.PAG 'TIME FUNCTION'
+.pag 'time function'
 ;***********************************
 ;*                                 *
-;* TIME                            *
+;* time                            *
 ;*                                 *
-;*CONSISTS OF THREE FUNCTIONS:     *
-;* (1) UDTIM-- UPDATE TIME. USUALLY*
-;*     CALLED EVERY 60TH SECOND.   *
-;* (2) SETTIM-- SET TIME. .Y=MSD,  *
-;*     .X=NEXT SIGNIFICANT,.A=LSD  *
-;* (3) RDTIM-- READ TIME. .Y=MSD,  *
-;*     .X=NEXT SIGNIFICANT,.A=LSD  *
+;*consists of three functions:     *
+;* (1) udtim-- update time. usually*
+;*     called every 60th second.   *
+;* (2) settim-- set time. .y=msd,  *
+;*     .x=next significant,.a=lsd  *
+;* (3) rdtim-- read time. .y=msd,  *
+;*     .x=next significant,.a=lsd  *
 ;*                                 *
 ;***********************************
-.SKI
-;INTERRUPTS ARE COMING FROM THE 6526 TIMERS
+.ski
+;interrupts are coming from the 6526 timers
 ;
-UDTIM	LDX #0          ;PRE-LOAD FOR LATER
+udtim	ldx #0          ;pre-load for later
 ;
-;HERE WE PROCEED WITH AN INCREMENT
-;OF THE TIME REGISTER.
+;here we proceed with an increment
+;of the time register.
 ;
-UD20	INC TIME+2
-	BNE UD30
-	INC TIME+1
-	BNE UD30
-	INC TIME
+ud20	inc time+2
+	bne ud30
+	inc time+1
+	bne ud30
+	inc time
 ;
-;HERE WE CHECK FOR ROLL-OVER 23:59:59
-;AND RESET THE CLOCK TO ZERO IF TRUE
+;here we check for roll-over 23:59:59
+;and reset the clock to zero if true
 ;
-UD30	SEC
-	LDA TIME+2
-	SBC #$01
-	LDA TIME+1
-	SBC #$1A
-	LDA TIME
-	SBC #$4F
-	BCC UD60
+ud30	sec
+	lda time+2
+	sbc #$01
+	lda time+1
+	sbc #$1a
+	lda time
+	sbc #$4f
+	bcc ud60
 ;
-;TIME HAS ROLLED--ZERO REGISTER
+;time has rolled--zero register
 ;
-	STX TIME
-	STX TIME+1
-	STX TIME+2
+	stx time
+	stx time+1
+	stx time+2
 ;
-;SET STOP KEY FLAG HERE
+;set stop key flag here
 ;
-UD60	LDA ROWS        ;WAIT FOR IT TO SETTLE
-	CMP ROWS
-	BNE UD60        ;STILL BOUNCING
-	TAX             ;SET FLAGS...
-	BMI UD80        ;NO STOP KEY...EXIT  STOP KEY=$7F
-	LDX #$FF-$42    ;CHECK FOR A SHIFT KEY (C64 KEYBOARD)
-	STX COLM
-UD70	LDX ROWS        ;WAIT TO SETTLE...
-	CPX ROWS
-	BNE UD70
-	STA COLM        ;!!!!!WATCH OUT...STOP KEY .A=$7F...SAME AS COLMS WAS...
-	INX             ;ANY KEY DOWN ABORTS
-	BNE UD90        ;LEAVE SAME AS BEFORE...
-UD80	STA STKEY       ;SAVE FOR OTHER ROUTINES
-UD90	RTS
-.SKI 5
-RDTIM	SEI             ;KEEP TIME FROM ROLLING
-	LDA TIME+2      ;GET LSD
-	LDX TIME+1      ;GET NEXT MOST SIG.
-	LDY TIME        ;GET MSD
-.SKI 5
-SETTIM	SEI             ;KEEP TIME FROM CHANGING
-	STA TIME+2      ;STORE LSD
-	STX TIME+1      ;NEXT MOST SIGNIFICANT
-	STY TIME        ;STORE MSD
-	CLI
-	RTS
-.END
-; RSR 8/21/80 REMOVE CRFAC CHANGE STOP
-; RSR 3/29/82 ADD SHIT KEY CHECK FOR COMMODORE 64
+ud60	lda rows        ;wait for it to settle
+	cmp rows
+	bne ud60        ;still bouncing
+	tax             ;set flags...
+	bmi ud80        ;no stop key...exit  stop key=$7f
+	ldx #$ff-$42    ;check for a shift key (c64 keyboard)
+	stx colm
+ud70	ldx rows        ;wait to settle...
+	cpx rows
+	bne ud70
+	sta colm        ;!!!!!watch out...stop key .a=$7f...same as colms was...
+	inx             ;any key down aborts
+	bne ud90        ;leave same as before...
+ud80	sta stkey       ;save for other routines
+ud90	rts
+.ski 5
+rdtim	sei             ;keep time from rolling
+	lda time+2      ;get lsd
+	ldx time+1      ;get next most sig.
+	ldy time        ;get msd
+.ski 5
+settim	sei             ;keep time from changing
+	sta time+2      ;store lsd
+	stx time+1      ;next most significant
+	sty time        ;store msd
+	cli
+	rts
+.end
+; rsr 8/21/80 remove crfac change stop
+; rsr 3/29/82 add shit key check for commodore 64

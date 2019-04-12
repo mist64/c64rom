@@ -1,186 +1,186 @@
-.PAG 'TAPE CONTROL'
-JTP20	JSR ZZZ
-	INC BUFPT
-	LDY BUFPT
-	CPY #BUFSZ
-	RTS
-.SKI 5
-;STAYS IN ROUTINE D2T1LL PLAY SWITCH
+.pag 'tape control'
+jtp20	jsr zzz
+	inc bufpt
+	ldy bufpt
+	cpy #bufsz
+	rts
+.ski 5
+;stays in routine d2t1ll play switch
 ;
-CSTE1	JSR CS10
-	BEQ CS25
-	LDY #MS7-MS1    ;"PRESS PLAY..."
-CS30	JSR MSG
-CS40	JSR TSTOP       ;WATCH FOR STOP KEY
-	JSR CS10        ;WATCH CASSETTE SWITCHES
-	BNE CS40
-	LDY #MS18-MS1   ;"OK"
-	JMP MSG
-.SKI 5
-;SUBR RETURNS <> FOR CASSETTE SWITCH
+cste1	jsr cs10
+	beq cs25
+	ldy #ms7-ms1    ;"press play..."
+cs30	jsr msg
+cs40	jsr tstop       ;watch for stop key
+	jsr cs10        ;watch cassette switches
+	bne cs40
+	ldy #ms18-ms1   ;"ok"
+	jmp msg
+.ski 5
+;subr returns <> for cassette switch
 ;
-CS10	LDA #$10        ;CHECK PORT
-	BIT R6510       ;CLOSED?...
-	BNE CS25        ;NO. . .
-	BIT R6510       ;CHECK AGAIN TO DEBOUNCE
-CS25	CLC             ;GOOD RETURN
-	RTS
-.SKI 5
-;CHECKS FOR PLAY & RECORD
+cs10	lda #$10        ;check port
+	bit r6510       ;closed?...
+	bne cs25        ;no. . .
+	bit r6510       ;check again to debounce
+cs25	clc             ;good return
+	rts
+.ski 5
+;checks for play & record
 ;
-CSTE2	JSR CS10
-	BEQ CS25
-	LDY #MS8-MS1    ;"RECORD"
-	BNE CS30
-.SKI 5
-;READ HEADER BLOCK ENTRY
+cste2	jsr cs10
+	beq cs25
+	ldy #ms8-ms1    ;"record"
+	bne cs30
+.ski 5
+;read header block entry
 ;
-RBLK	LDA #0
-	STA STATUS
-	STA VERCK
-	JSR LDAD1
-.SKI 3
-;READ LOAD BLOCK ENTRY
+rblk	lda #0
+	sta status
+	sta verck
+	jsr ldad1
+.ski 3
+;read load block entry
 ;
-TRD	JSR CSTE1       ;SAY 'PRESS PLAY'
-	BCS TWRT3       ;STOP KEY PRESSED
-	SEI
-	LDA #0          ;CLEAR FLAGS...
-	STA RDFLG
-	STA SNSW1
-	STA CMP0
-	STA PTR1
-	STA PTR2
-	STA DPSW
-	LDA #$90        ;ENABLE FOR CA1 IRQ...READ LINE
-	LDX #14         ;POINT IRQ VECTOR TO READ
-	BNE TAPE        ;JMP
-.SKI 5
-;WRITE HEADER BLOCK ENTRY
+trd	jsr cste1       ;say 'press play'
+	bcs twrt3       ;stop key pressed
+	sei
+	lda #0          ;clear flags...
+	sta rdflg
+	sta snsw1
+	sta cmp0
+	sta ptr1
+	sta ptr2
+	sta dpsw
+	lda #$90        ;enable for ca1 irq...read line
+	ldx #14         ;point irq vector to read
+	bne tape        ;jmp
+.ski 5
+;write header block entry
 ;
-WBLK	JSR LDAD1
+wblk	jsr ldad1
 ;
-;WRITE LOAD BLOCK ENTRY
+;write load block entry
 ;
-TWRT	LDA #20         ;BETWEEN BLOCK SHORTS
-	STA SHCNH
-TWRT2	JSR CSTE2       ;SAY 'PRESS PLAY & RECORD'
-TWRT3	BCS STOP3       ;STOP KEY PRESSED
-	SEI
-	LDA #$82        ;ENABLE T2 IRQS...WRITE TIME
-	LDX #8          ;VECTOR IRQ TO WRTZ
-.SKI 5
-;START TAPE OPERATION ENTRY POINT
+twrt	lda #20         ;between block shorts
+	sta shcnh
+twrt2	jsr cste2       ;say 'press play & record'
+twrt3	bcs stop3       ;stop key pressed
+	sei
+	lda #$82        ;enable t2 irqs...write time
+	ldx #8          ;vector irq to wrtz
+.ski 5
+;start tape operation entry point
 ;
-TAPE	LDY #$7F        ;KILL UNWANTED IRQ'S
-	STY D1ICR
-	STA D1ICR       ;TURN ON WANTED
-	LDA D1CRA       ;CALC TIMER ENABLES
-	ORA #$19
-	STA D1CRB       ;TURN ON T2 IRQ'S FOR CASS WRITE(ONE SHOT)
-	AND #$91        ;SAVE TOD 50/60 INDICATION
-	STA CASTON      ;PLACE IN AUTO MODE FOR T1
-; WAIT FOR RS-232 TO FINISH
-	JSR RSP232
-; DISABLE SCREEN DISPLAY
-	LDA VICREG+17
-	AND #$FF-$10    ;DISABLE SCREEN
-	STA VICREG+17
-; MOVE IRQ TO IRQTEMP FOR CASS OPS
-	LDA CINV
-	STA IRQTMP
-	LDA CINV+1
-	STA IRQTMP+1
-	JSR BSIV        ;GO CHANGE IRQ VECTOR
-	LDA #2          ;FSBLK STARTS AT 2
-	STA FSBLK
-	JSR NEWCH       ;PREP LOCAL COUNTERS AND FLAGS
-	LDA R6510       ;TURN MOTOR ON
-	AND #%011111    ;LOW TURNS ON
-	STA R6510
-	STA CAS1        ;FLAG INTERNAL CONTROL OF CASS MOTOR
-	LDX #$FF        ;DELAY BETWEEN BLOCKS
-TP32	LDY #$FF
-TP35	DEY
-	BNE TP35
-	DEX
-	BNE TP32
-	CLI
-TP40	LDA IRQTMP+1    ;CHECK FOR INTERRUPT VECTOR...
-	CMP CINV+1      ;...POINTING AT KEY ROUTINE
-	CLC
-	BEQ STOP3       ;...YES RETURN
-	JSR TSTOP       ;...NO CHECK FOR STOP KEY
+tape	ldy #$7f        ;kill unwanted irq's
+	sty d1icr
+	sta d1icr       ;turn on wanted
+	lda d1cra       ;calc timer enables
+	ora #$19
+	sta d1crb       ;turn on t2 irq's for cass write(one shot)
+	and #$91        ;save tod 50/60 indication
+	sta caston      ;place in auto mode for t1
+; wait for rs-232 to finish
+	jsr rsp232
+; disable screen display
+	lda vicreg+17
+	and #$ff-$10    ;disable screen
+	sta vicreg+17
+; move irq to irqtemp for cass ops
+	lda cinv
+	sta irqtmp
+	lda cinv+1
+	sta irqtmp+1
+	jsr bsiv        ;go change irq vector
+	lda #2          ;fsblk starts at 2
+	sta fsblk
+	jsr newch       ;prep local counters and flags
+	lda r6510       ;turn motor on
+	and #%011111    ;low turns on
+	sta r6510
+	sta cas1        ;flag internal control of cass motor
+	ldx #$ff        ;delay between blocks
+tp32	ldy #$ff
+tp35	dey
+	bne tp35
+	dex
+	bne tp32
+	cli
+tp40	lda irqtmp+1    ;check for interrupt vector...
+	cmp cinv+1      ;...pointing at key routine
+	clc
+	beq stop3       ;...yes return
+	jsr tstop       ;...no check for stop key
 ;
-; 60 HZ KEYSCAN IGNORED
+; 60 hz keyscan ignored
 ;
-	JSR UD60        ; STOP KEY CHECK
-	JMP TP40        ;STAY IN LOOP UNTILL TAPES ARE DONE
-.SKI 5
-TSTOP	JSR STOP        ;STOP KEY DOWN?
-	CLC             ;ASSUME NO STOP
-	BNE STOP4       ;WE WERE RIGHT
+	jsr ud60        ; stop key check
+	jmp tp40        ;stay in loop untill tapes are done
+.ski 5
+tstop	jsr stop        ;stop key down?
+	clc             ;assume no stop
+	bne stop4       ;we were right
 ;
-;STOP KEY DOWN...
+;stop key down...
 ;
-	JSR TNIF        ;TURN OFF CASSETTES
-	SEC             ;FAILURE FLAG
-	PLA             ;BACK ONE SQUARE...
-	PLA
+	jsr tnif        ;turn off cassettes
+	sec             ;failure flag
+	pla             ;back one square...
+	pla
 ;
-; LDA #0 ;STOP KEY FLAG
+; lda #0 ;stop key flag
 ;
-STOP3	LDA #0          ;DEALLOCATE IRQTMP
-	STA IRQTMP+1    ;IF C-SET THEN STOP KEY
-STOP4	RTS
-.SKI 5
+stop3	lda #0          ;deallocate irqtmp
+	sta irqtmp+1    ;if c-set then stop key
+stop4	rts
+.ski 5
 ;
-; STT1 - SET UP TIMEOUT WATCH FOR NEXT DIPOLE
+; stt1 - set up timeout watch for next dipole
 ;
-STT1	STX TEMP        ;.X HAS CONSTANT FOR TIMEOUT
-	LDA CMP0        ;CMP0*5
-	ASL A
-	ASL A
-	CLC
-	ADC CMP0
-	CLC 
-	ADC TEMP        ;ADJUST LONG BYTE COUNT
-	STA TEMP
-	LDA #0
-	BIT CMP0        ;CHECK CMP0 ...
-	BMI STT2        ;...MINUS, NO ADJUST
-	ROL A           ;...PLUS SO ADJUST POS
-STT2	ASL TEMP        ;MULTIPLY CORRECTED VALUE BY 4
-	ROL A
-	ASL TEMP
-	ROL A
-	TAX
-STT3	LDA D1T2L       ;WATCH OUT FOR D1T2H ROLLOVER...
-	CMP #22         ;...TIME FOR ROUTINE...!!!...
-	BCC STT3        ;...TOO CLOSE SO WAIT UNTILL PAST
-	ADC TEMP        ;CALCULATE AND...
-	STA D1T1L       ;...STORE ADUSTED TIME COUNT
-	TXA
-	ADC D1T2H       ;ADJUST FOR HIGH TIME COUNT
-	STA D1T1H
-	LDA CASTON      ;ENABLE TIMERS
-	STA D1CRA
-	STA STUPID      ;NON-ZERO MEANS AN T1 IRQ HAS NOT OCCURED YET
-	LDA D1ICR       ;CLEAR OLD T1 INTERRUPT
-	AND #$10        ;CHECK FOR OLD-FLAG IRQ
-	BEQ STT4        ;NO...NORMAL EXIT
-	LDA #>STT4      ;PUSH SIMULATED RETURN ADDRESS ON STACK
-	PHA
-	LDA #<STT4
-	PHA
-	JMP SIMIRQ
-STT4	CLI             ;ALLOW FOR RE-ENTRY CODE
-	RTS
-.END
-; RSR 8/25/80 MODIFY I/O FOR MOD2 HARDWARE
-; RSR 12/11/81 MODIFY I/O FOR VIC-40
-; RSR 2/9/82 ADD SCREEN DISABLE FOR TAPE
-; RSR 3/28/82 ADD T2IRQ TO START CASSETTE WRITE
-; RSR 3/28/82 ADD CASSETTE READ TIMER1 FLAG
-; RSR 5/11/82 CHANGE SO WE DON'T MISS ANY IRQ'S
-; RSR 5/14/82 SIMULATE AN IRQ
+stt1	stx temp        ;.x has constant for timeout
+	lda cmp0        ;cmp0*5
+	asl a
+	asl a
+	clc
+	adc cmp0
+	clc 
+	adc temp        ;adjust long byte count
+	sta temp
+	lda #0
+	bit cmp0        ;check cmp0 ...
+	bmi stt2        ;...minus, no adjust
+	rol a           ;...plus so adjust pos
+stt2	asl temp        ;multiply corrected value by 4
+	rol a
+	asl temp
+	rol a
+	tax
+stt3	lda d1t2l       ;watch out for d1t2h rollover...
+	cmp #22         ;...time for routine...!!!...
+	bcc stt3        ;...too close so wait untill past
+	adc temp        ;calculate and...
+	sta d1t1l       ;...store adusted time count
+	txa
+	adc d1t2h       ;adjust for high time count
+	sta d1t1h
+	lda caston      ;enable timers
+	sta d1cra
+	sta stupid      ;non-zero means an t1 irq has not occured yet
+	lda d1icr       ;clear old t1 interrupt
+	and #$10        ;check for old-flag irq
+	beq stt4        ;no...normal exit
+	lda #>stt4      ;push simulated return address on stack
+	pha
+	lda #<stt4
+	pha
+	jmp simirq
+stt4	cli             ;allow for re-entry code
+	rts
+.end
+; rsr 8/25/80 modify i/o for mod2 hardware
+; rsr 12/11/81 modify i/o for vic-40
+; rsr 2/9/82 add screen disable for tape
+; rsr 3/28/82 add t2irq to start cassette write
+; rsr 3/28/82 add cassette read timer1 flag
+; rsr 5/11/82 change so we don't miss any irq's
+; rsr 5/14/82 simulate an irq

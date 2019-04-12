@@ -1,164 +1,164 @@
-.PAG 'CODE16'
-	LDA (STRNG1)Y
-	TAX
-	INY
-	LDA (STRNG1)Y
-	TAY
-	PLA
-MOVSTR	STX INDEX
-	STY INDEX+1
-MOVDO	TAY
-	BEQ MVDONE
-	PHA
-MOVLP	DEY
-	LDA (INDEX)Y
-	STA (FRESPC)Y
-	TYA
-	BNE MOVLP
-	PLA
-MVDONE	CLC
-	ADC FRESPC
-	STA FRESPC
-	BCC MVSTRT
-	INC FRESPC+1
-MVSTRT	RTS
-FRESTR	JSR CHKSTR
-FREFAC	LDA FACMO
-	LDY FACMO+1
-FRETMP	STA INDEX
-	STY INDEX+1
-	JSR FRETMS
-	PHP
-	LDY #0
-	LDA (INDEX)Y
-	PHA
-	INY
-	LDA (INDEX)Y
-	TAX
-	INY
-	LDA (INDEX)Y
-	TAY
-	PLA
-	PLP
-	BNE FRETRT
-	CPY FRETOP+1
-	BNE FRETRT
-	CPX FRETOP
-	BNE FRETRT
-	PHA
-	CLC
-	ADC FRETOP
-	STA FRETOP
-	BCC FREPLA
-	INC FRETOP+1
-FREPLA	PLA
-FRETRT	STX INDEX
-	STY INDEX+1
-	RTS
-FRETMS	CPY LASTPT+1
-	BNE FRERTS
-	CMP LASTPT
-	BNE FRERTS
-	STA TEMPPT
-	SBC #STRSIZ
-	STA LASTPT
-	LDY #0
-FRERTS	RTS
-CHRD	JSR CONINT
-	TXA
-	PHA
-	LDA #1
-	JSR STRSPA
-	PLA
-	LDY #0
-	STA (DSCTMP+1)Y
-	PLA
-	PLA
-	JMP PUTNEW
-LEFTD	JSR PREAM
-	CMP (DSCPNT)Y
-	TYA
-RLEFT	BCC RLEFT1
-	LDA (DSCPNT)Y
-	TAX
-	TYA
-RLEFT1	PHA
-RLEFT2	TXA
-RLEFT3	PHA
-	JSR STRSPA
-	LDA DSCPNT
-	LDY DSCPNT+1
-	JSR FRETMP
-	PLA
-	TAY
-	PLA
-	CLC
-	ADC INDEX
-	STA INDEX
-	BCC PULMOR
-	INC INDEX+1
-PULMOR	TYA
-	JSR MOVDO
-	JMP PUTNEW
-RIGHTD	JSR PREAM
-	CLC
-	SBC (DSCPNT)Y
-	EOR #255
-	JMP RLEFT
-MIDD	LDA #255
-	STA FACLO
-	JSR CHRGOT
-	CMP #41
-	BEQ MID2
-	JSR CHKCOM
-	JSR GETBYT
-MID2	JSR PREAM
-	BEQ GOFUC
-	DEX
-	TXA
-	PHA
-	CLC
-	LDX #0
-	SBC (DSCPNT)Y
-	BCS RLEFT2
-	EOR #255
-	CMP FACLO
-	BCC RLEFT3
-	LDA FACLO
-	BCS RLEFT3
-PREAM	JSR CHKCLS
-	PLA
-	TAY
-	PLA
-	STA JMPER+1
-	PLA
-	PLA
-	PLA
-	TAX
-	PLA
-	STA DSCPNT
-	PLA
-	STA DSCPNT+1
-	LDA JMPER+1
-	PHA
-	TYA
-	PHA
-	LDY #0
-	TXA
-	RTS
-LEN	JSR LEN1
-	JMP SNGFLT
-LEN1	JSR FRESTR
-	LDX #0
-	STX VALTYP
-	TAY
-	RTS
-ASC	JSR LEN1
-	BEQ GOFUC
-	LDY #0
-	LDA (INDEX1)Y
-	TAY
-	JMP SNGFLT
-GOFUC	JMP FCERR
-GTBYTC	JSR CHRGET
-.END
+.pag 'code16'
+	lda (strng1)y
+	tax
+	iny
+	lda (strng1)y
+	tay
+	pla
+movstr	stx index
+	sty index+1
+movdo	tay
+	beq mvdone
+	pha
+movlp	dey
+	lda (index)y
+	sta (frespc)y
+	tya
+	bne movlp
+	pla
+mvdone	clc
+	adc frespc
+	sta frespc
+	bcc mvstrt
+	inc frespc+1
+mvstrt	rts
+frestr	jsr chkstr
+frefac	lda facmo
+	ldy facmo+1
+fretmp	sta index
+	sty index+1
+	jsr fretms
+	php
+	ldy #0
+	lda (index)y
+	pha
+	iny
+	lda (index)y
+	tax
+	iny
+	lda (index)y
+	tay
+	pla
+	plp
+	bne fretrt
+	cpy fretop+1
+	bne fretrt
+	cpx fretop
+	bne fretrt
+	pha
+	clc
+	adc fretop
+	sta fretop
+	bcc frepla
+	inc fretop+1
+frepla	pla
+fretrt	stx index
+	sty index+1
+	rts
+fretms	cpy lastpt+1
+	bne frerts
+	cmp lastpt
+	bne frerts
+	sta temppt
+	sbc #strsiz
+	sta lastpt
+	ldy #0
+frerts	rts
+chrd	jsr conint
+	txa
+	pha
+	lda #1
+	jsr strspa
+	pla
+	ldy #0
+	sta (dsctmp+1)y
+	pla
+	pla
+	jmp putnew
+leftd	jsr pream
+	cmp (dscpnt)y
+	tya
+rleft	bcc rleft1
+	lda (dscpnt)y
+	tax
+	tya
+rleft1	pha
+rleft2	txa
+rleft3	pha
+	jsr strspa
+	lda dscpnt
+	ldy dscpnt+1
+	jsr fretmp
+	pla
+	tay
+	pla
+	clc
+	adc index
+	sta index
+	bcc pulmor
+	inc index+1
+pulmor	tya
+	jsr movdo
+	jmp putnew
+rightd	jsr pream
+	clc
+	sbc (dscpnt)y
+	eor #255
+	jmp rleft
+midd	lda #255
+	sta faclo
+	jsr chrgot
+	cmp #41
+	beq mid2
+	jsr chkcom
+	jsr getbyt
+mid2	jsr pream
+	beq gofuc
+	dex
+	txa
+	pha
+	clc
+	ldx #0
+	sbc (dscpnt)y
+	bcs rleft2
+	eor #255
+	cmp faclo
+	bcc rleft3
+	lda faclo
+	bcs rleft3
+pream	jsr chkcls
+	pla
+	tay
+	pla
+	sta jmper+1
+	pla
+	pla
+	pla
+	tax
+	pla
+	sta dscpnt
+	pla
+	sta dscpnt+1
+	lda jmper+1
+	pha
+	tya
+	pha
+	ldy #0
+	txa
+	rts
+len	jsr len1
+	jmp sngflt
+len1	jsr frestr
+	ldx #0
+	stx valtyp
+	tay
+	rts
+asc	jsr len1
+	beq gofuc
+	ldy #0
+	lda (index1)y
+	tay
+	jmp sngflt
+gofuc	jmp fcerr
+gtbytc	jsr chrget
+.end

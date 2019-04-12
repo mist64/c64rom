@@ -1,135 +1,135 @@
-.PAG 'CLOSE'
+.pag 'close'
 ;***************************************
-;* CLOSE -- CLOSE LOGICAL FILE       *
+;* close -- close logical file       *
 ;*                                   *
-;*     THE LOGICAL FILE NUMBER OF THE*
-;* FILE TO BE CLOSED IS PASSED IN .A.*
-;* KEYBOARD, SCREEN, AND FILES NOT   *
-;* OPEN PASS STRAIGHT THROUGH. TAPE  *
-;* FILES OPEN FOR WRITE ARE CLOSED BY*
-;* DUMPING THE LAST BUFFER AND       *
-;* CONDITIONALLY WRITING AN END OF   *
-;* TAPE BLOCK.SERIAL FILES ARE CLOSED*
-;* BY SENDING A CLOSE FILE COMMAND IF*
-;* A SECONDARY ADDRESS WAS SPECIFIED *
-;* IN ITS OPEN COMMAND.              *
+;*     the logical file number of the*
+;* file to be closed is passed in .a.*
+;* keyboard, screen, and files not   *
+;* open pass straight through. tape  *
+;* files open for write are closed by*
+;* dumping the last buffer and       *
+;* conditionally writing an end of   *
+;* tape block.serial files are closed*
+;* by sending a close file command if*
+;* a secondary address was specified *
+;* in its open command.              *
 ;***************************************
 ;
-NCLOSE	JSR JLTLK       ;LOOK FILE UP
-	BEQ JX050       ;OPEN...
-	CLC             ;ELSE RETURN
-	RTS
+nclose	jsr jltlk       ;look file up
+	beq jx050       ;open...
+	clc             ;else return
+	rts
 ;
-JX050	JSR JZ100       ;EXTRACT TABLE DATA
-	TXA             ;SAVE TABLE INDEX
-	PHA
+jx050	jsr jz100       ;extract table data
+	txa             ;save table index
+	pha
 ;
-	LDA FA          ;CHECK DEVICE NUMBER
-	BEQ JX150       ;IS KEYBOARD...DONE
-	CMP #3
-	BEQ JX150       ;IS SCREEN...DONE
-	BCS JX120       ;IS SERIAL...PROCESS
-	CMP #2          ;RS232?
-	BNE JX115       ;NO...
+	lda fa          ;check device number
+	beq jx150       ;is keyboard...done
+	cmp #3
+	beq jx150       ;is screen...done
+	bcs jx120       ;is serial...process
+	cmp #2          ;rs232?
+	bne jx115       ;no...
 ;
-; RS-232 CLOSE
+; rs-232 close
 ;
-; REMOVE FILE FROM TABLES
-	PLA
-	JSR JXRMV
+; remove file from tables
+	pla
+	jsr jxrmv
 ;
-	JSR CLN232      ;CLEAN UP RS232 FOR CLOSE
+	jsr cln232      ;clean up rs232 for close
 ;
-; DEALLOCATE BUFFERS
+; deallocate buffers
 ;
-	JSR GETTOP      ;GET MEMSIZ
-	LDA RIBUF+1     ;CHECK INPUT ALLOCATION
-	BEQ CLS010      ;NOT...ALLOCATED
-	INY
-CLS010	LDA ROBUF+1     ;CHECK OUTPUT ALLOCATION
-	BEQ CLS020
-	INY
-CLS020	LDA #00         ;DEALLOCATE
-	STA RIBUF+1
-	STA ROBUF+1
-; FLAG TOP OF MEMORY CHANGE
-	JMP MEMTCF      ;GO SET NEW TOP
+	jsr gettop      ;get memsiz
+	lda ribuf+1     ;check input allocation
+	beq cls010      ;not...allocated
+	iny
+cls010	lda robuf+1     ;check output allocation
+	beq cls020
+	iny
+cls020	lda #00         ;deallocate
+	sta ribuf+1
+	sta robuf+1
+; flag top of memory change
+	jmp memtcf      ;go set new top
 ;
-;CLOSE CASSETTE FILE
+;close cassette file
 ;
-JX115	LDA SA          ;WAS IT A TAPE READ?
-	AND #$F
-	BEQ JX150       ;YES
+jx115	lda sa          ;was it a tape read?
+	and #$f
+	beq jx150       ;yes
 ;
-	JSR ZZZ         ;NO. . .IT IS WRITE
-	LDA #0          ;END OF FILE CHARACTER
-	SEC             ;NEED TO SET CARRY FOR CASOUT (ELSE RS232 OUTPUT!)
-	JSR CASOUT      ;PUT IN END OF FILE
-	JSR WBLK
-	BCC JX117       ;NO ERRORS...
-	PLA             ;CLEAN STACK FOR ERROR
-	LDA #0          ;BREAK KEY ERROR
-	RTS
+	jsr zzz         ;no. . .it is write
+	lda #0          ;end of file character
+	sec             ;need to set carry for casout (else rs232 output!)
+	jsr casout      ;put in end of file
+	jsr wblk
+	bcc jx117       ;no errors...
+	pla             ;clean stack for error
+	lda #0          ;break key error
+	rts
 ;
-JX117	LDA SA
-	CMP #$62        ;WRITE END OF TAPE BLOCK?
-	BNE JX150       ;NO...
+jx117	lda sa
+	cmp #$62        ;write end of tape block?
+	bne jx150       ;no...
 ;
-	LDA #EOT
-	JSR TAPEH       ;WRITE END OF TAPE BLOCK
-	JMP JX150
+	lda #eot
+	jsr tapeh       ;write end of tape block
+	jmp jx150
 ;
-;CLOSE AN SERIAL FILE
+;close an serial file
 ;
-JX120	JSR CLSEI
+jx120	jsr clsei
 ;
-;ENTRY TO REMOVE A GIVE LOGICAL FILE
-;FROM TABLE OF LOGICAL, PRIMARY,
-;AND SECONDARY ADDRESSES
+;entry to remove a give logical file
+;from table of logical, primary,
+;and secondary addresses
 ;
-JX150	PLA             ;GET TABLE INDEX OFF STACK
+jx150	pla             ;get table index off stack
 ;
-; JXRMV - ENTRY TO USE AS AN RS-232 SUBROUTINE
+; jxrmv - entry to use as an rs-232 subroutine
 ;
-JXRMV	TAX
-	DEC LDTND
-	CPX LDTND       ;IS DELETED FILE AT END?
-	BEQ JX170       ;YES...DONE
+jxrmv	tax
+	dec ldtnd
+	cpx ldtnd       ;is deleted file at end?
+	beq jx170       ;yes...done
 ;
-;DELETE ENTRY IN MIDDLE BY MOVING
-;LAST ENTRY TO THAT POSITION.
+;delete entry in middle by moving
+;last entry to that position.
 ;
-	LDY LDTND
-	LDA LAT,Y
-	STA LAT,X
-	LDA FAT,Y
-	STA FAT,X
-	LDA SAT,Y
-	STA SAT,X
+	ldy ldtnd
+	lda lat,y
+	sta lat,x
+	lda fat,y
+	sta fat,x
+	lda sat,y
+	sta sat,x
 ;
-JX170	CLC             ;CLOSE EXIT
-JX175	RTS
-.SKI 5
-;LOOKUP TABLIZED LOGICAL FILE DATA
+jx170	clc             ;close exit
+jx175	rts
+.ski 5
+;lookup tablized logical file data
 ;
-LOOKUP	LDA #0
-	STA STATUS
-	TXA
-JLTLK	LDX LDTND
-JX600	DEX
-	BMI JZ101
-	CMP LAT,X
-	BNE JX600
-	RTS
-.SKI 5
-;ROUTINE TO FETCH TABLE ENTRIES
+lookup	lda #0
+	sta status
+	txa
+jltlk	ldx ldtnd
+jx600	dex
+	bmi jz101
+	cmp lat,x
+	bne jx600
+	rts
+.ski 5
+;routine to fetch table entries
 ;
-JZ100	LDA LAT,X
-	STA LA
-	LDA FAT,X
-	STA FA
-	LDA SAT,X
-	STA SA
-JZ101	RTS
-.END
-; RSR  5/12/82 - MODIFY FOR CLN232
+jz100	lda lat,x
+	sta la
+	lda fat,x
+	sta fa
+	lda sat,x
+	sta sa
+jz101	rts
+.end
+; rsr  5/12/82 - modify for cln232

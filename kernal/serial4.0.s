@@ -1,310 +1,310 @@
-.PAG 'SERIAL ROUTINES'
-;COMMAND SERIAL BUS DEVICE TO TALK
+.pag 'serial routines'
+;command serial bus device to talk
 ;
-TALK	ORA #$40        ;MAKE A TALK ADR
-	.BYT $2C        ;SKIP TWO BYTES
-.SKI 3
-;COMMAND SERIAL BUS DEVICE TO LISTEN
+talk	ora #$40        ;make a talk adr
+	.byt $2c        ;skip two bytes
+.ski 3
+;command serial bus device to listen
 ;
-LISTN	ORA #$20        ;MAKE A LISTEN ADR
-	JSR RSP232      ;PROTECT SELF FROM RS232 NMI'S
-LIST1	PHA
-;
-;
-	BIT C3P0        ;CHARACTER LEFT IN BUF?
-	BPL LIST2       ;NO...
-;
-;SEND BUFFERED CHARACTER
-;
-	SEC             ;SET EOI FLAG
-	ROR R2D2
-;
-	JSR ISOUR       ;SEND LAST CHARACTER
-;
-	LSR C3P0        ;BUFFER CLEAR FLAG
-	LSR R2D2        ;CLEAR EOI FLAG
+listn	ora #$20        ;make a listen adr
+	jsr rsp232      ;protect self from rs232 nmi's
+list1	pha
 ;
 ;
-LIST2	PLA             ;TALK/LISTEN ADDRESS
-	STA BSOUR
-	SEI
-	JSR DATAHI
-	CMP #$3F        ;CLKHI ONLY ON UNLISTEN
-	BNE LIST5
-	JSR CLKHI
+	bit c3p0        ;character left in buf?
+	bpl list2       ;no...
 ;
-LIST5	LDA D2PRA       ;ASSERT ATTENTION
-	ORA #$08
-	STA D2PRA
+;send buffered character
 ;
-.SKI 3
-ISOURA	SEI
-	JSR CLKLO       ;SET CLOCK LINE LOW
-	JSR DATAHI
-	JSR W1MS        ;DELAY 1 MS
-.SKI 3
-ISOUR	SEI             ;NO IRQ'S ALLOWED
-	JSR DATAHI      ;MAKE SURE DATA IS RELEASED
-	JSR DEBPIA      ;DATA SHOULD BE LOW
-	BCS NODEV
-	JSR CLKHI       ;CLOCK LINE HIGH
-	BIT R2D2        ;EOI FLAG TEST
-	BPL NOEOI
-; DO THE EOI
-ISR02	JSR DEBPIA      ;WAIT FOR DATA TO GO HIGH
-	BCC ISR02
+	sec             ;set eoi flag
+	ror r2d2
 ;
-ISR03	JSR DEBPIA      ;WAIT FOR DATA TO GO LOW
-	BCS ISR03
+	jsr isour       ;send last character
 ;
-NOEOI	JSR DEBPIA      ;WAIT FOR DATA HIGH
-	BCC NOEOI
-	JSR CLKLO       ;SET CLOCK LOW
-;
-; SET TO SEND DATA
-;
-	LDA #$08        ;COUNT 8 BITS
-	STA COUNT
-;
-ISR01
-	LDA D2PRA       ;DEBOUNCE THE BUS
-	CMP D2PRA
-	BNE ISR01
-	ASL A           ;SET THE FLAGS
-	BCC FRMERR      ;DATA MUST BE HI
-;
-	ROR BSOUR       ;NEXT BIT INTO CARRY
-	BCS ISRHI
-	JSR DATALO
-	BNE ISRCLK
-ISRHI	JSR DATAHI
-ISRCLK	JSR CLKHI       ;CLOCK HI
-	NOP
-	NOP
-	NOP
-	NOP
-	LDA D2PRA
-	AND #$FF-$20    ;DATA HIGH
-	ORA #$10        ;CLOCK LOW
-	STA D2PRA
-	DEC COUNT
-	BNE ISR01
-	LDA #$04        ;SET TIMER FOR 1MS
-	STA D1T2H
-	LDA #TIMRB      ;TRIGGER TIMER
-	STA D1CRB
-	LDA D1ICR       ;CLEAR THE TIMER FLAGS<<<<<<<<<<<<<
-ISR04	LDA D1ICR
-	AND #$02
-	BNE FRMERR
-	JSR DEBPIA
-	BCS ISR04
-	CLI             ;LET IRQ'S CONTINUE
-	RTS
-;
-NODEV	;DEVICE NOT PRESENT ERROR
-	LDA #$80
-	.BYT $2C
-FRMERR	;FRAMING ERROR
-	LDA #$03
-CSBERR	JSR UDST        ;COMMODORE SERIAL BUSS ERROR ENTRY
-	CLI             ;IRQ'S WERE OFF...TURN ON
-	CLC             ;MAKE SURE NO KERNAL ERROR RETURNED
-	BCC DLABYE      ;TURN ATN OFF ,RELEASE ALL LINES
-;
-.SKI 3
-;SEND SECONDARY ADDRESS AFTER LISTEN
-;
-SECND	STA BSOUR       ;BUFFER CHARACTER
-	JSR ISOURA      ;SEND IT
-.SKI 3
-;RELEASE ATTENTION AFTER LISTEN
-;
-SCATN	LDA D2PRA
-	AND #$FF-$08
-	STA D2PRA       ;RELEASE ATTENTION
-	RTS
-.SKI 3
-;TALK SECOND ADDRESS
-;
-TKSA	STA BSOUR       ;BUFFER CHARACTER
-	JSR ISOURA      ;SEND SECOND ADDR
-.SKI 3
-TKATN	;SHIFT OVER TO LISTENER
-	SEI             ;NO IRQ'S HERE
-	JSR DATALO      ;DATA LINE LOW
-	JSR SCATN
-	JSR CLKHI       ;CLOCK LINE HIGH JSR/RTS
-TKATN1	JSR DEBPIA      ;WAIT FOR CLOCK TO GO LOW
-	BMI TKATN1
-	CLI             ;IRQ'S OKAY NOW
-	RTS
-.SKI 3
-;BUFFERED OUTPUT TO SERIAL BUS
-;
-CIOUT	BIT C3P0        ;BUFFERED CHAR?
-	BMI CI2         ;YES...SEND LAST
-;
-	SEC             ;NO...
-	ROR C3P0        ;SET BUFFERED CHAR FLAG
-	BNE CI4         ;BRANCH ALWAYS
-;
-CI2	PHA             ;SAVE CURRENT CHAR
-	JSR ISOUR       ;SEND LAST CHAR
-	PLA             ;RESTORE CURRENT CHAR
-CI4	STA BSOUR       ;BUFFER CURRENT CHAR
-	CLC             ;CARRY-GOOD EXIT
-	RTS
-.SKI 3
-;SEND UNTALK COMMAND ON SERIAL BUS
-;
-UNTLK	SEI
-	JSR CLKLO
-	LDA D2PRA       ;PULL ATN
-	ORA #$08
-	STA D2PRA
-	LDA #$5F        ;UNTALK COMMAND
-	.BYT $2C        ;SKIP TWO BYTES
-.SKI 3
-;SEND UNLISTEN COMMAND ON SERIAL BUS
-;
-UNLSN	LDA #$3F        ;UNLISTEN COMMAND
-	JSR LIST1       ;SEND IT
-;
-; RELEASE ALL LINES
-DLABYE	JSR SCATN       ;ALWAYS RELEASE ATN
-; DELAY THEN RELEASE CLOCK AND DATA
-;
-DLADLH	TXA             ;DELAY APPROX 60 US
-	LDX #10
-DLAD00	DEX
-	BNE DLAD00
-	TAX
-	JSR CLKHI
-	JMP DATAHI
-.SKI 3
-;INPUT A BYTE FROM SERIAL BUS
-;
-ACPTR
-	SEI             ;NO IRQ ALLOWED
-	LDA #$00        ;SET EOI/ERROR FLAG
-	STA COUNT
-	JSR CLKHI       ;MAKE SURE CLOCK LINE IS RELEASED
-ACP00A	JSR DEBPIA      ;WAIT FOR CLOCK HIGH
-	BPL ACP00A
-;
-EOIACP
-	LDA #$01        ;SET TIMER 2 FOR 256US
-	STA D1T2H
-	LDA #TIMRB
-	STA D1CRB
-	JSR DATAHI      ;DATA LINE HIGH (MAKES TIMMING MORE LIKE VIC-20
-	LDA D1ICR       ;CLEAR THE TIMER FLAGS<<<<<<<<<<<<
-ACP00	LDA D1ICR
-	AND #$02        ;CHECK THE TIMER
-	BNE ACP00B      ;RAN OUT.....
-	JSR DEBPIA      ;CHECK THE CLOCK LINE
-	BMI ACP00       ;NO NOT YET
-	BPL ACP01       ;YES.....
-;
-ACP00B	LDA COUNT       ;CHECK FOR ERROR (TWICE THRU TIMEOUTS)
-	BEQ ACP00C
-	LDA #2
-	JMP CSBERR      ; ST = 2 READ TIMEOUT
-;
-; TIMER RAN OUT DO AN EOI THING
-;
-ACP00C	JSR DATALO      ;DATA LINE LOW
-	JSR CLKHI       ; DELAY AND THEN SET DATAHI (FIX FOR 40US C64)
-	LDA #$40
-	JSR UDST        ;OR AN EOI BIT INTO STATUS
-	INC COUNT       ;GO AROUND AGAIN FOR ERROR CHECK ON EOI
-	BNE EOIACP
-;
-; DO THE BYTE TRANSFER
-;
-ACP01	LDA #08         ;SET UP COUNTER
-	STA COUNT
-;
-ACP03	LDA D2PRA       ;WAIT FOR CLOCK HIGH
-	CMP D2PRA       ;DEBOUNCE
-	BNE ACP03
-	ASL A           ;SHIFT DATA INTO CARRY
-	BPL ACP03       ;CLOCK STILL LOW...
-	ROR BSOUR1      ;ROTATE DATA IN
-;
-ACP03A	LDA D2PRA       ;WAIT FOR CLOCK LOW
-	CMP D2PRA       ;DEBOUNCE
-	BNE ACP03A
-	ASL A
-	BMI ACP03A
-	DEC COUNT
-	BNE ACP03       ;MORE BITS.....
-;...EXIT...
-	JSR DATALO      ;DATA LOW
-	BIT STATUS      ;CHECK FOR EOI
-	BVC ACP04       ;NONE...
-;
-	JSR DLADLH      ;DELAY THEN SET DATA HIGH
-;
-ACP04	LDA BSOUR1
-	CLI             ;IRQ IS OK
-	CLC             ;GOOD EXIT
-	RTS
-;
-CLKHI	;SET CLOCK LINE HIGH (INVERTED)
-	LDA D2PRA
-	AND #$FF-$10
-	STA D2PRA
-	RTS
-;
-CLKLO	;SET CLOCK LINE LOW  (INVERTED)
-	LDA D2PRA
-	ORA #$10
-	STA D2PRA
-	RTS
+	lsr c3p0        ;buffer clear flag
+	lsr r2d2        ;clear eoi flag
 ;
 ;
-DATAHI	;SET DATA LINE HIGH (INVERTED)
-	LDA D2PRA
-	AND #$FF-$20
-	STA D2PRA
-	RTS
+list2	pla             ;talk/listen address
+	sta bsour
+	sei
+	jsr datahi
+	cmp #$3f        ;clkhi only on unlisten
+	bne list5
+	jsr clkhi
 ;
-DATALO	;SET DATA LINE LOW  (INVERTED)
-	LDA D2PRA
-	ORA #$20
-	STA D2PRA
-	RTS
+list5	lda d2pra       ;assert attention
+	ora #$08
+	sta d2pra
 ;
-DEBPIA	LDA D2PRA       ;DEBOUNCE THE PIA
-	CMP D2PRA
-	BNE DEBPIA
-	ASL A           ;SHIFT THE DATA BIT INTO THE CARRY...
-	RTS             ;...AND THE CLOCK INTO NEG FLAG
+.ski 3
+isoura	sei
+	jsr clklo       ;set clock line low
+	jsr datahi
+	jsr w1ms        ;delay 1 ms
+.ski 3
+isour	sei             ;no irq's allowed
+	jsr datahi      ;make sure data is released
+	jsr debpia      ;data should be low
+	bcs nodev
+	jsr clkhi       ;clock line high
+	bit r2d2        ;eoi flag test
+	bpl noeoi
+; do the eoi
+isr02	jsr debpia      ;wait for data to go high
+	bcc isr02
 ;
-W1MS	;DELAY 1MS USING LOOP
-	TXA             ;SAVE .X
-	LDX #200-16     ;1000US-(1000/500*8=#40US HOLDS)
-W1MS1	DEX             ;5US LOOP
-	BNE W1MS1
-	TAX             ;RESTORE .X
-	RTS
-.END
+isr03	jsr debpia      ;wait for data to go low
+	bcs isr03
+;
+noeoi	jsr debpia      ;wait for data high
+	bcc noeoi
+	jsr clklo       ;set clock low
+;
+; set to send data
+;
+	lda #$08        ;count 8 bits
+	sta count
+;
+isr01
+	lda d2pra       ;debounce the bus
+	cmp d2pra
+	bne isr01
+	asl a           ;set the flags
+	bcc frmerr      ;data must be hi
+;
+	ror bsour       ;next bit into carry
+	bcs isrhi
+	jsr datalo
+	bne isrclk
+isrhi	jsr datahi
+isrclk	jsr clkhi       ;clock hi
+	nop
+	nop
+	nop
+	nop
+	lda d2pra
+	and #$ff-$20    ;data high
+	ora #$10        ;clock low
+	sta d2pra
+	dec count
+	bne isr01
+	lda #$04        ;set timer for 1ms
+	sta d1t2h
+	lda #timrb      ;trigger timer
+	sta d1crb
+	lda d1icr       ;clear the timer flags<<<<<<<<<<<<<
+isr04	lda d1icr
+	and #$02
+	bne frmerr
+	jsr debpia
+	bcs isr04
+	cli             ;let irq's continue
+	rts
+;
+nodev	;device not present error
+	lda #$80
+	.byt $2c
+frmerr	;framing error
+	lda #$03
+csberr	jsr udst        ;commodore serial buss error entry
+	cli             ;irq's were off...turn on
+	clc             ;make sure no kernal error returned
+	bcc dlabye      ;turn atn off ,release all lines
+;
+.ski 3
+;send secondary address after listen
+;
+secnd	sta bsour       ;buffer character
+	jsr isoura      ;send it
+.ski 3
+;release attention after listen
+;
+scatn	lda d2pra
+	and #$ff-$08
+	sta d2pra       ;release attention
+	rts
+.ski 3
+;talk second address
+;
+tksa	sta bsour       ;buffer character
+	jsr isoura      ;send second addr
+.ski 3
+tkatn	;shift over to listener
+	sei             ;no irq's here
+	jsr datalo      ;data line low
+	jsr scatn
+	jsr clkhi       ;clock line high jsr/rts
+tkatn1	jsr debpia      ;wait for clock to go low
+	bmi tkatn1
+	cli             ;irq's okay now
+	rts
+.ski 3
+;buffered output to serial bus
+;
+ciout	bit c3p0        ;buffered char?
+	bmi ci2         ;yes...send last
+;
+	sec             ;no...
+	ror c3p0        ;set buffered char flag
+	bne ci4         ;branch always
+;
+ci2	pha             ;save current char
+	jsr isour       ;send last char
+	pla             ;restore current char
+ci4	sta bsour       ;buffer current char
+	clc             ;carry-good exit
+	rts
+.ski 3
+;send untalk command on serial bus
+;
+untlk	sei
+	jsr clklo
+	lda d2pra       ;pull atn
+	ora #$08
+	sta d2pra
+	lda #$5f        ;untalk command
+	.byt $2c        ;skip two bytes
+.ski 3
+;send unlisten command on serial bus
+;
+unlsn	lda #$3f        ;unlisten command
+	jsr list1       ;send it
+;
+; release all lines
+dlabye	jsr scatn       ;always release atn
+; delay then release clock and data
+;
+dladlh	txa             ;delay approx 60 us
+	ldx #10
+dlad00	dex
+	bne dlad00
+	tax
+	jsr clkhi
+	jmp datahi
+.ski 3
+;input a byte from serial bus
+;
+acptr
+	sei             ;no irq allowed
+	lda #$00        ;set eoi/error flag
+	sta count
+	jsr clkhi       ;make sure clock line is released
+acp00a	jsr debpia      ;wait for clock high
+	bpl acp00a
+;
+eoiacp
+	lda #$01        ;set timer 2 for 256us
+	sta d1t2h
+	lda #timrb
+	sta d1crb
+	jsr datahi      ;data line high (makes timming more like vic-20
+	lda d1icr       ;clear the timer flags<<<<<<<<<<<<
+acp00	lda d1icr
+	and #$02        ;check the timer
+	bne acp00b      ;ran out.....
+	jsr debpia      ;check the clock line
+	bmi acp00       ;no not yet
+	bpl acp01       ;yes.....
+;
+acp00b	lda count       ;check for error (twice thru timeouts)
+	beq acp00c
+	lda #2
+	jmp csberr      ; st = 2 read timeout
+;
+; timer ran out do an eoi thing
+;
+acp00c	jsr datalo      ;data line low
+	jsr clkhi       ; delay and then set datahi (fix for 40us c64)
+	lda #$40
+	jsr udst        ;or an eoi bit into status
+	inc count       ;go around again for error check on eoi
+	bne eoiacp
+;
+; do the byte transfer
+;
+acp01	lda #08         ;set up counter
+	sta count
+;
+acp03	lda d2pra       ;wait for clock high
+	cmp d2pra       ;debounce
+	bne acp03
+	asl a           ;shift data into carry
+	bpl acp03       ;clock still low...
+	ror bsour1      ;rotate data in
+;
+acp03a	lda d2pra       ;wait for clock low
+	cmp d2pra       ;debounce
+	bne acp03a
+	asl a
+	bmi acp03a
+	dec count
+	bne acp03       ;more bits.....
+;...exit...
+	jsr datalo      ;data low
+	bit status      ;check for eoi
+	bvc acp04       ;none...
+;
+	jsr dladlh      ;delay then set data high
+;
+acp04	lda bsour1
+	cli             ;irq is ok
+	clc             ;good exit
+	rts
+;
+clkhi	;set clock line high (inverted)
+	lda d2pra
+	and #$ff-$10
+	sta d2pra
+	rts
+;
+clklo	;set clock line low  (inverted)
+	lda d2pra
+	ora #$10
+	sta d2pra
+	rts
+;
+;
+datahi	;set data line high (inverted)
+	lda d2pra
+	and #$ff-$20
+	sta d2pra
+	rts
+;
+datalo	;set data line low  (inverted)
+	lda d2pra
+	ora #$20
+	sta d2pra
+	rts
+;
+debpia	lda d2pra       ;debounce the pia
+	cmp d2pra
+	bne debpia
+	asl a           ;shift the data bit into the carry...
+	rts             ;...and the clock into neg flag
+;
+w1ms	;delay 1ms using loop
+	txa             ;save .x
+	ldx #200-16     ;1000us-(1000/500*8=#40us holds)
+w1ms1	dex             ;5us loop
+	bne w1ms1
+	tax             ;restore .x
+	rts
+.end
 ;*******************************
-;WRITTEN 8/11/80 BOB FAIRBAIRN
-;TEST SERIAL0.6 8/12/80  RJF
-;CHANGE I/O STRUCTURE 8/21/80 RJF
-;MORE I/O CHANGES 8/24/80 RJF
-;FINAL RELEASE INTO KERNAL 8/26/80 RJF
-;SOME CLEAN UP 9/8/80 RSR
-;ADD IRQ PROTECT ON ISOUR AND TKATN 9/22/80 RSR
-;FIX UNTALK 10/7/80 RSR
-;MODIFY FOR VIC-40 I/O SYSTEM 12/08/81 RSR
-;ADD SEI TO (UNTLK,ISOURA,LIST2) 12/14/81 RSR
-;MODIFY FOR 6526 FLAGS FIX ERRS 12/31/81 RSR
-;MODIFY FOR COMMODORE 64 I/O  3/11/82 RSR
-;CHANGE ACPTR EOI FOR BETTER RESPONSE 3/28/82 RSR
-;CHANGE WAIT 1 MS ROUTINE FOR LESS CODE 4/8/82 RSR
+;written 8/11/80 bob fairbairn
+;test serial0.6 8/12/80  rjf
+;change i/o structure 8/21/80 rjf
+;more i/o changes 8/24/80 rjf
+;final release into kernal 8/26/80 rjf
+;some clean up 9/8/80 rsr
+;add irq protect on isour and tkatn 9/22/80 rsr
+;fix untalk 10/7/80 rsr
+;modify for vic-40 i/o system 12/08/81 rsr
+;add sei to (untlk,isoura,list2) 12/14/81 rsr
+;modify for 6526 flags fix errs 12/31/81 rsr
+;modify for commodore 64 i/o  3/11/82 rsr
+;change acptr eoi for better response 3/28/82 rsr
+;change wait 1 ms routine for less code 4/8/82 rsr
 ;******************************
-.END
+.end

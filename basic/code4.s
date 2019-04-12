@@ -1,143 +1,143 @@
-.PAG 'CODE4'
-NEWSTT	JSR ISCNTC
-	LDA TXTPTR
-	LDY TXTPTR+1
-	CPY #BUFPAG
-	NOP
-	BEQ DIRCON
-	STA OLDTXT
-	STY OLDTXT+1
-DIRCON	LDY #0
-	LDA (TXTPTR)Y
-	BNE MORSTS
-	LDY #2
-	LDA (TXTPTR)Y
-	CLC
-	BNE DIRCN1
-	JMP ENDCON
-DIRCN1	INY
-	LDA (TXTPTR)Y
-	STA CURLIN
-	INY
-	LDA (TXTPTR)Y
-	STA CURLIN+1
-	TYA
-	ADC TXTPTR
-	STA TXTPTR
-	BCC GONE
-	INC TXTPTR+1
-GONE	JMP (IGONE)
-NGONE	JSR CHRGET
-NGONE1	JSR GONE3
-	JMP NEWSTT
-GONE3	BEQ ISCRTS
-GONE2	SBC #ENDTK
-	BCC GLET
-	CMP #SCRATK-ENDTK+1
-	BCS SNERRX
-	ASL A
-	TAY
-	LDA STMDSP+1,Y
-	PHA
-	LDA STMDSP,Y
-	PHA
-	JMP CHRGET
-GLET	JMP LET
-MORSTS	CMP #':
-	BEQ GONE
-SNERR1	JMP SNERR
-SNERRX	CMP #GOTK-ENDTK
-	BNE SNERR1
-	JSR CHRGET
-	LDA #TOTK
-	JSR SYNCHR
-	JMP GOTO
-RESTOR	SEC
-	LDA TXTTAB
-	SBC #1
-	LDY TXTTAB+1
-	BCS RESFIN
-	DEY
-RESFIN	STA DATPTR
-	STY DATPTR+1
-ISCRTS	RTS
-ISCNTC	JSR $FFE1
-STOP	BCS STOPC
-END	CLC
-STOPC	BNE CONTRT
-	LDA TXTPTR
-	LDY TXTPTR+1
-	LDX CURLIN+1
-	INX
-	BEQ DIRIS
-	STA OLDTXT
-	STY OLDTXT+1
-STPEND	LDA CURLIN
-	LDY CURLIN+1
-	STA OLDLIN
-	STY OLDLIN+1
-DIRIS	PLA
-	PLA
-ENDCON	LDA #<BRKTXT
-	LDY #>BRKTXT
-	BCC GORDY
-	JMP ERRFIN
-GORDY	JMP READY
-CONT	BNE CONTRT
-	LDX #ERRCN
-	LDY OLDTXT+1
-	BNE *+5
-	JMP ERROR
-	LDA OLDTXT
-	STA TXTPTR
-	STY TXTPTR+1
-	LDA OLDLIN
-	LDY OLDLIN+1
-	STA CURLIN
-	STY CURLIN+1
-CONTRT	RTS
-RUN	PHP
-	LDA #0          ;NO KERNAL MESSAGES
-	JSR SETMSG
-	PLP
-	BNE *+5
-	JMP RUNC
-	JSR CLEARC
-	JMP RUNC2
-GOSUB	LDA #3
-	JSR GETSTK
-	LDA TXTPTR+1
-	PHA
-	LDA TXTPTR
-	PHA
-	LDA CURLIN+1
-	PHA
-	LDA CURLIN
-	PHA
-	LDA #GOSUTK
-	PHA
-RUNC2	JSR CHRGOT
-	JSR GOTO
-	JMP NEWSTT
-GOTO	JSR LINGET
-	JSR REMN
-	SEC
-	LDA CURLIN
-	SBC LINNUM
-	LDA CURLIN+1
-	SBC LINNUM+1
-	BCS LUK4IT
-	TYA
-	SEC
-	ADC TXTPTR
-	LDX TXTPTR+1
-	BCC LUKALL
-	INX
-	BCS LUKALL
-LUK4IT	LDA TXTTAB
-	LDX TXTTAB+1
-LUKALL	JSR FNDLNC
-	BCC USERR
-	LDA LOWTR
-	SBC #1
-.END
+.pag 'code4'
+newstt	jsr iscntc
+	lda txtptr
+	ldy txtptr+1
+	cpy #bufpag
+	nop
+	beq dircon
+	sta oldtxt
+	sty oldtxt+1
+dircon	ldy #0
+	lda (txtptr)y
+	bne morsts
+	ldy #2
+	lda (txtptr)y
+	clc
+	bne dircn1
+	jmp endcon
+dircn1	iny
+	lda (txtptr)y
+	sta curlin
+	iny
+	lda (txtptr)y
+	sta curlin+1
+	tya
+	adc txtptr
+	sta txtptr
+	bcc gone
+	inc txtptr+1
+gone	jmp (igone)
+ngone	jsr chrget
+ngone1	jsr gone3
+	jmp newstt
+gone3	beq iscrts
+gone2	sbc #endtk
+	bcc glet
+	cmp #scratk-endtk+1
+	bcs snerrx
+	asl a
+	tay
+	lda stmdsp+1,y
+	pha
+	lda stmdsp,y
+	pha
+	jmp chrget
+glet	jmp let
+morsts	cmp #':
+	beq gone
+snerr1	jmp snerr
+snerrx	cmp #gotk-endtk
+	bne snerr1
+	jsr chrget
+	lda #totk
+	jsr synchr
+	jmp goto
+restor	sec
+	lda txttab
+	sbc #1
+	ldy txttab+1
+	bcs resfin
+	dey
+resfin	sta datptr
+	sty datptr+1
+iscrts	rts
+iscntc	jsr $ffe1
+stop	bcs stopc
+end	clc
+stopc	bne contrt
+	lda txtptr
+	ldy txtptr+1
+	ldx curlin+1
+	inx
+	beq diris
+	sta oldtxt
+	sty oldtxt+1
+stpend	lda curlin
+	ldy curlin+1
+	sta oldlin
+	sty oldlin+1
+diris	pla
+	pla
+endcon	lda #<brktxt
+	ldy #>brktxt
+	bcc gordy
+	jmp errfin
+gordy	jmp ready
+cont	bne contrt
+	ldx #errcn
+	ldy oldtxt+1
+	bne *+5
+	jmp error
+	lda oldtxt
+	sta txtptr
+	sty txtptr+1
+	lda oldlin
+	ldy oldlin+1
+	sta curlin
+	sty curlin+1
+contrt	rts
+run	php
+	lda #0          ;no kernal messages
+	jsr setmsg
+	plp
+	bne *+5
+	jmp runc
+	jsr clearc
+	jmp runc2
+gosub	lda #3
+	jsr getstk
+	lda txtptr+1
+	pha
+	lda txtptr
+	pha
+	lda curlin+1
+	pha
+	lda curlin
+	pha
+	lda #gosutk
+	pha
+runc2	jsr chrgot
+	jsr goto
+	jmp newstt
+goto	jsr linget
+	jsr remn
+	sec
+	lda curlin
+	sbc linnum
+	lda curlin+1
+	sbc linnum+1
+	bcs luk4it
+	tya
+	sec
+	adc txtptr
+	ldx txtptr+1
+	bcc lukall
+	inx
+	bcs lukall
+luk4it	lda txttab
+	ldx txttab+1
+lukall	jsr fndlnc
+	bcc userr
+	lda lowtr
+	sbc #1
+.end

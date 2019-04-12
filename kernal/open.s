@@ -1,272 +1,272 @@
-.PAG 'OPEN FILE'
+.pag 'open file'
 ;***********************************
 ;*                                 *
-;* OPEN FUNCTION                   *
+;* open function                   *
 ;*                                 *
-;* CREATES AN ENTRY IN THE LOGICAL *
-;* FILES TABLES CONSISTING OF      *
-;* LOGICAL FILE NUMBER--LA, DEVICE *
-;* NUMBER--FA, AND SECONDARY CMD-- *
-;* SA.                             *
+;* creates an entry in the logical *
+;* files tables consisting of      *
+;* logical file number--la, device *
+;* number--fa, and secondary cmd-- *
+;* sa.                             *
 ;*                                 *
-;* A FILE NAME DESCRIPTOR, FNADR & *
-;* FNLEN ARE PASSED TO THIS ROUTINE*
+;* a file name descriptor, fnadr & *
+;* fnlen are passed to this routine*
 ;*                                 *
 ;***********************************
 ;
-NOPEN	LDX LA          ;CHECK FILE #
-	BNE OP98        ;IS NOT THE KEYBOARD
+nopen	ldx la          ;check file #
+	bne op98        ;is not the keyboard
 ;
-	JMP ERROR6      ;NOT INPUT FILE...
+	jmp error6      ;not input file...
 ;
-OP98	JSR LOOKUP      ;SEE IF IN TABLE
-	BNE OP100       ;NOT FOUND...O.K.
+op98	jsr lookup      ;see if in table
+	bne op100       ;not found...o.k.
 ;
-	JMP ERROR2      ;FILE OPEN
+	jmp error2      ;file open
 ;
-OP100	LDX LDTND       ;LOGICAL DEVICE TABLE END
-	CPX #10         ;MAXIMUM # OF OPEN FILES
-	BCC OP110       ;LESS THAN 10...O.K.
+op100	ldx ldtnd       ;logical device table end
+	cpx #10         ;maximum # of open files
+	bcc op110       ;less than 10...o.k.
 ;
-	JMP ERROR1      ;TOO MANY FILES
+	jmp error1      ;too many files
 ;
-OP110	INC LDTND       ;NEW FILE
-	LDA LA
-	STA LAT,X       ;STORE LOGICAL FILE #
-	LDA SA
-	ORA #$60        ;MAKE SA AN SERIAL COMMAND
-	STA SA
-	STA SAT,X       ;STORE COMMAND #
-	LDA FA
-	STA FAT,X       ;STORE DEVICE #
+op110	inc ldtnd       ;new file
+	lda la
+	sta lat,x       ;store logical file #
+	lda sa
+	ora #$60        ;make sa an serial command
+	sta sa
+	sta sat,x       ;store command #
+	lda fa
+	sta fat,x       ;store device #
 ;
-;PERFORM DEVICE SPECIFIC OPEN TASKS
+;perform device specific open tasks
 ;
-	BEQ OP175       ;IS KEYBOARD...DONE.
-	CMP #3
-	BEQ OP175       ;IS SCREEN...DONE.
-	BCC OP150       ;ARE CASSETTES 1 & 2
+	beq op175       ;is keyboard...done.
+	cmp #3
+	beq op175       ;is screen...done.
+	bcc op150       ;are cassettes 1 & 2
 ;
-	JSR OPENI       ;IS ON SERIAL...OPEN IT
-	BCC OP175       ;BRANCH ALWAYS...DONE
+	jsr openi       ;is on serial...open it
+	bcc op175       ;branch always...done
 ;
-;PERFORM TAPE OPEN STUFF
+;perform tape open stuff
 ;
-OP150	CMP #2
-	BNE OP152
+op150	cmp #2
+	bne op152
 ;
-	JMP OPN232
+	jmp opn232
 ;
-OP152	JSR ZZZ         ;SEE IF TAPE BUFFER
-	BCS OP155       ;YES
+op152	jsr zzz         ;see if tape buffer
+	bcs op155       ;yes
 ;
-	JMP ERROR9      ;NO...DEALLOCATED
+	jmp error9      ;no...deallocated
 ;
-OP155	LDA SA
-	AND #$F         ;MASK OFF COMMAND
-	BNE OP200       ;NON ZERO IS TAPE WRITE
+op155	lda sa
+	and #$f         ;mask off command
+	bne op200       ;non zero is tape write
 ;
-;OPEN CASSETE TAPE FILE TO READ
+;open cassete tape file to read
 ;
-	JSR CSTE1       ;TELL "PRESS PLAY"
-	BCS OP180       ;STOP KEY PRESSED
+	jsr cste1       ;tell "press play"
+	bcs op180       ;stop key pressed
 ;
-	JSR LUKING      ;TELL USER "SEARCHING"
+	jsr luking      ;tell user "searching"
 ;
-	LDA FNLEN
-	BEQ OP170       ;LOOKING FOR ANY FILE
+	lda fnlen
+	beq op170       ;looking for any file
 ;
-	JSR FAF         ;LOOKING FOR NAMED FILE
-	BCC OP171       ;FOUND IT!!!
-	BEQ OP180       ;STOP KEY PRESSED
+	jsr faf         ;looking for named file
+	bcc op171       ;found it!!!
+	beq op180       ;stop key pressed
 ;
-OP160	JMP ERROR4      ;FILE NOT FOUND
+op160	jmp error4      ;file not found
 ;
-OP170	JSR FAH         ;GET ANY OLD HEADER
-	BEQ OP180       ;STOP KEY PRESSED
-	BCC OP171       ;ALL O.K.
-	BCS OP160       ;FILE NOT FOUND...
+op170	jsr fah         ;get any old header
+	beq op180       ;stop key pressed
+	bcc op171       ;all o.k.
+	bcs op160       ;file not found...
 ;
-;OPEN CASSETTE TAPE FOR WRITE
+;open cassette tape for write
 ;
-OP200	JSR CSTE2       ;TELL "PRESS PLAY AND RECORD"
-	BCS OP180       ;STOP KEY PRESSED
-	LDA #BDFH       ;DATA FILE HEADER TYPE
-	JSR TAPEH       ;WRITE IT
+op200	jsr cste2       ;tell "press play and record"
+	bcs op180       ;stop key pressed
+	lda #bdfh       ;data file header type
+	jsr tapeh       ;write it
 ;
-;FINISH OPEN FOR TAPE READ/WRITE
+;finish open for tape read/write
 ;
-OP171	LDA #BUFSZ-1    ;ASSUME FORCE READ
+op171	lda #bufsz-1    ;assume force read
 ;
-	LDY SA
-	CPY #$60        ;OPEN FOR READ?
-	BEQ OP172
+	ldy sa
+	cpy #$60        ;open for read?
+	beq op172
 ;
-;SET POINTERS FOR BUFFERING DATA
+;set pointers for buffering data
 ;
-	LDY #0
-	LDA #BDF        ;TYPE FLAG FOR BLOCK
-	STA (TAPE1)Y    ;TO BEGIN OF BUFFER
-	TYA
+	ldy #0
+	lda #bdf        ;type flag for block
+	sta (tape1)y    ;to begin of buffer
+	tya
 ;
-OP172	STA BUFPT       ;POINT TO DATA
-OP175	CLC             ;FLAG GOOD OPEN
-OP180	RTS             ;EXIT IN PEACE
-.SKI 5
-OPENI	LDA SA
-	BMI OP175       ;NO SA...DONE
+op172	sta bufpt       ;point to data
+op175	clc             ;flag good open
+op180	rts             ;exit in peace
+.ski 5
+openi	lda sa
+	bmi op175       ;no sa...done
 ;
-	LDY FNLEN
-	BEQ OP175       ;NO FILE NAME...DONE
+	ldy fnlen
+	beq op175       ;no file name...done
 ;
-	LDA #0          ;CLEAR THE SERIAL STATUS
-	STA STATUS
+	lda #0          ;clear the serial status
+	sta status
 ;
-	LDA FA
-	JSR LISTN       ;DEVICE LA TO LISTEN
+	lda fa
+	jsr listn       ;device la to listen
 ;
-	LDA SA
-	ORA #$F0
-	JSR SECND
+	lda sa
+	ora #$f0
+	jsr secnd
 ;
-	LDA STATUS      ;ANYBODY HOME?
-	BPL OP35        ;YES...CONTINUE
+	lda status      ;anybody home?
+	bpl op35        ;yes...continue
 ;
-;THIS ROUTINE IS CALLED BY OTHER
-;KERNAL ROUTINES WHICH ARE CALLED
-;DIRECTLY BY OS.  KILL RETURN
-;ADDRESS TO RETURN TO OS.
+;this routine is called by other
+;kernal routines which are called
+;directly by os.  kill return
+;address to return to os.
 ;
-	PLA
-	PLA
-	JMP ERROR5      ;DEVICE NOT PRESENT
+	pla
+	pla
+	jmp error5      ;device not present
 ;
-OP35	LDA FNLEN
-	BEQ OP45        ;NO NAME...DONE SEQUENCE
-;
-;SEND FILE NAME OVER SERIAL
-;
-	LDY #0
-OP40	LDA (FNADR)Y
-	JSR CIOUT
-	INY
-	CPY FNLEN
-	BNE OP40
-;
-OP45	JMP CUNLSN      ;JSR UNLSN: CLC: RTS
-.PAGE 'OPEN RS232 FILE'
-; OPN232 - OPEN AN RS-232 OR PARALLEL PORT FILE
-;
-; VARIABLES INITILIZED
-;   BITNUM - # OF BITS TO BE SENT CALC FROM M51CTR
-;   BAUDOF - BAUD RATE FULL
-;   RSSTAT - RS-232 STATUS REG
-;   M51CTR - 6551 CONTROL REG
-;   M51CDR - 6551 COMMAND REG
-;   M51AJB - USER BAUD RATE (CLOCK/BAUD/2-100)
-;   ENABL  - 6526 NMI ENABLES (1-NMI BIT ON)
-;
-OPN232	JSR CLN232      ;SET UP RS232, .Y=0 ON RETURN
-;
-; PASS PRAMS TO M51REGS
-;
-	STY RSSTAT      ;CLEAR STATUS
-;
-OPN020	CPY FNLEN       ;CHECK IF AT END OF FILENAME
-	BEQ OPN025      ;YES...
-;
-	LDA (FNADR)Y    ;MOVE DATA
-	STA M51CTR,Y    ;TO M51REGS
-	INY
-	CPY #4          ;ONLY 4 POSSIBLE PRAMS
-	BNE OPN020
-;
-; CALC # OF BITS
-;
-OPN025	JSR BITCNT
-	STX BITNUM
-;
-; CALC BAUD RATE
-;
-	LDA M51CTR
-	AND #$0F
-	BEQ OPN028
-;
-; CALCULATE START-TEST RATE...
-;  DIFFERENT THAN ORIGINAL RELEASE 901227-01
-;
-	ASL A           ;GET OFFSET INTO TABLES
-	TAX
-	LDA PALNTS      ;GET TV STANDARD
-	BNE OPN026
-	LDY BAUDO-1,X   ;NTSC STANDARD
-	LDA BAUDO-2,X
-	JMP OPN027
-;
-OPN026	LDY BAUDOP-1,X  ;PAL STANDARD
-	LDA BAUDOP-2,X
-OPN027	STY M51AJB+1    ;HOLD START RATE IN M51AJB
-	STA M51AJB
-OPN028	LDA M51AJB      ;CALCULATE BAUD RATE
-	ASL
-	JSR POPEN       ;GOTO PATCH AREA
-;
-; CHECK FOR 3/X LINE RESPONSE
-;
-OPN030	LDA M51CDR      ;BIT 0 OF M51CDR
-	LSR A
-	BCC OPN050      ;...3 LINE
-;
-; CHECK FOR X LINE PROPER STATES
-;
-	LDA D2PRB
-	ASL A
-	BCS OPN050
-	JSR CKDSRX      ;CHANGE FROM JMP TO PREVENT SYSTEM 
-;
-; SET UP BUFFER POINTERS (DBE=DBS)
-;
-OPN050	LDA RIDBE
-	STA RIDBS
-	LDA RODBE
-	STA RODBS
-;
-; ALLOCATE BUFFERS
-;
-OPN055	JSR GETTOP      ;GET MEMSIZ
-	LDA RIBUF+1     ;IN ALLOCATION...
-	BNE OPN060      ;ALREADY
-	DEY             ;THERE GOES 256 BYTES
-	STY RIBUF+1
-	STX RIBUF
-OPN060	LDA ROBUF+1     ;OUT ALLOCATION...
-	BNE MEMTCF      ;ALREAY
-	DEY             ;THERE GOES 256 BYTES
-	STY ROBUF+1
-	STX ROBUF
-MEMTCF	SEC             ;SIGNAL TOP OF MEMORY CHANGE
-	LDA #$F0
-	JMP SETTOP      ;TOP CHANGED
-;
-; CLN232 - CLEAN UP 232 SYSTEM FOR OPEN/CLOSE
-;  SET UP DDRB AND CB2 FOR RS-232
-;
-CLN232	LDA #$7F        ;CLEAR NMI'S
-	STA D2ICR
-	LDA #%00000110  ;DDRB
-	STA D2DDRB
-	STA D2PRB       ;DTR,RTS HIGH
-	LDA #$04        ;OUTPUT HIGH PA2
-	ORA D2PRA
-	STA D2PRA
-	LDY #00
-	STY ENABL       ;CLEAR ENABLS
-	RTS
-.END
-; RSR  8/25/80 - ADD RS-232 CODE
-; RSR  8/26/80 - TOP OF MEMORY HANDLER
-; RSR  8/29/80 - ADD FILENAME TO M51REGS
-; RSR  9/02/80 - FIX ORDERING OF RS-232 ROUTINES
-; RSR 12/11/81 - MODIFY FOR VIC-40 I/O
-; RSR  2/08/82 - CLEAR STATUS IN OPENI
-; RSR  5/12/82 - COMPACT RS232 OPEN/CLOSE CODE
+op35	lda fnlen
+	beq op45        ;no name...done sequence
+;
+;send file name over serial
+;
+	ldy #0
+op40	lda (fnadr)y
+	jsr ciout
+	iny
+	cpy fnlen
+	bne op40
+;
+op45	jmp cunlsn      ;jsr unlsn: clc: rts
+.page 'open rs232 file'
+; opn232 - open an rs-232 or parallel port file
+;
+; variables initilized
+;   bitnum - # of bits to be sent calc from m51ctr
+;   baudof - baud rate full
+;   rsstat - rs-232 status reg
+;   m51ctr - 6551 control reg
+;   m51cdr - 6551 command reg
+;   m51ajb - user baud rate (clock/baud/2-100)
+;   enabl  - 6526 nmi enables (1-nmi bit on)
+;
+opn232	jsr cln232      ;set up rs232, .y=0 on return
+;
+; pass prams to m51regs
+;
+	sty rsstat      ;clear status
+;
+opn020	cpy fnlen       ;check if at end of filename
+	beq opn025      ;yes...
+;
+	lda (fnadr)y    ;move data
+	sta m51ctr,y    ;to m51regs
+	iny
+	cpy #4          ;only 4 possible prams
+	bne opn020
+;
+; calc # of bits
+;
+opn025	jsr bitcnt
+	stx bitnum
+;
+; calc baud rate
+;
+	lda m51ctr
+	and #$0f
+	beq opn028
+;
+; calculate start-test rate...
+;  different than original release 901227-01
+;
+	asl a           ;get offset into tables
+	tax
+	lda palnts      ;get tv standard
+	bne opn026
+	ldy baudo-1,x   ;ntsc standard
+	lda baudo-2,x
+	jmp opn027
+;
+opn026	ldy baudop-1,x  ;pal standard
+	lda baudop-2,x
+opn027	sty m51ajb+1    ;hold start rate in m51ajb
+	sta m51ajb
+opn028	lda m51ajb      ;calculate baud rate
+	asl
+	jsr popen       ;goto patch area
+;
+; check for 3/x line response
+;
+opn030	lda m51cdr      ;bit 0 of m51cdr
+	lsr a
+	bcc opn050      ;...3 line
+;
+; check for x line proper states
+;
+	lda d2prb
+	asl a
+	bcs opn050
+	jsr ckdsrx      ;change from jmp to prevent system 
+;
+; set up buffer pointers (dbe=dbs)
+;
+opn050	lda ridbe
+	sta ridbs
+	lda rodbe
+	sta rodbs
+;
+; allocate buffers
+;
+opn055	jsr gettop      ;get memsiz
+	lda ribuf+1     ;in allocation...
+	bne opn060      ;already
+	dey             ;there goes 256 bytes
+	sty ribuf+1
+	stx ribuf
+opn060	lda robuf+1     ;out allocation...
+	bne memtcf      ;alreay
+	dey             ;there goes 256 bytes
+	sty robuf+1
+	stx robuf
+memtcf	sec             ;signal top of memory change
+	lda #$f0
+	jmp settop      ;top changed
+;
+; cln232 - clean up 232 system for open/close
+;  set up ddrb and cb2 for rs-232
+;
+cln232	lda #$7f        ;clear nmi's
+	sta d2icr
+	lda #%00000110  ;ddrb
+	sta d2ddrb
+	sta d2prb       ;dtr,rts high
+	lda #$04        ;output high pa2
+	ora d2pra
+	sta d2pra
+	ldy #00
+	sty enabl       ;clear enabls
+	rts
+.end
+; rsr  8/25/80 - add rs-232 code
+; rsr  8/26/80 - top of memory handler
+; rsr  8/29/80 - add filename to m51regs
+; rsr  9/02/80 - fix ordering of rs-232 routines
+; rsr 12/11/81 - modify for vic-40 i/o
+; rsr  2/08/82 - clear status in openi
+; rsr  5/12/82 - compact rs232 open/close code

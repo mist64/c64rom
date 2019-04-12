@@ -1,123 +1,123 @@
-.PAG 'CODE25'
-	*=$E000         ;START OF VIC-40 KERNAL ROM
-.SKI 2
-; CONTINUATION OF EXPONENT ROUTINE
+.pag 'code25'
+	*=$e000         ;start of vic-40 kernal rom
+.ski 2
+; continuation of exponent routine
 ;
-STOLD	STA OLDOV
-	JSR MOVEF
-	LDA FACEXP
-	CMP #@210
-	BCC EXP1
-GOMLDV	JSR MLDVEX
-EXP1	JSR INT
-	LDA INTEGR
-	CLC
-	ADC #@201
-	BEQ GOMLDV
-	SEC
-	SBC #1
-	PHA
-	LDX #4+ADDPRC
-SWAPLP	LDA ARGEXP,X
-	LDY FACEXP,X
-	STA FACEXP,X
-	STY ARGEXP,X
-	DEX
-	BPL SWAPLP
-	LDA OLDOV
-	STA FACOV
-	JSR FSUBT
-	JSR NEGOP
-	LDA #<EXPCON
-	LDY #>EXPCON
-	JSR POLY
-	LDA #0
-	STA ARISGN
-	PLA
-	JSR MLDEXP
-	RTS
-POLYX	STA POLYPT
-	STY POLYPT+1
-	JSR MOV1F
-	LDA #TEMPF1
-	JSR FMULT
-	JSR POLY1
-	LDA #<TEMPF1
-	LDY #>TEMPF1
-	JMP FMULT
-POLY	STA POLYPT
-	STY POLYPT+1
-POLY1	JSR MOV2F
-	LDA (POLYPT)Y
-	STA DEGREE
-	LDY POLYPT
-	INY
-	TYA
-	BNE POLY3
-	INC POLYPT+1
-POLY3	STA POLYPT
-	LDY POLYPT+1
-POLY2	JSR FMULT
-	LDA POLYPT
-	LDY POLYPT+1
-	CLC
-	ADC #4+ADDPRC
-	BCC POLY4
-	INY
-POLY4	STA POLYPT
-	STY POLYPT+1
-	JSR FADD
-	LDA #<TEMPF2
-	LDY #>TEMPF2
-	DEC DEGREE
-	BNE POLY2
-	RTS
-RMULC	.BYT @230,@65,@104,@172,0
-RADDC	.BYT @150,@50,@261,@106,0
-RND	JSR SIGN
-	BMI RND1
-	BNE QSETNR
-	JSR RDBAS
-	STX INDEX1
-	STY INDEX1+1
-	LDY #4
-	LDA (INDEX1)Y
-	STA FACHO
-	INY
-	LDA (INDEX1)Y
-	STA FACMO
-	LDY #8
-	LDA (INDEX1)Y
-	STA FACMOH
-	INY
-	LDA (INDEX1)Y
-	STA FACLO
-	JMP STRNEX
-QSETNR	LDA #<RNDX
-	LDY #>RNDX
-	JSR MOVFM
-	LDA #<RMULC
-	LDY #>RMULC
-	JSR FMULT
-	LDA #<RADDC
-	LDY #>RADDC
-	JSR FADD
-RND1	LDX FACLO
-	LDA FACHO
-	STA FACLO
-	STX FACHO
-	LDX FACMOH
-	LDA FACMO
-	STA FACMOH
-	STX FACMO
-STRNEX	LDA #0
-	STA FACSGN
-	LDA FACEXP
-	STA FACOV
-	LDA #@200
-	STA FACEXP
-	JSR NORMAL
-	LDX #<RNDX
-	LDY #>RNDX
-GMOVMF	JMP MOVMF
-.END
+stold	sta oldov
+	jsr movef
+	lda facexp
+	cmp #@210
+	bcc exp1
+gomldv	jsr mldvex
+exp1	jsr int
+	lda integr
+	clc
+	adc #@201
+	beq gomldv
+	sec
+	sbc #1
+	pha
+	ldx #4+addprc
+swaplp	lda argexp,x
+	ldy facexp,x
+	sta facexp,x
+	sty argexp,x
+	dex
+	bpl swaplp
+	lda oldov
+	sta facov
+	jsr fsubt
+	jsr negop
+	lda #<expcon
+	ldy #>expcon
+	jsr poly
+	lda #0
+	sta arisgn
+	pla
+	jsr mldexp
+	rts
+polyx	sta polypt
+	sty polypt+1
+	jsr mov1f
+	lda #tempf1
+	jsr fmult
+	jsr poly1
+	lda #<tempf1
+	ldy #>tempf1
+	jmp fmult
+poly	sta polypt
+	sty polypt+1
+poly1	jsr mov2f
+	lda (polypt)y
+	sta degree
+	ldy polypt
+	iny
+	tya
+	bne poly3
+	inc polypt+1
+poly3	sta polypt
+	ldy polypt+1
+poly2	jsr fmult
+	lda polypt
+	ldy polypt+1
+	clc
+	adc #4+addprc
+	bcc poly4
+	iny
+poly4	sta polypt
+	sty polypt+1
+	jsr fadd
+	lda #<tempf2
+	ldy #>tempf2
+	dec degree
+	bne poly2
+	rts
+rmulc	.byt @230,@65,@104,@172,0
+raddc	.byt @150,@50,@261,@106,0
+rnd	jsr sign
+	bmi rnd1
+	bne qsetnr
+	jsr rdbas
+	stx index1
+	sty index1+1
+	ldy #4
+	lda (index1)y
+	sta facho
+	iny
+	lda (index1)y
+	sta facmo
+	ldy #8
+	lda (index1)y
+	sta facmoh
+	iny
+	lda (index1)y
+	sta faclo
+	jmp strnex
+qsetnr	lda #<rndx
+	ldy #>rndx
+	jsr movfm
+	lda #<rmulc
+	ldy #>rmulc
+	jsr fmult
+	lda #<raddc
+	ldy #>raddc
+	jsr fadd
+rnd1	ldx faclo
+	lda facho
+	sta faclo
+	stx facho
+	ldx facmoh
+	lda facmo
+	sta facmoh
+	stx facmo
+strnex	lda #0
+	sta facsgn
+	lda facexp
+	sta facov
+	lda #@200
+	sta facexp
+	jsr normal
+	ldx #<rndx
+	ldy #>rndx
+gmovmf	jmp movmf
+.end

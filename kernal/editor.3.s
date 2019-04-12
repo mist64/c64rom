@@ -1,201 +1,201 @@
-.PAG 'KEYBOARD TABLES'
-KEYCOD	;KEYBOARD MODE 'DISPATCH'
-	.WORD MODE1
-	.WORD MODE2
-	.WORD MODE3
-	.WORD CONTRL    ;CONTROL KEYS
+.pag 'keyboard tables'
+keycod	;keyboard mode 'dispatch'
+	.word mode1
+	.word mode2
+	.word mode3
+	.word contrl    ;control keys
 ;
-; COTTACONNA MODE
+; cottaconna mode
 ;
-;.WORD MODE1  ;PET MODE1
-;.WORD MODE2  ;PET MODE2
-;.WORD CCTTA3 ;DUMMY WORD
-;.WORD CONTRL
+;.word mode1  ;pet mode1
+;.word mode2  ;pet mode2
+;.word cctta3 ;dummy word
+;.word contrl
 ;
-; EXTENDED KATAKANA MODE
+; extended katakana mode
 ;
-;.WORD CCTTA2 ;KATAKANA CHARACTERS
-;.WORD CCTTA3 ;LIMITED GRAPHICS
-;.WORD CCTTA3 ;DUMMY
-;.WORD CONTRL
-.SKI 5
-.PAG 'EDITOR.3'
-MODE1
-;DEL,3,5,7,9,+,YEN SIGN,1
-	.BYT $14,$0D,$1D,$88,$85,$86,$87,$11
-;RETURN,W,R,Y,I,P,*,LEFT ARROW
-	.BYT $33,$57,$41,$34,$5A,$53,$45,$01
-;RT CRSR,A,D,G,J,L,;,CTRL
-	.BYT $35,$52,$44,$36,$43,$46,$54,$58
-;F4,4,6,8,0,-,HOME,2
-	.BYT $37,$59,$47,$38,$42,$48,$55,$56
-;F1,Z,C,B,M,.,R.SHIFTT,SPACE
-	.BYT $39,$49,$4A,$30,$4D,$4B,$4F,$4E
-;F2,S,F,H,K,:,=,COM.KEY
-	.BYT $2B,$50,$4C,$2D,$2E,$3A,$40,$2C
-;F3,E,T,U,O,@,EXP,Q
-	.BYT $5C,$2A,$3B,$13,$01,$3D,$5E,$2F
-;CRSR DWN,L.SHIFT,X,V,N,,,/,STOP
-	.BYT $31,$5F,$04,$32,$20,$02,$51,$03
-	.BYT $FF        ;END OF TABLE NULL
-.SKI3
-MODE2	;SHIFT
-;INS,%,',),+,YEN,!
-	.BYT $94,$8D,$9D,$8C,$89,$8A,$8B,$91
-;SRETURN,W,R,Y,I,P,*,SLEFT ARROW
-	.BYT $23,$D7,$C1,$24,$DA,$D3,$C5,$01
-;LF.CRSR,A,D,G,J,L,;,CTRL
-	.BYT $25,$D2,$C4,$26,$C3,$C6,$D4,$D8
+;.word cctta2 ;katakana characters
+;.word cctta3 ;limited graphics
+;.word cctta3 ;dummy
+;.word contrl
+.ski 5
+.pag 'editor.3'
+mode1
+;del,3,5,7,9,+,yen sign,1
+	.byt $14,$0d,$1d,$88,$85,$86,$87,$11
+;return,w,r,y,i,p,*,left arrow
+	.byt $33,$57,$41,$34,$5a,$53,$45,$01
+;rt crsr,a,d,g,j,l,;,ctrl
+	.byt $35,$52,$44,$36,$43,$46,$54,$58
+;f4,4,6,8,0,-,home,2
+	.byt $37,$59,$47,$38,$42,$48,$55,$56
+;f1,z,c,b,m,.,r.shiftt,space
+	.byt $39,$49,$4a,$30,$4d,$4b,$4f,$4e
+;f2,s,f,h,k,:,=,com.key
+	.byt $2b,$50,$4c,$2d,$2e,$3a,$40,$2c
+;f3,e,t,u,o,@,exp,q
+	.byt $5c,$2a,$3b,$13,$01,$3d,$5e,$2f
+;crsr dwn,l.shift,x,v,n,,,/,stop
+	.byt $31,$5f,$04,$32,$20,$02,$51,$03
+	.byt $ff        ;end of table null
+.ski3
+mode2	;shift
+;ins,%,',),+,yen,!
+	.byt $94,$8d,$9d,$8c,$89,$8a,$8b,$91
+;sreturn,w,r,y,i,p,*,sleft arrow
+	.byt $23,$d7,$c1,$24,$da,$d3,$c5,$01
+;lf.crsr,a,d,g,j,l,;,ctrl
+	.byt $25,$d2,$c4,$26,$c3,$c6,$d4,$d8
 ;,$,&,(,      ,"
-	.BYT $27,$D9,$C7,$28,$C2,$C8,$D5,$D6
-;F5,Z,C,B,M,.,R.SHIFT,SSPACE
-	.BYT $29,$C9,$CA,$30,$CD,$CB,$CF,$CE
-;F6,S,F,H,K,:,=,SCOM.KEY
-	.BYT $DB,$D0,$CC,$DD,$3E,$5B,$BA,$3C
-;F7,E,T,U,O,@,PI,G
-	.BYT $A9,$C0,$5D,$93,$01,$3D,$DE,$3F
-;CRSR DWN,L.SHIFT,X,V,N,,,/,RUN
-	.BYT $21,$5F,$04,$22,$A0,$02,$D1,$83
-	.BYT $FF        ;END OF TABLE NULL
+	.byt $27,$d9,$c7,$28,$c2,$c8,$d5,$d6
+;f5,z,c,b,m,.,r.shift,sspace
+	.byt $29,$c9,$ca,$30,$cd,$cb,$cf,$ce
+;f6,s,f,h,k,:,=,scom.key
+	.byt $db,$d0,$cc,$dd,$3e,$5b,$ba,$3c
+;f7,e,t,u,o,@,pi,g
+	.byt $a9,$c0,$5d,$93,$01,$3d,$de,$3f
+;crsr dwn,l.shift,x,v,n,,,/,run
+	.byt $21,$5f,$04,$22,$a0,$02,$d1,$83
+	.byt $ff        ;end of table null
 ;
-MODE3	;LEFT WINDOW GRAHPICS
-;INS,C10,C12,C14,9,+,POUND SIGN,C8
-	.BYT $94,$8D,$9D,$8C,$89,$8A,$8B,$91
-;RETURN,W,R,Y,I,P,*,LFT.ARROW
-	.BYT $96,$B3,$B0,$97,$AD,$AE,$B1,$01
-;LF.CRSR,A,D,G,J,L,;,CTRL
-	.BYT $98,$B2,$AC,$99,$BC,$BB,$A3,$BD
-;F8,C11,C13,C15,0,-,HOME,C9
-	.BYT $9A,$B7,$A5,$9B,$BF,$B4,$B8,$BE
-;F2,Z,C,B,M,.,R.SHIFT,SPACE
-	.BYT $29,$A2,$B5,$30,$A7,$A1,$B9,$AA
-;F4,S,F,H,K,:,=,COM.KEY
-	.BYT $A6,$AF,$B6,$DC,$3E,$5B,$A4,$3C
-;F6,E,T,U,O,@,PI,Q
-	.BYT $A8,$DF,$5D,$93,$01,$3D,$DE,$3F
-;CRSR.UP,L.SHIFT,X,V,N,,,/,STOP
-	.BYT $81,$5F,$04,$95,$A0,$02,$AB,$83
-	.BYT $FF        ;END OF TABLE NULL
-;CCTTA2 ;WAS CCTTA2 IN JAPANESE VERSION
-LOWER
-	CMP #$0E        ;DOES HE WANT LOWER CASE?
-	BNE UPPER       ;BRANCH IF NOT
-	LDA VICREG+24   ;ELSE SET VIC TO POINT TO LOWER CASE
-	ORA #$02
-	BNE ULSET       ;JMP
-.SKI
-UPPER
-	CMP #$8E        ;DOES HE WANT UPPER CASE
-	BNE LOCK        ;BRANCH IF NOT
-	LDA VICREG+24   ;MAKE SURE VIC POINT TO UPPER/PET SET
-	AND #$FF-$02
-ULSET	STA VICREG+24
-OUTHRE	JMP LOOP2
-.SKI
-LOCK
-	CMP #8          ;DOES HE WANT TO LOCK IN THIS MODE?
-	BNE UNLOCK      ;BRANCH IF NOT
-	LDA #$80        ;ELSE SET LOCK SWITCH ON
-	ORA MODE        ;DON'T HURT ANYTHING - JUST IN CASE
-	BMI LEXIT
-.SKI
-UNLOCK
-	CMP #9          ;DOES HE WANT TO UNLOCK THE KEYBOARD?
-	BNE OUTHRE      ;BRANCH IF NOT
-	LDA #$7F        ;CLEAR THE LOCK SWITCH
-	AND MODE        ;DONT HURT ANYTHING
-LEXIT	STA MODE
-	JMP LOOP2       ;GET OUT
-;CCTTA3
-;.BYT $04,$FF,$FF,$FF,$FF,$FF,$E2,$9D
-;RUN-K24-K31
-;.BYT $83,$01,$FF,$FF,$FF,$FF,$FF,$91
-;K32-K39.F5
-;.BYT $A0,$FF,$FF,$FF,$FF,$EE,$01,$89
-;CO.KEY,K40-K47.F6
-;.BYT $02,$FF,$FF,$FF,$FF,$E1,$FD,$8A
-;K48-K55
-;.BYT $FF,$FF,$FF,$FF,$FF,$B0,$E0,$8B
-;K56-K63
-;.BYT $F2,$F4,$F6,$FF,$F0,$ED,$93,$8C
-;.BYT $FF ;END OF TABLE NULL
-.SKI3
-CONTRL
-;NULL,RED,PURPLE,BLUE,RVS ,NULL,NULL,BLACK
-	.BYT $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-;NULL, W  ,REVERSE, Y  , I  , P  ,NULL,MUSIC
-	.BYT $1C,$17,$01,$9F,$1A,$13,$05,$FF
-	.BYT $9C,$12,$04,$1E,$03,$06,$14,$18
-;NULL,CYAN,GREEN,YELLOW,RVS OFF,NULL,NULL,WHITE
-	.BYT $1F,$19,$07,$9E,$02,$08,$15,$16
-	.BYT $12,$09,$0A,$92,$0D,$0B,$0F,$0E
-	.BYT $FF,$10,$0C,$FF,$FF,$1B,$00,$FF
-	.BYT $1C,$FF,$1D,$FF,$FF,$1F,$1E,$FF
-	.BYT $90,$06,$FF,$05,$FF,$FF,$11,$FF
-	.BYT $FF        ;END OF TABLE NULL
-TVIC
-	.BYT 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;SPRITES (0-16)
-	.BYT $9B,55,0,0,0,$08,0,$14,$0f,0,0,0,0,0,0 ;DATA (17-31)
-	.BYT 14,6,1,2,3,4,0,1,2,3,4,5,6,7 ;32-46
+mode3	;left window grahpics
+;ins,c10,c12,c14,9,+,pound sign,c8
+	.byt $94,$8d,$9d,$8c,$89,$8a,$8b,$91
+;return,w,r,y,i,p,*,lft.arrow
+	.byt $96,$b3,$b0,$97,$ad,$ae,$b1,$01
+;lf.crsr,a,d,g,j,l,;,ctrl
+	.byt $98,$b2,$ac,$99,$bc,$bb,$a3,$bd
+;f8,c11,c13,c15,0,-,home,c9
+	.byt $9a,$b7,$a5,$9b,$bf,$b4,$b8,$be
+;f2,z,c,b,m,.,r.shift,space
+	.byt $29,$a2,$b5,$30,$a7,$a1,$b9,$aa
+;f4,s,f,h,k,:,=,com.key
+	.byt $a6,$af,$b6,$dc,$3e,$5b,$a4,$3c
+;f6,e,t,u,o,@,pi,q
+	.byt $a8,$df,$5d,$93,$01,$3d,$de,$3f
+;crsr.up,l.shift,x,v,n,,,/,stop
+	.byt $81,$5f,$04,$95,$a0,$02,$ab,$83
+	.byt $ff        ;end of table null
+;cctta2 ;was cctta2 in japanese version
+lower
+	cmp #$0e        ;does he want lower case?
+	bne upper       ;branch if not
+	lda vicreg+24   ;else set vic to point to lower case
+	ora #$02
+	bne ulset       ;jmp
+.ski
+upper
+	cmp #$8e        ;does he want upper case
+	bne lock        ;branch if not
+	lda vicreg+24   ;make sure vic point to upper/pet set
+	and #$ff-$02
+ulset	sta vicreg+24
+outhre	jmp loop2
+.ski
+lock
+	cmp #8          ;does he want to lock in this mode?
+	bne unlock      ;branch if not
+	lda #$80        ;else set lock switch on
+	ora mode        ;don't hurt anything - just in case
+	bmi lexit
+.ski
+unlock
+	cmp #9          ;does he want to unlock the keyboard?
+	bne outhre      ;branch if not
+	lda #$7f        ;clear the lock switch
+	and mode        ;dont hurt anything
+lexit	sta mode
+	jmp loop2       ;get out
+;cctta3
+;.byt $04,$ff,$ff,$ff,$ff,$ff,$e2,$9d
+;run-k24-k31
+;.byt $83,$01,$ff,$ff,$ff,$ff,$ff,$91
+;k32-k39.f5
+;.byt $a0,$ff,$ff,$ff,$ff,$ee,$01,$89
+;co.key,k40-k47.f6
+;.byt $02,$ff,$ff,$ff,$ff,$e1,$fd,$8a
+;k48-k55
+;.byt $ff,$ff,$ff,$ff,$ff,$b0,$e0,$8b
+;k56-k63
+;.byt $f2,$f4,$f6,$ff,$f0,$ed,$93,$8c
+;.byt $ff ;end of table null
+.ski3
+contrl
+;null,red,purple,blue,rvs ,null,null,black
+	.byt $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
+;null, w  ,reverse, y  , i  , p  ,null,music
+	.byt $1c,$17,$01,$9f,$1a,$13,$05,$ff
+	.byt $9c,$12,$04,$1e,$03,$06,$14,$18
+;null,cyan,green,yellow,rvs off,null,null,white
+	.byt $1f,$19,$07,$9e,$02,$08,$15,$16
+	.byt $12,$09,$0a,$92,$0d,$0b,$0f,$0e
+	.byt $ff,$10,$0c,$ff,$ff,$1b,$00,$ff
+	.byt $1c,$ff,$1d,$ff,$ff,$1f,$1e,$ff
+	.byt $90,$06,$ff,$05,$ff,$ff,$11,$ff
+	.byt $ff        ;end of table null
+tvic
+	.byt 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ;sprites (0-16)
+	.byt $9b,55,0,0,0,$08,0,$14,$0f,0,0,0,0,0,0 ;data (17-31)
+	.byt 14,6,1,2,3,4,0,1,2,3,4,5,6,7 ;32-46
 ;
-RUNTB	.BYT 'LOAD',$D,'RUN',$D
+runtb	.byt 'load',$d,'run',$d
 ;
-LINZ0	= VICSCN
-LINZ1	= LINZ0+LLEN
-LINZ2	= LINZ1+LLEN
-LINZ3	= LINZ2+LLEN
-LINZ4	= LINZ3+LLEN
-LINZ5	= LINZ4+LLEN
-LINZ6	= LINZ5+LLEN
-LINZ7	= LINZ6+LLEN
-LINZ8	= LINZ7+LLEN
-LINZ9	= LINZ8+LLEN
-LINZ10	= LINZ9+LLEN
-LINZ11	= LINZ10+LLEN
-LINZ12	= LINZ11+LLEN
-LINZ13	= LINZ12+LLEN
-LINZ14	= LINZ13+LLEN
-LINZ15	= LINZ14+LLEN
-LINZ16	= LINZ15+LLEN
-LINZ17	= LINZ16+LLEN
-LINZ18	= LINZ17+LLEN
-LINZ19	= LINZ18+LLEN
-LINZ20	= LINZ19+LLEN
-LINZ21	= LINZ20+LLEN
-LINZ22	= LINZ21+LLEN
-LINZ23	= LINZ22+LLEN
-LINZ24	= LINZ23+LLEN
-.SKIP 3
-;****** SCREEN LINES LO BYTE TABLE ******
+linz0	= vicscn
+linz1	= linz0+llen
+linz2	= linz1+llen
+linz3	= linz2+llen
+linz4	= linz3+llen
+linz5	= linz4+llen
+linz6	= linz5+llen
+linz7	= linz6+llen
+linz8	= linz7+llen
+linz9	= linz8+llen
+linz10	= linz9+llen
+linz11	= linz10+llen
+linz12	= linz11+llen
+linz13	= linz12+llen
+linz14	= linz13+llen
+linz15	= linz14+llen
+linz16	= linz15+llen
+linz17	= linz16+llen
+linz18	= linz17+llen
+linz19	= linz18+llen
+linz20	= linz19+llen
+linz21	= linz20+llen
+linz22	= linz21+llen
+linz23	= linz22+llen
+linz24	= linz23+llen
+.skip 3
+;****** screen lines lo byte table ******
 ;
-LDTB2
-	.BYTE <LINZ0
-	.BYTE <LINZ1
-	.BYTE <LINZ2
-	.BYTE <LINZ3
-	.BYTE <LINZ4
-	.BYTE <LINZ5
-	.BYTE <LINZ6
-	.BYTE <LINZ7
-	.BYTE <LINZ8
-	.BYTE <LINZ9
-	.BYTE <LINZ10
-	.BYTE <LINZ11
-	.BYTE <LINZ12
-	.BYTE <LINZ13
-	.BYTE <LINZ14
-	.BYTE <LINZ15
-	.BYTE <LINZ16
-	.BYTE <LINZ17
-	.BYTE <LINZ18
-	.BYTE <LINZ19
-	.BYTE <LINZ20
-	.BYTE <LINZ21
-	.BYTE <LINZ22
-	.BYTE <LINZ23
-	.BYTE <LINZ24
-.END
-; RSR 12/08/81 MODIFY FOR VIC-40 KEYSCAN
-; RSR  2/17/81 MODIFY FOR THE STINKING 6526R2 CHIP
-; RSR  3/11/82 MODIFY FOR COMMODORE 64
-; RSR  3/28/82 MODIFY FOR NEW PLA
+ldtb2
+	.byte <linz0
+	.byte <linz1
+	.byte <linz2
+	.byte <linz3
+	.byte <linz4
+	.byte <linz5
+	.byte <linz6
+	.byte <linz7
+	.byte <linz8
+	.byte <linz9
+	.byte <linz10
+	.byte <linz11
+	.byte <linz12
+	.byte <linz13
+	.byte <linz14
+	.byte <linz15
+	.byte <linz16
+	.byte <linz17
+	.byte <linz18
+	.byte <linz19
+	.byte <linz20
+	.byte <linz21
+	.byte <linz22
+	.byte <linz23
+	.byte <linz24
+.end
+; rsr 12/08/81 modify for vic-40 keyscan
+; rsr  2/17/81 modify for the stinking 6526r2 chip
+; rsr  3/11/82 modify for commodore 64
+; rsr  3/28/82 modify for new pla

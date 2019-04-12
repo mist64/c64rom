@@ -1,292 +1,292 @@
-.PAG 'DECLARE'
-	*=$0000         ;DECLARE 6510 PORTS
-D6510	*=*+1           ;6510 DATA DIRECTION REGISTER
-R6510	*=*+1           ;6510 DATA REGISTER
-	*=$0002         ;MISS 6510 REGS
-;VIRTUAL REGS FOR MACHINE LANGUAGE MONITOR
-PCH	*=*+1
-PCL	*=*+1
-FLGS	*=*+1
-ACC	*=*+1
-XR	*=*+1
-YR	*=*+1
-SP	*=*+1
-INVH	*=*+1           ;USER MODIFIABLE IRQ
-INVL	*=*+1
-.SKI 3
+.pag 'declare'
+	*=$0000         ;declare 6510 ports
+d6510	*=*+1           ;6510 data direction register
+r6510	*=*+1           ;6510 data register
+	*=$0002         ;miss 6510 regs
+;virtual regs for machine language monitor
+pch	*=*+1
+pcl	*=*+1
+flgs	*=*+1
+acc	*=*+1
+xr	*=*+1
+yr	*=*+1
+sp	*=*+1
+invh	*=*+1           ;user modifiable irq
+invl	*=*+1
+.ski 3
 	* =$90
-STATUS	*=*+1           ;I/O OPERATION STATUS BYTE
-; CRFAC *=*+2 ;CORRECTION FACTOR (UNUSED)
-STKEY	*=*+1           ;STOP KEY FLAG
-SVXT	*=*+1           ;TEMPORARY
-VERCK	*=*+1           ;LOAD OR VERIFY FLAG
-C3P0	*=*+1           ;IEEE BUFFERED CHAR FLAG
-BSOUR	*=*+1           ;CHAR BUFFER FOR IEEE
-SYNO	*=*+1           ;CASSETTE SYNC #
-XSAV	*=*+1           ;TEMP FOR BASIN
-LDTND	*=*+1           ;INDEX TO LOGICAL FILE
-DFLTN	*=*+1           ;DEFAULT INPUT DEVICE #
-DFLTO	*=*+1           ;DEFAULT OUTPUT DEVICE #
-PRTY	*=*+1           ;CASSETTE PARITY
-DPSW	*=*+1           ;CASSETTE DIPOLE SWITCH
-MSGFLG	*=*+1           ;OS MESSAGE FLAG
-PTR1	;CASSETTE ERROR PASS1
-T1	*=*+1           ;TEMPORARY 1
-TMPC
-PTR2	;CASSETTE ERROR PASS2
-T2	*=*+1           ;TEMPORARY 2
-TIME	*=*+3           ;24 HOUR CLOCK IN 1/60TH SECONDS
-R2D2	;SERIAL BUS USAGE
-PCNTR	*=*+1           ;CASSETTE STUFF
-; PTCH *=*+1  (UNUSED)
-BSOUR1	;TEMP USED BY SERIAL ROUTINE
-FIRT	*=*+1
-COUNT	;TEMP USED BY SERIAL ROUTINE
-CNTDN	*=*+1           ;CASSETTE SYNC COUNTDOWN
-BUFPT	*=*+1           ;CASSETTE BUFFER POINTER
-INBIT	;RS-232 RCVR INPUT BIT STORAGE
-SHCNL	*=*+1           ;CASSETTE SHORT COUNT
-BITCI	;RS-232 RCVR BIT COUNT IN
-RER	*=*+1           ;CASSETTE READ ERROR
-RINONE	;RS-232 RCVR FLAG FOR START BIT CHECK
-REZ	*=*+1           ;CASSETE READING ZEROES
-RIDATA	;RS-232 RCVR BYTE BUFFER
-RDFLG	*=*+1           ;CASSETTE READ MODE
-RIPRTY	;RS-232 RCVR PARITY STORAGE
-SHCNH	*=*+1           ;CASSETTE SHORT CNT
-SAL	*=*+1
-SAH	*=*+1
-EAL	*=*+1
-EAH	*=*+1
-CMP0	*=*+1
-TEMP	*=*+1
-TAPE1	*=*+2           ;ADDRESS OF TAPE BUFFER #1Y.
-BITTS	;RS-232 TRNS BIT COUNT
-SNSW1	*=*+1
-NXTBIT	;RS-232 TRNS NEXT BIT TO BE SENT
-DIFF	*=*+1
-RODATA	;RS-232 TRNS BYTE BUFFER
-PRP	*=*+1
-FNLEN	*=*+1           ;LENGTH CURRENT FILE N STR
-LA	*=*+1           ;CURRENT FILE LOGICAL ADDR
-SA	*=*+1           ;CURRENT FILE 2ND ADDR
-FA	*=*+1           ;CURRENT FILE PRIMARY ADDR
-FNADR	*=*+2           ;ADDR CURRENT FILE NAME STR
-ROPRTY	;RS-232 TRNS PARITY BUFFER
-OCHAR	*=*+1
-FSBLK	*=*+1           ;CASSETTE READ BLOCK COUNT
-MYCH	*=*+1
-CAS1	*=*+1           ;CASSETTE MANUAL/CONTROLLED SWITCH
-TMP0
-STAL	*=*+1
-STAH	*=*+1
-MEMUSS	;CASSETTE LOAD TEMPS (2 BYTES)
-TMP2	*=*+2
+status	*=*+1           ;i/o operation status byte
+; crfac *=*+2 ;correction factor (unused)
+stkey	*=*+1           ;stop key flag
+svxt	*=*+1           ;temporary
+verck	*=*+1           ;load or verify flag
+c3p0	*=*+1           ;ieee buffered char flag
+bsour	*=*+1           ;char buffer for ieee
+syno	*=*+1           ;cassette sync #
+xsav	*=*+1           ;temp for basin
+ldtnd	*=*+1           ;index to logical file
+dfltn	*=*+1           ;default input device #
+dflto	*=*+1           ;default output device #
+prty	*=*+1           ;cassette parity
+dpsw	*=*+1           ;cassette dipole switch
+msgflg	*=*+1           ;os message flag
+ptr1	;cassette error pass1
+t1	*=*+1           ;temporary 1
+tmpc
+ptr2	;cassette error pass2
+t2	*=*+1           ;temporary 2
+time	*=*+3           ;24 hour clock in 1/60th seconds
+r2d2	;serial bus usage
+pcntr	*=*+1           ;cassette stuff
+; ptch *=*+1  (unused)
+bsour1	;temp used by serial routine
+firt	*=*+1
+count	;temp used by serial routine
+cntdn	*=*+1           ;cassette sync countdown
+bufpt	*=*+1           ;cassette buffer pointer
+inbit	;rs-232 rcvr input bit storage
+shcnl	*=*+1           ;cassette short count
+bitci	;rs-232 rcvr bit count in
+rer	*=*+1           ;cassette read error
+rinone	;rs-232 rcvr flag for start bit check
+rez	*=*+1           ;cassete reading zeroes
+ridata	;rs-232 rcvr byte buffer
+rdflg	*=*+1           ;cassette read mode
+riprty	;rs-232 rcvr parity storage
+shcnh	*=*+1           ;cassette short cnt
+sal	*=*+1
+sah	*=*+1
+eal	*=*+1
+eah	*=*+1
+cmp0	*=*+1
+temp	*=*+1
+tape1	*=*+2           ;address of tape buffer #1y.
+bitts	;rs-232 trns bit count
+snsw1	*=*+1
+nxtbit	;rs-232 trns next bit to be sent
+diff	*=*+1
+rodata	;rs-232 trns byte buffer
+prp	*=*+1
+fnlen	*=*+1           ;length current file n str
+la	*=*+1           ;current file logical addr
+sa	*=*+1           ;current file 2nd addr
+fa	*=*+1           ;current file primary addr
+fnadr	*=*+2           ;addr current file name str
+roprty	;rs-232 trns parity buffer
+ochar	*=*+1
+fsblk	*=*+1           ;cassette read block count
+mych	*=*+1
+cas1	*=*+1           ;cassette manual/controlled switch
+tmp0
+stal	*=*+1
+stah	*=*+1
+memuss	;cassette load temps (2 bytes)
+tmp2	*=*+2
 ;
-;VARIABLES FOR SCREEN EDITOR
+;variables for screen editor
 ;
-LSTX	*=*+1           ;KEY SCAN INDEX
-; SFST *=*+1 ;KEYBOARD SHIFT FLAG (UNUSED)
-NDX	*=*+1           ;INDEX TO KEYBOARD Q
-RVS	*=*+1           ;RVS FIELD ON FLAG
-INDX	*=*+1
-LSXP	*=*+1           ;X POS AT START
-LSTP	*=*+1
-SFDX	*=*+1           ;SHIFT MODE ON PRINT
-BLNSW	*=*+1           ;CURSOR BLINK ENAB
-BLNCT	*=*+1           ;COUNT TO TOGGLE CUR
-GDBLN	*=*+1           ;CHAR BEFORE CURSOR
-BLNON	*=*+1           ;ON/OFF BLINK FLAG
-CRSW	*=*+1           ;INPUT VS GET FLAG
-PNT	*=*+2           ;POINTER TO ROW
-; POINT *=*+1   (UNUSED)
-PNTR	*=*+1           ;POINTER TO COLUMN
-QTSW	*=*+1           ;QUOTE SWITCH
-LNMX	*=*+1           ;40/80 MAX POSITON
-TBLX	*=*+1
-DATA	*=*+1
-INSRT	*=*+1           ;INSERT MODE FLAG
-LDTB1	*=*+26          ;LINE FLAGS+ENDSPACE
-USER	*=*+2           ;SCREEN EDITOR COLOR IP
-KEYTAB	*=*+2           ;KEYSCAN TABLE INDIRECT
-;RS-232 Z-PAGE
-RIBUF	*=*+2           ;RS-232 INPUT BUFFER POINTER
-ROBUF	*=*+2           ;RS-232 OUTPUT BUFFER POINTER
-FREKZP	*=*+4           ;FREE KERNAL ZERO PAGE 9/24/80
-BASZPT	*=*+1           ;LOCATION ($00FF) USED BY BASIC
-.SKI 3
+lstx	*=*+1           ;key scan index
+; sfst *=*+1 ;keyboard shift flag (unused)
+ndx	*=*+1           ;index to keyboard q
+rvs	*=*+1           ;rvs field on flag
+indx	*=*+1
+lsxp	*=*+1           ;x pos at start
+lstp	*=*+1
+sfdx	*=*+1           ;shift mode on print
+blnsw	*=*+1           ;cursor blink enab
+blnct	*=*+1           ;count to toggle cur
+gdbln	*=*+1           ;char before cursor
+blnon	*=*+1           ;on/off blink flag
+crsw	*=*+1           ;input vs get flag
+pnt	*=*+2           ;pointer to row
+; point *=*+1   (unused)
+pntr	*=*+1           ;pointer to column
+qtsw	*=*+1           ;quote switch
+lnmx	*=*+1           ;40/80 max positon
+tblx	*=*+1
+data	*=*+1
+insrt	*=*+1           ;insert mode flag
+ldtb1	*=*+26          ;line flags+endspace
+user	*=*+2           ;screen editor color ip
+keytab	*=*+2           ;keyscan table indirect
+;rs-232 z-page
+ribuf	*=*+2           ;rs-232 input buffer pointer
+robuf	*=*+2           ;rs-232 output buffer pointer
+frekzp	*=*+4           ;free kernal zero page 9/24/80
+baszpt	*=*+1           ;location ($00ff) used by basic
+.ski 3
 	*=$100 
-BAD	*=*+1
+bad	*=*+1
 	*=$200
-BUF	*=*+89          ;BASIC/MONITOR BUFFER
-.SKI
-; TABLES FOR OPEN FILES
+buf	*=*+89          ;basic/monitor buffer
+.ski
+; tables for open files
 ;
-LAT	*=*+10          ;LOGICAL FILE NUMBERS
-FAT	*=*+10          ;PRIMARY DEVICE NUMBERS
-SAT	*=*+10          ;SECONDARY ADDRESSES
-.SKI 2
-; SYSTEM STORAGE
+lat	*=*+10          ;logical file numbers
+fat	*=*+10          ;primary device numbers
+sat	*=*+10          ;secondary addresses
+.ski 2
+; system storage
 ;
-KEYD	*=*+10          ;IRQ KEYBOARD BUFFER
-MEMSTR	*=*+2           ;START OF MEMORY
-MEMSIZ	*=*+2           ;TOP OF MEMORY
-TIMOUT	*=*+1           ;IEEE TIMEOUT FLAG
-.SKI 2
-; SCREEN EDITOR STORAGE
+keyd	*=*+10          ;irq keyboard buffer
+memstr	*=*+2           ;start of memory
+memsiz	*=*+2           ;top of memory
+timout	*=*+1           ;ieee timeout flag
+.ski 2
+; screen editor storage
 ;
-COLOR	*=*+1           ;ACTIV COLOR NYBBLE
-GDCOL	*=*+1           ;ORIGINAL COLOR BEFORE CURSOR
-HIBASE	*=*+1           ;BASE LOCATION OF SCREEN (TOP)
-XMAX	*=*+1
-RPTFLG	*=*+1           ;KEY REPEAT FLAG
-KOUNT	*=*+1
-DELAY	*=*+1
-SHFLAG	*=*+1           ;SHIFT FLAG BYTE
-LSTSHF	*=*+1           ;LAST SHIFT PATTERN
-KEYLOG	*=*+2           ;INDIRECT FOR KEYBOARD TABLE SETUP
-MODE	*=*+1           ;0-PET MODE, 1-CATTACANNA
-AUTODN	*=*+1           ;AUTO SCROLL DOWN FLAG(=0 ON,<>0 OFF)
-.SKI 3
-; RS-232 STORAGE
+color	*=*+1           ;activ color nybble
+gdcol	*=*+1           ;original color before cursor
+hibase	*=*+1           ;base location of screen (top)
+xmax	*=*+1
+rptflg	*=*+1           ;key repeat flag
+kount	*=*+1
+delay	*=*+1
+shflag	*=*+1           ;shift flag byte
+lstshf	*=*+1           ;last shift pattern
+keylog	*=*+2           ;indirect for keyboard table setup
+mode	*=*+1           ;0-pet mode, 1-cattacanna
+autodn	*=*+1           ;auto scroll down flag(=0 on,<>0 off)
+.ski 3
+; rs-232 storage
 ;
-M51CTR	*=*+1           ;6551 CONTROL REGISTER
-M51CDR	*=*+1           ;6551 COMMAND REGISTER
-M51AJB	*=*+2           ;NON STANDARD (BITTIME/2-100)
-RSSTAT	*=*+1           ; RS-232 STATUS REGISTER
-BITNUM	*=*+1           ;NUMBER OF BITS TO SEND (FAST RESPONSE)
-BAUDOF	*=*+2           ;BAUD RATE FULL BIT TIME (CREATED BY OPEN)
+m51ctr	*=*+1           ;6551 control register
+m51cdr	*=*+1           ;6551 command register
+m51ajb	*=*+2           ;non standard (bittime/2-100)
+rsstat	*=*+1           ; rs-232 status register
+bitnum	*=*+1           ;number of bits to send (fast response)
+baudof	*=*+2           ;baud rate full bit time (created by open)
 ;
-; RECIEVER STORAGE
+; reciever storage
 ;
-; INBIT *=*+1 ;INPUT BIT STORAGE
-; BITCI *=*+1 ;BIT COUNT IN
-; RINONE *=*+1 ;FLAG FOR START BIT CHECK
-; RIDATA *=*+1 ;BYTE IN BUFFER
-; RIPRTY *=*+1 ;BYTE IN PARITY STORAGE
-RIDBE	*=*+1           ;INPUT BUFFER INDEX TO END
-RIDBS	*=*+1           ;INPUT BUFFER POINTER TO START
+; inbit *=*+1 ;input bit storage
+; bitci *=*+1 ;bit count in
+; rinone *=*+1 ;flag for start bit check
+; ridata *=*+1 ;byte in buffer
+; riprty *=*+1 ;byte in parity storage
+ridbe	*=*+1           ;input buffer index to end
+ridbs	*=*+1           ;input buffer pointer to start
 ;
-; TRANSMITTER STORAGE
+; transmitter storage
 ;
-; BITTS *=*+1 ;# OF BITS TO BE SENT
-; NXTBIT *=*+1 ;NEXT BIT TO BE SENT
-; ROPRTY *=*+1 ;PARITY OF BYTE SENT
-; RODATA *=*+1 ;BYTE BUFFER OUT
-RODBS	*=*+1           ;OUTPUT BUFFER INDEX TO START
-RODBE	*=*+1           ;OUTPUT BUFFER INDEX TO END
+; bitts *=*+1 ;# of bits to be sent
+; nxtbit *=*+1 ;next bit to be sent
+; roprty *=*+1 ;parity of byte sent
+; rodata *=*+1 ;byte buffer out
+rodbs	*=*+1           ;output buffer index to start
+rodbe	*=*+1           ;output buffer index to end
 ;
-IRQTMP	*=*+2           ;HOLDS IRQ DURING TAPE OPS
+irqtmp	*=*+2           ;holds irq during tape ops
 ;
-; TEMP SPACE FOR VIC-40 VARIABLES ****
+; temp space for vic-40 variables ****
 ;
-ENABL	*=*+1           ;RS-232 ENABLES (REPLACES IER)
-CASTON	*=*+1           ;TOD SENSE DURING CASSETTES
-KIKA26	*=*+1           ;TEMP STORAGE FOR CASSETTE READ ROUTINE
-STUPID	*=*+1           ;TEMP D1IRQ INDICATOR FOR CASSETTE READ
-LINTMP	*=*+1           ;TEMPORARY FOR LINE INDEX
-PALNTS	*=*+1           ;PAL VS NTSC FLAG 0=NTSC 1=PAL
-.SKI 3
-	*=$0300         ;REM PROGRAM INDIRECTS(10)
-	*=$0300+20      ;REM KERNAL/OS INDIRECTS(20)
-CINV	*=*+2           ;IRQ RAM VECTOR
-CBINV	*=*+2           ;BRK INSTR RAM VECTOR
-NMINV	*=*+2           ;NMI RAM VECTOR
-IOPEN	*=*+2           ;INDIRECTS FOR CODE
-ICLOSE	*=*+2           ; CONFORMS TO KERNAL SPEC 8/19/80
-ICHKIN	*=*+2
-ICKOUT	*=*+2
-ICLRCH	*=*+2
-IBASIN	*=*+2
-IBSOUT	*=*+2
-ISTOP	*=*+2
-IGETIN	*=*+2
-ICLALL	*=*+2
-USRCMD	*=*+2
-ILOAD	*=*+2
-ISAVE	*=*+2           ;SAVESP
-.SKI 3
+enabl	*=*+1           ;rs-232 enables (replaces ier)
+caston	*=*+1           ;tod sense during cassettes
+kika26	*=*+1           ;temp storage for cassette read routine
+stupid	*=*+1           ;temp d1irq indicator for cassette read
+lintmp	*=*+1           ;temporary for line index
+palnts	*=*+1           ;pal vs ntsc flag 0=ntsc 1=pal
+.ski 3
+	*=$0300         ;rem program indirects(10)
+	*=$0300+20      ;rem kernal/os indirects(20)
+cinv	*=*+2           ;irq ram vector
+cbinv	*=*+2           ;brk instr ram vector
+nminv	*=*+2           ;nmi ram vector
+iopen	*=*+2           ;indirects for code
+iclose	*=*+2           ; conforms to kernal spec 8/19/80
+ichkin	*=*+2
+ickout	*=*+2
+iclrch	*=*+2
+ibasin	*=*+2
+ibsout	*=*+2
+istop	*=*+2
+igetin	*=*+2
+iclall	*=*+2
+usrcmd	*=*+2
+iload	*=*+2
+isave	*=*+2           ;savesp
+.ski 3
 	*=$0300+60
-TBUFFR	*=*+192         ;CASSETTE DATA BUFFER
-.SKI 3
+tbuffr	*=*+192         ;cassette data buffer
+.ski 3
 	* =$400
-VICSCN	*=*+1024
-RAMLOC
-.SKI 3
-.PAG 'DECLARE'
-; I/O DEVICES
+vicscn	*=*+1024
+ramloc
+.ski 3
+.pag 'declare'
+; i/o devices
 ;
-	* =$D000
-VICREG	=* ;VIC REGISTERS
-.SKI 2
-	* =$D400
-SIDREG	=* ;SID REGISTERS
-.SKI 2
-	* =$D800
-VICCOL	*=*+1024        ;VIC COLOR NYBBLES
-.SKI 2
-	* =$DC00        ;DEVICE1 6526 (PAGE1 IRQ)
-COLM	;KEYBOARD MATRIX
-D1PRA	*=*+1
-ROWS	;KEYBOARD MATRIX
-D1PRB	*=*+1
-D1DDRA	*=*+1
-D1DDRB	*=*+1
-D1T1L	*=*+1
-D1T1H	*=*+1
-D1T2L	*=*+1
-D1T2H	*=*+1
-D1TOD1	*=*+1
-D1TODS	*=*+1
-D1TODM	*=*+1
-D1TODH	*=*+1
-D1SDR	*=*+1
-D1ICR	*=*+1
-D1CRA	*=*+1
-D1CRB	*=*+1
-.SKI 2
-	* =$DD00        ;DEVICE2 6526 (PAGE2 NMI)
-D2PRA	*=*+1
-D2PRB	*=*+1
-D2DDRA	*=*+1
-D2DDRB	*=*+1
-D2T1L	*=*+1
-D2T1H	*=*+1
-D2T2L	*=*+1
-D2T2H	*=*+1
-D2TOD1	*=*+1
-D2TODS	*=*+1
-D2TODM	*=*+1
-D2TODH	*=*+1
-D2SDR	*=*+1
-D2ICR	*=*+1
-D2CRA	*=*+1
-D2CRB	*=*+1
-.SKI 2
-TIMRB	=$19            ;6526 CRB ENABLE ONE-SHOT TB
-.PAG 'DECLARE'
-;TAPE BLOCK TYPES
+	* =$d000
+vicreg	=* ;vic registers
+.ski 2
+	* =$d400
+sidreg	=* ;sid registers
+.ski 2
+	* =$d800
+viccol	*=*+1024        ;vic color nybbles
+.ski 2
+	* =$dc00        ;device1 6526 (page1 irq)
+colm	;keyboard matrix
+d1pra	*=*+1
+rows	;keyboard matrix
+d1prb	*=*+1
+d1ddra	*=*+1
+d1ddrb	*=*+1
+d1t1l	*=*+1
+d1t1h	*=*+1
+d1t2l	*=*+1
+d1t2h	*=*+1
+d1tod1	*=*+1
+d1tods	*=*+1
+d1todm	*=*+1
+d1todh	*=*+1
+d1sdr	*=*+1
+d1icr	*=*+1
+d1cra	*=*+1
+d1crb	*=*+1
+.ski 2
+	* =$dd00        ;device2 6526 (page2 nmi)
+d2pra	*=*+1
+d2prb	*=*+1
+d2ddra	*=*+1
+d2ddrb	*=*+1
+d2t1l	*=*+1
+d2t1h	*=*+1
+d2t2l	*=*+1
+d2t2h	*=*+1
+d2tod1	*=*+1
+d2tods	*=*+1
+d2todm	*=*+1
+d2todh	*=*+1
+d2sdr	*=*+1
+d2icr	*=*+1
+d2cra	*=*+1
+d2crb	*=*+1
+.ski 2
+timrb	=$19            ;6526 crb enable one-shot tb
+.pag 'declare'
+;tape block types
 ;
-EOT	=5 ;END OF TAPE
-BLF	=1 ;BASIC LOAD FILE
-BDF	=2 ;BASIC DATA FILE
-PLF	=3 ;FIXED PROGRAM TYPE
-BDFH	=4 ;BASIC DATA FILE HEADER
-BUFSZ	=192            ;BUFFER SIZE
+eot	=5 ;end of tape
+blf	=1 ;basic load file
+bdf	=2 ;basic data file
+plf	=3 ;fixed program type
+bdfh	=4 ;basic data file header
+bufsz	=192            ;buffer size
 ;
-;SCREEN EDITOR CONSTANTS
+;screen editor constants
 ;
-LLEN	=40             ;SINGLE LINE 40 COLUMNS
-LLEN2	=80             ;DOUBLE LINE = 80 COLUMNS
-NLINES	=25             ;25 ROWS ON SCREEN
-WHITE	=$01            ;WHITE SCREEN COLOR
-BLUE	=$06            ;BLUE CHAR COLOR
-CR	=$D             ;CARRIAGE RETURN
-.END
-;RSR 8/3/80 ADD & CHANGE Z-PAGE
-;RSR 8/11/80 ADD MEMUSS & PLF TYPE
-;RSR 8/22/80 ADD RS-232 ROUTINES
-;RSR 8/24/80 ADD OPEN VARIABLES
-;RSR 8/29/80 ADD BAUD SPACE MOVE RS232 TO Z-PAGE
-;RSR 9/2/80 ADD SCREEN EDITOR VARS&CON
-;RSR 12/7/81 MODIFY FOR VIC-40
+llen	=40             ;single line 40 columns
+llen2	=80             ;double line = 80 columns
+nlines	=25             ;25 rows on screen
+white	=$01            ;white screen color
+blue	=$06            ;blue char color
+cr	=$d             ;carriage return
+.end
+;rsr 8/3/80 add & change z-page
+;rsr 8/11/80 add memuss & plf type
+;rsr 8/22/80 add rs-232 routines
+;rsr 8/24/80 add open variables
+;rsr 8/29/80 add baud space move rs232 to z-page
+;rsr 9/2/80 add screen editor vars&con
+;rsr 12/7/81 modify for vic-40

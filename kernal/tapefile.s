@@ -1,202 +1,202 @@
-.PAG 'TAPE FILES'
-;FAH -- FIND ANY HEADER
+.pag 'tape files'
+;fah -- find any header
 ;
-;READS TAPE DEVICE UNTIL ONE OF FOLLOWING
-;BLOCK TYPES FOUND: BDFH--BASIC DATA
-;FILE HEADER, BLF--BASIC LOAD FILE
-;FOR SUCCESS CARRY IS CLEAR ON RETURN.
-;FOR FAILURE CARRY IS SET ON RETURN.
-;IN ADDITION ACCUMULATOR IS 0 IF STOP
-;KEY WAS PRESSED.
+;reads tape device until one of following
+;block types found: bdfh--basic data
+;file header, blf--basic load file
+;for success carry is clear on return.
+;for failure carry is set on return.
+;in addition accumulator is 0 if stop
+;key was pressed.
 ;
-FAH	LDA VERCK       ;SAVE OLD VERIFY
-	PHA
-	JSR RBLK        ;READ TAPE BLOCK
-	PLA
-	STA VERCK       ;RESTORE VERIFY FLAG
-	BCS FAH40       ;READ TERMINATED
+fah	lda verck       ;save old verify
+	pha
+	jsr rblk        ;read tape block
+	pla
+	sta verck       ;restore verify flag
+	bcs fah40       ;read terminated
 ;
-	LDY #0
-	LDA (TAPE1)Y    ;GET HEADER TYPE
+	ldy #0
+	lda (tape1)y    ;get header type
 ;
-	CMP #EOT        ;CHECK END OF TAPE?
-	BEQ FAH40       ;YES...FAILURE
+	cmp #eot        ;check end of tape?
+	beq fah40       ;yes...failure
 ;
-	CMP #BLF        ;BASIC LOAD FILE?
-	BEQ FAH50       ;YES...SUCCESS
+	cmp #blf        ;basic load file?
+	beq fah50       ;yes...success
 ;
-	CMP #PLF        ;FIXED LOAD FILE?
-	BEQ FAH50       ;YES...SUCCESS
+	cmp #plf        ;fixed load file?
+	beq fah50       ;yes...success
 ;
-	CMP #BDFH       ;BASIC DATA FILE?
-	BNE FAH         ;NO...KEEP TRYING
+	cmp #bdfh       ;basic data file?
+	bne fah         ;no...keep trying
 ;
-FAH50	TAX             ;RETURN FILE TYPE IN .X
-	BIT MSGFLG      ;PRINTING MESSAGES?
-	BPL FAH45       ;NO...
+fah50	tax             ;return file type in .x
+	bit msgflg      ;printing messages?
+	bpl fah45       ;no...
 ;
-	LDY #MS17-MS1   ;PRINT "FOUND"
-	JSR MSG
+	ldy #ms17-ms1   ;print "found"
+	jsr msg
 ;
-;OUTPUT COMPLETE FILE NAME
+;output complete file name
 ;
-	LDY #5
-FAH55	LDA (TAPE1)Y
-	JSR BSOUT
-	INY
-	CPY #21
-	BNE FAH55
+	ldy #5
+fah55	lda (tape1)y
+	jsr bsout
+	iny
+	cpy #21
+	bne fah55
 ;
-FAH56	LDA TIME+1      ;SET UP FOR TIME OUT...
-	JSR FPATCH      ;GOTO PATCH...
-	NOP
+fah56	lda time+1      ;set up for time out...
+	jsr fpatch      ;goto patch...
+	nop
 ;
-FAH45	CLC             ;SUCCESS FLAG
-	DEY             ;MAKE NONZERO FOR OKAY RETURN
+fah45	clc             ;success flag
+	dey             ;make nonzero for okay return
 ;
-FAH40	RTS
-.SKI 5
-;TAPEH--WRITE TAPE HEADER
-;ERROR IF TAPE BUFFER DE-ALLOCATED
-;CARRY CLEAR IF O.K.
+fah40	rts
+.ski 5
+;tapeh--write tape header
+;error if tape buffer de-allocated
+;carry clear if o.k.
 ;
-TAPEH	STA T1
+tapeh	sta t1
 ;
-;DETERMINE ADDRESS OF BUFFER
+;determine address of buffer
 ;
-	JSR ZZZ
-	BCC TH40        ;BUFFER WAS DE-ALLOCATED
+	jsr zzz
+	bcc th40        ;buffer was de-allocated
 ;
-;PRESERVE START AND END ADDRESSES
-;FOR CASE OF HEADER FOR LOAD FILE
+;preserve start and end addresses
+;for case of header for load file
 ;
-	LDA STAH
-	PHA
-	LDA STAL
-	PHA
-	LDA EAH
-	PHA
-	LDA EAL
-	PHA
+	lda stah
+	pha
+	lda stal
+	pha
+	lda eah
+	pha
+	lda eal
+	pha
 ;
-;PUT BLANKS IN TAPE BUFFER
+;put blanks in tape buffer
 ;
-	LDY #BUFSZ-1
-	LDA #' 
-BLNK2	STA (TAPE1)Y
-	DEY
-	BNE BLNK2
+	ldy #bufsz-1
+	lda #' 
+blnk2	sta (tape1)y
+	dey
+	bne blnk2
 ;
-;PUT BLOCK TYPE IN HEADER
+;put block type in header
 ;
-	LDA T1
-	STA (TAPE1)Y
+	lda t1
+	sta (tape1)y
 ;
-;PUT START LOAD ADDRESS IN HEADER
+;put start load address in header
 ;
-	INY
-	LDA STAL
-	STA (TAPE1)Y
-	INY
-	LDA STAH
-	STA (TAPE1)Y
+	iny
+	lda stal
+	sta (tape1)y
+	iny
+	lda stah
+	sta (tape1)y
 ;
-;PUT END LOAD ADDRESS IN HEADER
+;put end load address in header
 ;
-	INY
-	LDA EAL
-	STA (TAPE1)Y
-	INY
-	LDA EAH
-	STA (TAPE1)Y
+	iny
+	lda eal
+	sta (tape1)y
+	iny
+	lda eah
+	sta (tape1)y
 ;
-;PUT FILE NAME IN HEADER
+;put file name in header
 ;
-	INY
-	STY T2
-	LDY #0
-	STY T1
-TH20	LDY T1
-	CPY FNLEN
-	BEQ TH30
-	LDA (FNADR)Y
-	LDY T2
-	STA (TAPE1)Y
-	INC T1
-	INC T2
-	BNE TH20
+	iny
+	sty t2
+	ldy #0
+	sty t1
+th20	ldy t1
+	cpy fnlen
+	beq th30
+	lda (fnadr)y
+	ldy t2
+	sta (tape1)y
+	inc t1
+	inc t2
+	bne th20
 ;
-;SET UP START AND END ADDRESS OF HEADER
+;set up start and end address of header
 ;
-TH30	JSR LDAD1
+th30	jsr ldad1
 ;
-;SET UP TIME FOR LEADER
+;set up time for leader
 ;
-	LDA #$69
-	STA SHCNH
+	lda #$69
+	sta shcnh
 ;
-	JSR TWRT2       ;WRITE HEADER ON TAPE
+	jsr twrt2       ;write header on tape
 ;
-;RESTORE START AND END ADDRESS OF
-;LOAD FILE.
+;restore start and end address of
+;load file.
 ;
-	TAY             ;SAVE ERROR CODE IN .Y
-	PLA
-	STA EAL
-	PLA 
-	STA EAH
-	PLA
-	STA STAL
-	PLA
-	STA STAH
-	TYA             ;RESTORE ERROR CODE FOR RETURN
+	tay             ;save error code in .y
+	pla
+	sta eal
+	pla 
+	sta eah
+	pla
+	sta stal
+	pla
+	sta stah
+	tya             ;restore error code for return
 ;
-TH40	RTS
-.SKI 5
-;FUNCTION TO RETURN TAPE BUFFER
-;ADDRESS IN TAPE1
+th40	rts
+.ski 5
+;function to return tape buffer
+;address in tape1
 ;
-ZZZ	LDX TAPE1       ;ASSUME TAPE1
-	LDY TAPE1+1
-	CPY #>BUF       ;CHECK FOR ALLOCATION...
-;...[TAPE1+1]=0 OR 1 MEANS DEALLOCATED
-;...C CLR => DEALLOCATED
-	RTS
-.SKI 5
-LDAD1	JSR ZZZ         ;GET PTR TO CASSETTE
-	TXA
-	STA STAL        ;SAVE START LOW
-	CLC
-	ADC #BUFSZ      ;COMPUTE POINTER TO END
-	STA EAL         ;SAVE END LOW
-	TYA
-	STA STAH        ;SAVE START HIGH
-	ADC #0          ;COMPUTE POINTER TO END
-	STA EAH         ;SAVE END HIGH
-	RTS
-.SKI 5
-FAF	JSR FAH         ;FIND ANY HEADER
-	BCS FAF40       ;FAILED
+zzz	ldx tape1       ;assume tape1
+	ldy tape1+1
+	cpy #>buf       ;check for allocation...
+;...[tape1+1]=0 or 1 means deallocated
+;...c clr => deallocated
+	rts
+.ski 5
+ldad1	jsr zzz         ;get ptr to cassette
+	txa
+	sta stal        ;save start low
+	clc
+	adc #bufsz      ;compute pointer to end
+	sta eal         ;save end low
+	tya
+	sta stah        ;save start high
+	adc #0          ;compute pointer to end
+	sta eah         ;save end high
+	rts
+.ski 5
+faf	jsr fah         ;find any header
+	bcs faf40       ;failed
 ;
-;SUCCESS...SEE IF RIGHT NAME
+;success...see if right name
 ;
-	LDY #5          ;OFFSET INTO TAPE HEADER
-	STY T2
-	LDY #0          ;OFFSET INTO FILE NAME
-	STY T1
-FAF20	CPY FNLEN       ;COMPARE THIS MANY
-	BEQ FAF30       ;DONE
+	ldy #5          ;offset into tape header
+	sty t2
+	ldy #0          ;offset into file name
+	sty t1
+faf20	cpy fnlen       ;compare this many
+	beq faf30       ;done
 ;
-	LDA (FNADR)Y
-	LDY T2
-	CMP (TAPE1)Y
-	BNE FAF         ;MISMATCH--TRY NEXT HEADER
-	INC T1
-	INC T2
-	LDY T1
-	BNE FAF20       ;BRANCH ALWAYS
+	lda (fnadr)y
+	ldy t2
+	cmp (tape1)y
+	bne faf         ;mismatch--try next header
+	inc t1
+	inc t2
+	ldy t1
+	bne faf20       ;branch always
 ;
-FAF30	CLC             ;SUCCESS FLAG
-FAF40	RTS
-.END
-; RSR  4/10/82 ADD KEY DOWN TEST IN FAH...
+faf30	clc             ;success flag
+faf40	rts
+.end
+; rsr  4/10/82 add key down test in fah...

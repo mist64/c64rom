@@ -1,171 +1,171 @@
-.PAG 'CODE11'
-	CMP (DSCTMP+1)Y
-	BEQ NXTCMP
-	LDX #$FF
-	BCS DOCMP
-	LDX #1
-DOCMP	INX
-	TXA
-	ROL A
-	AND DOMASK
-	BEQ GOFLOT
-	LDA #$FF
-GOFLOT	JMP FLOAT
-DIM3	JSR CHKCOM
-DIM	TAX
-	JSR PTRGT1
-	JSR CHRGOT
-	BNE DIM3
-	RTS
-PTRGET	LDX #0
-	JSR CHRGOT
-PTRGT1	STX DIMFLG
-PTRGT2	STA VARNAM
-	JSR CHRGOT
-	JSR ISLETC
-	BCS PTRGT3
-INTERR	JMP SNERR
-PTRGT3	LDX #0
-	STX VALTYP
-	STX INTFLG
-	JSR CHRGET
-	BCC ISSEC
-	JSR ISLETC
-	BCC NOSEC
-ISSEC	TAX
-EATEM	JSR CHRGET
-	BCC EATEM
-	JSR ISLETC
-	BCS EATEM
-NOSEC	CMP #'$
-	BNE NOTSTR
-	LDA #$FF
-	STA VALTYP
-	BNE TURNON
-NOTSTR	CMP #'%
-	BNE STRNAM
-	LDA SUBFLG
-	BNE INTERR
-	LDA #128
-	STA INTFLG
-	ORA VARNAM
-	STA VARNAM
-TURNON	TXA
-	ORA #128
-	TAX
-	JSR CHRGET
-STRNAM	STX VARNAM+1
-	SEC
-	ORA SUBFLG
-	SBC #40
-	BNE *+5
-	JMP ISARY
-	LDY #0
-	STY SUBFLG
-	LDA VARTAB
-	LDX VARTAB+1
-STXFND	STX LOWTR+1
-LOPFND	STA LOWTR
-	CPX ARYTAB+1
-	BNE LOPFN
-	CMP ARYTAB
-	BEQ NOTFNS
-LOPFN	LDA VARNAM
-	CMP (LOWTR)Y
-	BNE NOTIT
-	LDA VARNAM+1
-	INY
-	CMP (LOWTR)Y
-	BEQ FINPTR
-	DEY
-NOTIT	CLC
-	LDA LOWTR
-	ADC #6+ADDPRC
-	BCC LOPFND
-	INX
-	BNE STXFND
-ISLETC	CMP #'A
-	BCC ISLRTS
-	SBC #$5B
-	SEC
-	SBC #@245
-ISLRTS	RTS
-NOTFNS	PLA
-	PHA
-ZZ6=ISVRET-1
-	CMP #<ZZ6 
-	BNE NOTEVL
-LDZR	LDA #<ZERO
-	LDY #>ZERO
-	RTS
-NOTEVL	LDA VARNAM
-	LDY VARNAM+1
-	CMP #'T
-	BNE QSTAVR
-	CPY #@311
-	BEQ LDZR
-	CPY #@111
-	BNE QSTAVR
-GOBADV	JMP SNERR
-QSTAVR
-	CMP #'S
-	BNE VAROK
-	CPY #'T
-	BEQ GOBADV
-VAROK	LDA ARYTAB
-	LDY ARYTAB+1
-	STA LOWTR
-	STY LOWTR+1
-	LDA STREND
-	LDY STREND+1
-	STA HIGHTR
-	STY HIGHTR+1
-	CLC
-	ADC #6+ADDPRC
-	BCC NOTEVE
-	INY
-NOTEVE	STA HIGHDS
-	STY HIGHDS+1
-	JSR BLTU
-	LDA HIGHDS
-	LDY HIGHDS+1
-	INY
-	STA ARYTAB
-	STY ARYTAB+1
-	LDY #0
-	LDA VARNAM
-	STA (LOWTR)Y
-	INY
-	LDA VARNAM+1
-	STA (LOWTR)Y
-	LDA #0
-	INY
-	STA (LOWTR)Y
-	INY
-	STA (LOWTR)Y
-	INY
-	STA (LOWTR)Y
-	INY
-	STA (LOWTR)Y
-	INY
-	STA (LOWTR)Y
-FINPTR	LDA LOWTR
-	CLC
-	ADC #2
-	LDY LOWTR+1
-	BCC FINNOW
-	INY
-FINNOW	STA VARPNT
-	STY VARPNT+1
-	RTS
-FMAPTR	LDA COUNT
-	ASL A
-	ADC #5
-	ADC LOWTR
-	LDY LOWTR+1
-	BCC JSRGM
-	INY
-JSRGM	STA ARYPNT
-	STY ARYPNT+1
-	RTS
-.END
+.pag 'code11'
+	cmp (dsctmp+1)y
+	beq nxtcmp
+	ldx #$ff
+	bcs docmp
+	ldx #1
+docmp	inx
+	txa
+	rol a
+	and domask
+	beq goflot
+	lda #$ff
+goflot	jmp float
+dim3	jsr chkcom
+dim	tax
+	jsr ptrgt1
+	jsr chrgot
+	bne dim3
+	rts
+ptrget	ldx #0
+	jsr chrgot
+ptrgt1	stx dimflg
+ptrgt2	sta varnam
+	jsr chrgot
+	jsr isletc
+	bcs ptrgt3
+interr	jmp snerr
+ptrgt3	ldx #0
+	stx valtyp
+	stx intflg
+	jsr chrget
+	bcc issec
+	jsr isletc
+	bcc nosec
+issec	tax
+eatem	jsr chrget
+	bcc eatem
+	jsr isletc
+	bcs eatem
+nosec	cmp #'$
+	bne notstr
+	lda #$ff
+	sta valtyp
+	bne turnon
+notstr	cmp #'%
+	bne strnam
+	lda subflg
+	bne interr
+	lda #128
+	sta intflg
+	ora varnam
+	sta varnam
+turnon	txa
+	ora #128
+	tax
+	jsr chrget
+strnam	stx varnam+1
+	sec
+	ora subflg
+	sbc #40
+	bne *+5
+	jmp isary
+	ldy #0
+	sty subflg
+	lda vartab
+	ldx vartab+1
+stxfnd	stx lowtr+1
+lopfnd	sta lowtr
+	cpx arytab+1
+	bne lopfn
+	cmp arytab
+	beq notfns
+lopfn	lda varnam
+	cmp (lowtr)y
+	bne notit
+	lda varnam+1
+	iny
+	cmp (lowtr)y
+	beq finptr
+	dey
+notit	clc
+	lda lowtr
+	adc #6+addprc
+	bcc lopfnd
+	inx
+	bne stxfnd
+isletc	cmp #'a
+	bcc islrts
+	sbc #$5b
+	sec
+	sbc #@245
+islrts	rts
+notfns	pla
+	pha
+zz6=isvret-1
+	cmp #<zz6 
+	bne notevl
+ldzr	lda #<zero
+	ldy #>zero
+	rts
+notevl	lda varnam
+	ldy varnam+1
+	cmp #'t
+	bne qstavr
+	cpy #@311
+	beq ldzr
+	cpy #@111
+	bne qstavr
+gobadv	jmp snerr
+qstavr
+	cmp #'s
+	bne varok
+	cpy #'t
+	beq gobadv
+varok	lda arytab
+	ldy arytab+1
+	sta lowtr
+	sty lowtr+1
+	lda strend
+	ldy strend+1
+	sta hightr
+	sty hightr+1
+	clc
+	adc #6+addprc
+	bcc noteve
+	iny
+noteve	sta highds
+	sty highds+1
+	jsr bltu
+	lda highds
+	ldy highds+1
+	iny
+	sta arytab
+	sty arytab+1
+	ldy #0
+	lda varnam
+	sta (lowtr)y
+	iny
+	lda varnam+1
+	sta (lowtr)y
+	lda #0
+	iny
+	sta (lowtr)y
+	iny
+	sta (lowtr)y
+	iny
+	sta (lowtr)y
+	iny
+	sta (lowtr)y
+	iny
+	sta (lowtr)y
+finptr	lda lowtr
+	clc
+	adc #2
+	ldy lowtr+1
+	bcc finnow
+	iny
+finnow	sta varpnt
+	sty varpnt+1
+	rts
+fmaptr	lda count
+	asl a
+	adc #5
+	adc lowtr
+	ldy lowtr+1
+	bcc jsrgm
+	iny
+jsrgm	sta arypnt
+	sty arypnt+1
+	rts
+.end
