@@ -9,6 +9,7 @@ clmwid	=10             ;print window 10 chars
 pi	=255
 numlev	=23
 strsiz	=3
+.segment "ZPBASIC" : zeropage
 blank0	.res 3           ;6510 register area
 adray1	.res 2           ;convert float->integer
 adray2	.res 2           ;convert integer->float
@@ -120,12 +121,13 @@ txtptr	.res 6
 qnum	.res 10
 chrrts	.res 1
 rndx	.res 5
-	.segment "S00FF" : zeropage
+
+	.segment "STRTMP" : zeropage
 lofbuf	.res 1
 fbuffr	.res 1
 strng1	=arisgn
 ;
-	.segment "S0300b"         ;basic indirects
+	.segment "BVECTORS" ;basic indirects
 ierror	.res 2           ;indirect error (output error in .x)
 imain	.res 2           ;indirect main (system direct loop)
 icrnch	.res 2           ;indirect crunch (tokenization routine)
@@ -139,5 +141,4 @@ sxreg	.res 1           ;.x reg
 syreg	.res 1           ;.y reg
 spreg	.res 1           ;.p reg
 usrpok	.res 3           ;user function dispatch
-	.segment "S0314b"      ;system indirects follow
 

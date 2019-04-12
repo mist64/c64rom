@@ -1,11 +1,15 @@
-	.segment "SFF81"
+	.segment "JMPTBL"
+
+	;KERNAL revision
+	.byte 3
+
 	jmp pcint
 	jmp ioinit
 	jmp ramtas
-	.segment "SFF8A";new vectors for basic
+
 	jmp restor      ;restore vectors to initial system
 	jmp vector      ;change vectors for user
-	.segment "SFF90"
+
 	jmp setmsg      ;control o.s. messages
 	jmp secnd       ;send sa after listen
 	jmp tksa        ;send sa after talk
@@ -41,7 +45,10 @@ jscrog	jmp scrorg      ;screen org
 jplot	jmp plot        ;read/set x,y coord
 jiobas	jmp iobase      ;return i/o base
 
-	.segment "SFFFA"
+	;signature
+	.byte "RRBY"
+
+	.segment "VECTORS"
 	.word nmi        ;program defineable
 	.word start      ;initialization code
 	.word puls       ;interrupt handler

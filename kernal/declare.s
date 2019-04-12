@@ -1,19 +1,8 @@
-	.segment "S0000k" : zeropage ;declare 6510 ports
-d6510	.res 1           ;6510 data direction register
-r6510	.res 1           ;6510 data register
-	.segment "S0002" : zeropage ;miss 6510 regs
-;virtual regs for machine language monitor
-pch	.res 1
-pcl	.res 1
-flgs	.res 1
-acc	.res 1
-xr	.res 1
-yr	.res 1
-sp	.res 1
-invh	.res 1           ;user modifiable irq
-invl	.res 1
+	;declare 6510 ports
+d6510	= 0              ;6510 data direction register
+r6510	= 1              ;6510 data register
 
-	.segment "S0090" : zeropage
+	.segment "ZPKERNAL" : zeropage
 status	.res 1           ;i/o operation status byte
 ; crfac .res 2 ;correction factor (unused)
 stkey	.res 1           ;stop key flag
@@ -114,9 +103,9 @@ robuf	.res 2           ;rs-232 output buffer pointer
 frekzp	.res 4           ;free kernal zero page 9/24/80
 baszpt	.res 1           ;location ($00ff) used by basic
 
-	.segment "S0100"
+	.segment "STACK"
 bad	.res 1
-	.segment "S0200"
+	.segment "KVAR"
 buf	.res 89          ;basic/monitor buffer
 
 ; tables for open files
@@ -186,8 +175,7 @@ stupid	.res 1           ;temp d1irq indicator for cassette read
 lintmp	.res 1           ;temporary for line index
 palnts	.res 1           ;pal vs ntsc flag 0=ntsc 1=pal
 
-	.segment "S0300k"         ;rem program indirects(10)
-	.segment "S0314k"      ;rem kernal/os indirects(20)
+	.segment "KVECTORS";rem kernal/os indirects(20)
 cinv	.res 2           ;irq ram vector
 cbinv	.res 2           ;brk instr ram vector
 nminv	.res 2           ;nmi ram vector
@@ -205,61 +193,55 @@ usrcmd	.res 2
 iload	.res 2
 isave	.res 2           ;savesp
 
-	.segment "S033C"
-tbuffr	.res 192         ;cassette data buffer
+tbuffr	=$033C           ;cassette data buffer
 
-	.segment "S0400"
-vicscn	.res 1024
-ramloc
+vicscn	=$0400
 
 ; i/o devices
 ;
-	.segment "SD000"
-vicreg	=* ;vic registers
+vicreg	=$d000
 
-	.segment "SD400"
-sidreg	=* ;sid registers
+sidreg	=$d400
 
-	.segment "SD800"
-viccol	.res 1024        ;vic color nybbles
+viccol	=$d800           ;vic color nybbles
 
-	.segment "SDC00"        ;device1 6526 (page1 irq)
-colm	;keyboard matrix
-d1pra	.res 1
-rows	;keyboard matrix
-d1prb	.res 1
-d1ddra	.res 1
-d1ddrb	.res 1
-d1t1l	.res 1
-d1t1h	.res 1
-d1t2l	.res 1
-d1t2h	.res 1
-d1tod1	.res 1
-d1tods	.res 1
-d1todm	.res 1
-d1todh	.res 1
-d1sdr	.res 1
-d1icr	.res 1
-d1cra	.res 1
-d1crb	.res 1
+cia1	=$dc00                  ;device1 6526 (page1 irq)
+d1pra	=cia1+0
+colm	=d1pra                  ;keyboard matrix
+d1prb	=cia1+1
+rows	=d1prb                  ;keyboard matrix
+d1ddra	=cia1+2
+d1ddrb	=cia1+3
+d1t1l	=cia1+4
+d1t1h	=cia1+5
+d1t2l	=cia1+6
+d1t2h	=cia1+7
+d1tod1	=cia1+8
+d1tods	=cia1+9
+d1todm	=cia1+10
+d1todh	=cia1+11
+d1sdr	=cia1+12
+d1icr	=cia1+13
+d1cra	=cia1+14
+d1crb	=cia1+15
 
-	.segment "SDD00"        ;device2 6526 (page2 nmi)
-d2pra	.res 1
-d2prb	.res 1
-d2ddra	.res 1
-d2ddrb	.res 1
-d2t1l	.res 1
-d2t1h	.res 1
-d2t2l	.res 1
-d2t2h	.res 1
-d2tod1	.res 1
-d2tods	.res 1
-d2todm	.res 1
-d2todh	.res 1
-d2sdr	.res 1
-d2icr	.res 1
-d2cra	.res 1
-d2crb	.res 1
+cia2	=$dd00                  ;device2 6526 (page2 nmi)
+d2pra	=cia2+0
+d2prb	=cia2+1
+d2ddra	=cia2+2
+d2ddrb	=cia2+3
+d2t1l	=cia2+4
+d2t1h	=cia2+5
+d2t2l	=cia2+6
+d2t2h	=cia2+7
+d2tod1	=cia2+8
+d2tods	=cia2+9
+d2todm	=cia2+10
+d2todh	=cia2+11
+d2sdr	=cia2+12
+d2icr	=cia2+13
+d2cra	=cia2+14
+d2crb	=cia2+15
 
 timrb	=$19            ;6526 crb enable one-shot tb
 

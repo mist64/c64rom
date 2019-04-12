@@ -1,6 +1,5 @@
 .feature labels_without_colons, pc_assignment
 
-.segment "S0000b" : zeropage
 .include "declare.s"
 .include "tokens.s"
 .include "token2.s"

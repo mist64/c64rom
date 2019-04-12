@@ -1,7 +1,7 @@
 .feature labels_without_colons, pc_assignment
 
 .include "declare.s"
-	.segment "SE500"         ;start of vic-40 kernal
+	.segment "KERNAL"         ;start of vic-40 kernal
 .include "editor.1.s"
 .include "editor.2.s"
 .include "editor.3.s"
@@ -26,5 +26,6 @@
 .include "init.s"
 .include "rs232nmi.s"
 .include "irqfile.s"
+.include "patches.s"
 .include "vectors.s"
 

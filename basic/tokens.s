@@ -1,4 +1,4 @@
-	.segment "SA000"
+	.segment "LOBASIC"
 	.word init       ;c000 hard reset
 	.word panic      ;c000 soft reset
 	.byt "CBMBASIC"

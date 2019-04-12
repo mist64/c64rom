@@ -1,4 +1,4 @@
-	.segment "SE000"         ;start of vic-40 kernal rom
+	.segment "HIBASIC"         ;start of vic-40 kernal rom
 
 ; continuation of exponent routine
 ;
