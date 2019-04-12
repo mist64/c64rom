@@ -1,17 +1,17 @@
 .pag 'token2'
-	.byt 'tab',$a8
+	.byt 'TAB',$a8
 tabtk	=@243
-	.byt 't',$cf
+	.byt 'T',$cf
 totk	=@244
-	.byt 'f',$ce
+	.byt 'F',$ce
 fntk	=@245
-	.byt 'spc',$a8
+	.byt 'SPC',$a8
 spctk	=@246
-	.byt 'the',$ce
+	.byt 'THE',$ce
 thentk	=@247
-	.byt 'no',$d4
+	.byt 'NO',$d4
 nottk	=@250
-	.byt 'ste',$d0
+	.byt 'STE',$d0
 steptk	=@251
 	.byt $ab
 plustk	=@252
@@ -20,92 +20,92 @@ minutk	=@253
 	.byt $aa
 	.byt $af
 	.byt $de
-	.byt 'an',$c4
-	.byt 'o',$d2
+	.byt 'AN',$c4
+	.byt 'O',$d2
 	.byt 190
 greatk	=@261
 	.byt $bd
 equltk	=@262
 	.byt 188
 lesstk	=@263
-	.byt 'sg',$ce
+	.byt 'SG',$ce
 onefun	=@264
-	.byt 'in',$d4
-	.byt 'ab',$d3
-	.byt 'us',$d2
-	.byt 'fr',$c5
-	.byt 'po',$d3
-	.byt 'sq',$d2
-	.byt 'rn',$c4
-	.byt 'lo',$c7
-	.byt 'ex',$d0
-	.byt 'co',$d3
-	.byt 'si',$ce
-	.byt 'ta',$ce
-	.byt 'at',$ce
-	.byt 'pee',$cb
-	.byt 'le',$ce
-	.byt 'str',$a4
-	.byt 'va',$cc
-	.byt 'as',$c3
-	.byt 'chr',$a4
+	.byt 'IN',$d4
+	.byt 'AB',$d3
+	.byt 'US',$d2
+	.byt 'FR',$c5
+	.byt 'PO',$d3
+	.byt 'SQ',$d2
+	.byt 'RN',$c4
+	.byt 'LO',$c7
+	.byt 'EX',$d0
+	.byt 'CO',$d3
+	.byt 'SI',$ce
+	.byt 'TA',$ce
+	.byt 'AT',$ce
+	.byt 'PEE',$cb
+	.byt 'LE',$ce
+	.byt 'STR',$a4
+	.byt 'VA',$cc
+	.byt 'AS',$c3
+	.byt 'CHR',$a4
 lasnum	=@307
-	.byt 'left',$a4
-	.byt 'right',$a4
-	.byt 'mid',$a4
-	.byt 'g',$cf
+	.byt 'LEFT',$a4
+	.byt 'RIGHT',$a4
+	.byt 'MID',$a4
+	.byt 'G',$cf
 gotk	=@313
 	.byt 0
 .pag 'error messages'
-err01	.byt 'too many file',$d3
-err02	.byt 'file ope',$ce
-err03	.byt 'file not ope',$ce
-err04	.byt 'file not foun',$c4
-err05	.byt 'device not presen',$d4
-err06	.byt 'not input fil',$c5
-err07	.byt 'not output fil',$c5
-err08	.byt 'missing file nam',$c5
-err09	.byt 'illegal device numbe',$d2
-err10	.byt 'next without fo',$d2
+err01	.byt 'TOO MANY FILE',$d3
+err02	.byt 'FILE OPE',$ce
+err03	.byt 'FILE NOT OPE',$ce
+err04	.byt 'FILE NOT FOUN',$c4
+err05	.byt 'DEVICE NOT PRESEN',$d4
+err06	.byt 'NOT INPUT FIL',$c5
+err07	.byt 'NOT OUTPUT FIL',$c5
+err08	.byt 'MISSING FILE NAM',$c5
+err09	.byt 'ILLEGAL DEVICE NUMBE',$d2
+err10	.byt 'NEXT WITHOUT FO',$d2
 errnf	=10
-err11	.byt 'synta',$d8
+err11	.byt 'SYNTA',$d8
 errsn	=11
-err12	.byt 'return without gosu',$c2
+err12	.byt 'RETURN WITHOUT GOSU',$c2
 errrg	=12
-err13	.byt 'out of dat',$c1
+err13	.byt 'OUT OF DAT',$c1
 errod	=13
-err14	.byt 'illegal quantit',$d9
+err14	.byt 'ILLEGAL QUANTIT',$d9
 errfc	=14
-err15	.byt 'overflo',$d7
+err15	.byt 'OVERFLO',$d7
 errov	=15
-err16	.byt 'out of memor',$d9
+err16	.byt 'OUT OF MEMOR',$d9
 errom	=16
-err17	.byt 'undef',$27
-	.byt 'd statemen',$d4
+err17	.byt 'UNDEF',$27
+	.byt 'D STATEMEN',$d4
 errus	=17
-err18	.byt 'bad subscrip',$d4
+err18	.byt 'BAD SUBSCRIP',$d4
 errbs	=18
-err19	.byt 'redim',$27,'d arra',$d9
+err19	.byt 'REDIM',$27,'D ARRA',$d9
 errdd	=19
-err20	.byt 'division by zer',$cf
+err20	.byt 'DIVISION BY ZER',$cf
 errdvo	=20
-err21	.byt 'illegal direc',$d4
+err21	.byt 'ILLEGAL DIREC',$d4
 errid	=21
-err22	.byt 'type mismatc',$c8
+err22	.byt 'TYPE MISMATC',$c8
 errtm	=22
-err23	.byt 'string too lon',$c7
+err23	.byt 'STRING TOO LON',$c7
 errls	=23
-err24	.byt 'file dat',$c1
+err24	.byt 'FILE DAT',$c1
 errbd	=24
-err25	.byt 'formula too comple',$d8
+err25	.byt 'FORMULA TOO COMPLE',$d8
 errst	=25
-err26	.byt 'can',$27,'t continu',$c5
+err26	.byt 'CAN',$27,'T CONTINU',$c5
 errcn	=26
-err27	.byt 'undef',$27,'d functio',$ce
+err27	.byt 'UNDEF',$27,'D FUNCTIO',$ce
 erruf	=27
-err28	.byt 'verif',$d9
+err28	.byt 'VERIF',$d9
 ervfy	=28
-err29	.byt 'loa',$c4
+err29	.byt 'LOA',$c4
 erload	=29
 .pag 'error messages'
 ; table to translate error message #
@@ -142,13 +142,13 @@ errtab	.wor err01
 	.wor err29
 	.wor err30
 .ski 5
-okmsg	.byt $d,'ok',$d,$0
-err	.byt $20,' error',0 ;add a space for vic-40 screen
-intxt	.byt ' in ',0
-reddy	.byt $d,$a,'ready.',$d,$a,0
+okmsg	.byt $d,'OK',$d,$0
+err	.byt $20,' ERROR',0 ;add a space for vic-40 screen
+intxt	.byt ' IN ',0
+reddy	.byt $d,$a,'READY.',$d,$a,0
 erbrk	=30
 brktxt	.byt $d,$a
-err30	.byt 'break',0,$a0 ;shifted space
+err30	.byt 'BREAK',0,$a0 ;shifted space
 .pag
 forsiz	=@22
 fndfor	tsx

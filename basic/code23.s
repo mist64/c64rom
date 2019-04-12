@@ -1,7 +1,7 @@
 .pag 'code23'
 	lda #'-
 fout14	sta fbuffr+1,y
-	lda #'e
+	lda #'E
 	sta fbuffr,y
 	txa
 	ldx #@57

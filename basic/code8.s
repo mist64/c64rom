@@ -81,10 +81,10 @@ vary0	ldy #0
 	ldy #>exignt
 	jmp strout
 inprts	rts
-exignt	.byt '?extra ignored'
+exignt	.byt '?EXTRA IGNORED'
 	.byt $d
 	.byt 0
-tryagn	.byt '?redo from start'
+tryagn	.byt '?REDO FROM START'
 	.byt $d
 	.byt 0
 next	bne getfor

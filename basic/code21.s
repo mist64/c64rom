@@ -61,7 +61,7 @@ finc	jsr chrget
 findgq	bcc findig
 fin1	cmp #'.
 	beq findp
-	cmp #'e
+	cmp #'E
 	bne fine
 	jsr chrget
 	bcc fnedg1

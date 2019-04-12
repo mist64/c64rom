@@ -30,7 +30,7 @@ isvret	sta facmo
 	sta facov
 	jsr tstrom      ;see if an array
 	bcc strrts      ;don't test st(i),ti(i)
-	cpx #'t
+	cpx #'T
 	bne strrts
 	cpy #$c9
 	bne strrts
@@ -56,9 +56,9 @@ gooo	bit intflg
 	jmp givayf
 gooooo	jsr tstrom      ;see if array
 	bcc gomovf      ;don't test st(i),ti(i)
-	cpx #'t
+	cpx #'T
 	bne qstatv
-	cpy #'i
+	cpy #'I
 	bne gomovf
 	jsr gettim
 	tya
@@ -71,9 +71,9 @@ gettim	jsr rdtim
 	ldy #0
 	sty facho
 	rts
-qstatv	cpx #'s
+qstatv	cpx #'S
 	bne gomovf
-	cpy #'t
+	cpy #'T
 	bne gomovf
 	jsr readst
 	jmp float

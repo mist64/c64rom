@@ -84,7 +84,7 @@ notit	clc
 	bcc lopfnd
 	inx
 	bne stxfnd
-isletc	cmp #'a
+isletc	cmp #'A
 	bcc islrts
 	sbc #$5b
 	sec
@@ -100,7 +100,7 @@ ldzr	lda #<zero
 	rts
 notevl	lda varnam
 	ldy varnam+1
-	cmp #'t
+	cmp #'T
 	bne qstavr
 	cpy #@311
 	beq ldzr
@@ -108,9 +108,9 @@ notevl	lda varnam
 	bne qstavr
 gobadv	jmp snerr
 qstavr
-	cmp #'s
+	cmp #'S
 	bne varok
-	cpy #'t
+	cpy #'T
 	beq gobadv
 varok	lda arytab
 	ldy arytab+1

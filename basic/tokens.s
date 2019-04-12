@@ -2,7 +2,7 @@
 	*=romloc
 	.wor init       ;c000 hard reset
 	.wor panic      ;c000 soft reset
-	.byt 'cbmbasic'
+	.byt 'CBMBASIC'
 stmdsp	.wor end-1
 	.wor for-1
 	.wor next-1
@@ -82,47 +82,47 @@ nottab	.byt 90
 ptdorl	.byt 100
 	.wor dorel-1
 q=128-1
-reslst	.byt 'en',$c4
+reslst	.byt 'EN',$c4
 endtk	=@200
-	.byt 'fo',$d2
+	.byt 'FO',$d2
 fortk	=@201
-	.byt 'nex',$d4
-	.byt 'dat',$c1
+	.byt 'NEX',$d4
+	.byt 'DAT',$c1
 datatk	=@203
-	.byt 'input',$a3
-	.byt 'inpu',$d4
-	.byt 'di',$cd
-	.byt 'rea',$c4
-	.byt 'le',$d4
-	.byt 'got',$cf
+	.byt 'INPUT',$a3
+	.byt 'INPU',$d4
+	.byt 'DI',$cd
+	.byt 'REA',$c4
+	.byt 'LE',$d4
+	.byt 'GOT',$cf
 gototk	=@211
-	.byt 'ru',$ce
-	.byt 'i',$c6
-	.byt 'restor',$c5
-	.byt 'gosu',$c2
+	.byt 'RU',$ce
+	.byt 'I',$c6
+	.byt 'RESTOR',$c5
+	.byt 'GOSU',$c2
 gosutk	=@215
-	.byt 'retur',$ce
-	.byt 're',$cd
+	.byt 'RETUR',$ce
+	.byt 'RE',$cd
 remtk	=@217
-	.byt 'sto',$d0
-	.byt 'o',$ce
-	.byt 'wai',$d4
-	.byt 'loa',$c4
-	.byt 'sav',$c5
-	.byt 'verif',$d9
-	.byt 'de',$c6
-	.byt 'pok',$c5
-	.byt 'print',$a3
-	.byt 'prin',$d4
+	.byt 'STO',$d0
+	.byt 'O',$ce
+	.byt 'WAI',$d4
+	.byt 'LOA',$c4
+	.byt 'SAV',$c5
+	.byt 'VERIF',$d9
+	.byt 'DE',$c6
+	.byt 'POK',$c5
+	.byt 'PRINT',$a3
+	.byt 'PRIN',$d4
 printk	=@231
-	.byt 'con',$d4
-	.byt 'lis',$d4
-	.byt 'cl',$d2
-	.byt 'cm',$c4
-	.byt 'sy',$d3
-	.byt 'ope',$ce
-	.byt 'clos',$c5
-	.byt 'ge',$d4
-	.byt 'ne',$d7
+	.byt 'CON',$d4
+	.byt 'LIS',$d4
+	.byt 'CL',$d2
+	.byt 'CM',$c4
+	.byt 'SY',$d3
+	.byt 'OPE',$ce
+	.byt 'CLOS',$c5
+	.byt 'GE',$d4
+	.byt 'NE',$d7
 scratk	=@242
 .end
