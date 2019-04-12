@@ -1,11 +1,11 @@
 qint	lda facexp
 	beq clrfac
 	sec
-	sbc #addpr8+@230
+	sbc #addpr8+$98
 	bit facsgn
 	bpl qishft
 	tax
-	lda #@377
+	lda #$ff
 	sta bits
 	jsr negfch
 	txa
@@ -17,7 +17,7 @@ qishft	ldx #fac
 qintrt	rts
 qint1	tay
 	lda facsgn
-	and #@200
+	and #$80
 	lsr facho
 	ora facho
 	sta facho
@@ -25,15 +25,15 @@ qint1	tay
 	sty bits
 	rts
 int	lda facexp
-	cmp #addpr8+@230
+	cmp #addpr8+$98
 	bcs intrts
 	jsr qint
 	sty facov
 	lda facsgn
 	sty facsgn
-	eor #@200
+	eor #$80
 	rol a
-	lda #@230+8
+	lda #$98+8
 	sta facexp
 	lda faclo
 	sta integr
@@ -44,8 +44,8 @@ clrfac	sta facho
 	sta faclo
 	tay 
 intrts	rts
-fin	ldy #@0
-	ldx #@11+addprc
+fin	ldy #$00
+	ldx #$09+addprc
 finzlp	sty deccnt,x
 	dex
 	bpl finzlp
@@ -122,9 +122,9 @@ finlog	pha
 	ldx facexp
 	jmp faddt
 finedg	lda tenexp
-	cmp #@12
+	cmp #$0a
 	bcc mlex10
-	lda #@144
+	lda #$64
 	bit expsgn
 	bmi mlexmi
 	jmp overr

@@ -119,7 +119,7 @@ prtrts	rts
 comprt	sec
 	jsr plot        ;get tab position in x
 	tya
-ncmpos	=@36
+ncmpos	=$1e
 	sec
 morco1	sbc #clmwid
 	bcs morco1

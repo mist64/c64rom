@@ -3,12 +3,12 @@ fout14	sta fbuffr+1,y
 	lda #'E'
 	sta fbuffr,y
 	txa
-	ldx #@57
+	ldx #$2f
 	sec
 fout15	inx
-	sbc #@12
+	sbc #$0a
 	bcs fout15
-	adc #@72
+	adc #$3a
 	sta fbuffr+3,y
 	txa
 	sta fbuffr+2,y
@@ -21,21 +21,21 @@ fout17	lda #0
 fout20	lda #<fbuffr
 	ldy #>fbuffr
 	rts
-fhalf	.byt @200,0
-zero	.byt 0,0,0
-foutbl	.byt @372,@12,@37,0,0
-	.byt @230,@226,@200,@377
-	.byt @360,@275,@300,0
-	.byt 1,@206,@240,@377
-	.byt @377,@330,@360,0,0
-	.byt 3,@350,@377,@377
-	.byt @377,@234,0,0,0,@12
-	.byt @377,@377,@377,@377
-fdcend	.byt @377,@337,@12,@200
-	.byt 0,3,@113,@300,@377
-	.byt @377,@163,@140,0,0
-	.byt @16,@20,@377,@377
-	.byt @375,@250,0,0,0,@74
+fhalf	.byt $80,$00
+zero	.byt $00,$00,$00
+foutbl	.byt $fa,$0a,$1f,$00,$00
+	.byt $98,$96,$80,$ff
+	.byt $f0,$bd,$c0,$00
+	.byt $01,$86,$a0,$ff
+	.byt $ff,$d8,$f0,$00,$00
+	.byt $03,$e8,$ff,$ff
+	.byt $ff,$9c,$00,$00,$00,$0a
+	.byt $ff,$ff,$ff,$ff
+fdcend	.byt $ff,$df,$0a,$80
+	.byt $00,$03,$4b,$c0,$ff
+	.byt $ff,$73,$60,$00,$00
+	.byt $0e,$10,$ff,$ff
+	.byt $fd,$a8,$00,$00,$00,$3c
 timend
 ;
 cksma0	.byt $00        ;$a000 8k room check sum adj
@@ -75,7 +75,7 @@ fpwr1	jsr movfa1
 negop	lda facexp
 	beq negrts
 	lda facsgn
-	eor #@377
+	eor #$ff
 	sta facsgn
 negrts	rts
 

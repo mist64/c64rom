@@ -44,7 +44,7 @@ ploop	jsr outdo
 	cmp #34
 	bne ploop1
 	lda dores
-	eor #@377
+	eor #$ff
 	sta dores
 ploop1	iny
 	beq grody

@@ -5,13 +5,13 @@
 stold	sta oldov
 	jsr movef
 	lda facexp
-	cmp #@210
+	cmp #$88
 	bcc exp1
 gomldv	jsr mldvex
 exp1	jsr int
 	lda integr
 	clc
-	adc #@201
+	adc #$81
 	beq gomldv
 	sec
 	sbc #1
@@ -71,8 +71,8 @@ poly4	sta polypt
 	dec degree
 	bne poly2
 	rts
-rmulc	.byt @230,@65,@104,@172,0
-raddc	.byt @150,@50,@261,@106,0
+rmulc	.byt $98,$35,$44,$7a,$00
+raddc	.byt $68,$28,$b1,$46,$00
 rnd	jsr sign
 	bmi rnd1
 	bne qsetnr
@@ -113,7 +113,7 @@ strnex	lda #0
 	sta facsgn
 	lda facexp
 	sta facov
-	lda #@200
+	lda #$80
 	sta facexp
 	jsr normal
 	ldx #<rndx

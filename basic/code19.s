@@ -3,9 +3,9 @@ log	jsr sign
 	bpl log1
 logerr	jmp fcerr
 log1	lda facexp
-	sbc #@177
+	sbc #$7f
 	pha
-	lda #@200
+	lda #$80
 	sta facexp
 	lda #<sqr05
 	ldy #>sqr05
@@ -49,7 +49,7 @@ fmultt	bne *+5
 mltply	bne *+5
 	jmp mulshf
 mltpl1	lsr a
-	ora #@200
+	ora #$80
 mltpl2	tay
 	bcc mltpl3
 	clc
@@ -91,7 +91,7 @@ conupk	sta index1
 	eor facsgn
 	sta arisgn
 	lda argsgn
-	ora #@200
+	ora #$80
 	sta argho
 	dey
 	lda (index1),y
@@ -107,7 +107,7 @@ mldexp	beq zeremv
 	clc
 	.byt $2c
 tryoff	bpl zeremv
-	adc #@200
+	adc #$80
 	sta facexp
 	bne *+5
 	jmp zeroml
@@ -115,7 +115,7 @@ tryoff	bpl zeremv
 	sta facsgn
 	rts
 mldvex	lda facsgn
-	eor #@377
+	eor #$ff
 	bmi goover
 zeremv	pla
 	pla
@@ -133,7 +133,7 @@ finml6	ldx #0
 	inc facexp
 	beq goover
 mul10r	rts
-tenc	.byt @204,@40,0,0,0
+tenc	.byt $84,$20,0,0,0
 div10	jsr movaf
 	lda #<tenc
 	ldy #>tenc
@@ -196,7 +196,7 @@ divsub	tay
 	sta argho
 	tya
 	jmp shfarg
-ld100	lda #@100
+ld100	lda #$40
 	bne qshft
 divnrm	asl a
 	asl a

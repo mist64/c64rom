@@ -143,11 +143,11 @@ eval2	jsr isletc
 	ldy #>pival
 	jsr movfm
 	jmp chrget
-pival	.byt @202
-	.byt @111
-	.byt @017
-	.byt @332
-	.byt @241
+pival	.byt $82
+	.byt $49
+	.byt $0f
+	.byt $da
+	.byt $a1
 qdot	cmp #'.'
 	beq eval1
 	cmp #minutk

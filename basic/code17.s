@@ -87,7 +87,7 @@ faddh	lda #<fhalf
 	jmp fadd
 fsub	jsr conupk
 fsubt	lda facsgn
-	eor #@377
+	eor #$ff
 	sta facsgn
 	eor argsgn
 	sta arisgn
@@ -111,7 +111,7 @@ faddc	tay
 	sty facexp
 	ldy argsgn
 	sty facsgn
-	eor #@377
+	eor #$ff
 	adc #0
 	ldy #0
 	sty oldov
@@ -132,7 +132,7 @@ fadd4	bit arisgn
 	beq subit
 	ldy #argexp
 subit	sec
-	eor #@377
+	eor #$ff
 	adc oldov
 	sta facov
 	lda 3+addprc,y

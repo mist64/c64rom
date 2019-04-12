@@ -4,11 +4,11 @@
 	ldx facov
 	stx faclo
 	sty facov
-	adc #@10
+	adc #$08
 addpr2	=addprc+addprc
 addpr4	=addpr2+addpr2
 addpr8	=addpr4+addpr4
-	cmp #@30+addpr8
+	cmp #$18+addpr8
 	bne norm3
 zerofc	lda #0
 zerof1	sta facexp
@@ -39,7 +39,7 @@ norm1	bpl norm2
 	sec
 	sbc facexp
 	bcs zerofc
-	eor #@377
+	eor #$ff
 	adc #1
 	sta facexp
 squeez	bcc rndrts
@@ -52,22 +52,22 @@ rndshf	inc facexp
 	ror facov
 rndrts	rts
 negfac	lda facsgn
-	eor #@377
+	eor #$ff
 	sta facsgn
 negfch	lda facho
-	eor #@377
+	eor #$ff
 	sta facho
 	lda facmoh
-	eor #@377
+	eor #$ff
 	sta facmoh
 	lda facmo
-	eor #@377
+	eor #$ff
 	sta facmo
 	lda faclo
-	eor #@377
+	eor #$ff
 	sta faclo
 	lda facov
-	eor #@377
+	eor #$ff
 	sta facov
 	inc facov
 	bne incfrt
@@ -92,10 +92,10 @@ shftr2	ldy 3+addprc,x
 	sty 2,x
 	ldy bits
 	sty 1,x
-shiftr	adc #@10
+shiftr	adc #$08
 	bmi shftr2
 	beq shftr2
-	sbc #@10
+	sbc #$08
 	tay
 	lda facov
 	bcs shftrt
@@ -112,14 +112,13 @@ rolshf	ror 2,x
 	bne shftr3
 shftrt	clc
 	rts
-fone	.byt @201,0,0,0,0
-logcn2	.byt 3,@177,@136,@126
-	.byt @313,@171,@200,@23
-	.byt @233,@13,@144,@200
-	.byt @166,@70,@223,@26
-	.byt @202,@70,@252,@73,@40
-sqr05	.byt @200,@65,4,@363,@64
-sqr20	.byt @201,@65,@4,@363,@64
-neghlf	.byt @200,@200,0,0,0
-log2	.byt @200,@61,@162,@27,@370
-
+fone	.byt $81,$00,$00,$00,$00
+logcn2	.byt $03,$7f,$5e,$56
+	.byt $cb,$79,$80,$13
+	.byt $9b,$0b,$64,$80
+	.byt $76,$38,$93,$16
+	.byt $82,$38,$aa,$3b,$20
+sqr05	.byt $80,$35,$04,$f3,$34
+sqr20	.byt $81,$35,$04,$f3,$34
+neghlf	.byt $80,$80,$00,$00,$00
+log2	.byt $80,$31,$72,$17,$f8

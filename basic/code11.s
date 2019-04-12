@@ -87,7 +87,7 @@ isletc	cmp #'A'
 	bcc islrts
 	sbc #$5b
 	sec
-	sbc #@245
+	sbc #$a5
 islrts	rts
 notfns	pla
 	pha
@@ -101,9 +101,9 @@ notevl	lda varnam
 	ldy varnam+1
 	cmp #'T'
 	bne qstavr
-	cpy #@311
+	cpy #$c9
 	beq ldzr
-	cpy #@111
+	cpy #$49
 	bne qstavr
 gobadv	jmp snerr
 qstavr

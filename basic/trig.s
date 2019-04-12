@@ -52,22 +52,22 @@ tan	jsr mov1f
 	jmp fdiv
 cosc	pha
 	jmp sin1
-pi2	.byt @201,@111,@17,@332,@242
-twopi	.byt @203,@111,@17,@332,@242
-fr4	.byt @177,0,0,0,0
-sincon	.byt 5,@204,@346,@32,@55
-	.byt @33,@206,@50,@7,@373
-	.byt @370,@207,@231,@150,@211
-	.byt 1,@207,@43,@65,@337,@341
-	.byt @206,@245,@135,@347,@50,@203
-	.byt @111,@17,@332,@242
+pi2	.byt $81,$49,$0f,$da,$a2
+twopi	.byt $83,$49,$0f,$da,$a2
+fr4	.byt $7f,$00,$00,$00,$00
+sincon	.byt $05,$84,$e6,$1a,$2d
+	.byt $1b,$86,$28,$07,$fb
+	.byt $f8,$87,$99,$68,$89
+	.byt $01,$87,$23,$35,$df,$e1
+	.byt $86,$a5,$5d,$e7,$28,$83
+	.byt $49,$f,$da,$a2
 atn	lda facsgn
 	pha
 	bpl atn1
 	jsr negop
 atn1	lda facexp
 	pha
-	cmp #@201
+	cmp #$81
 	bcc atn2
 	lda #<fone
 	ldy #>fone
@@ -76,7 +76,7 @@ atn2	lda #<atncon
 	ldy #>atncon
 	jsr polyx
 	pla
-	cmp #@201
+	cmp #$81
 	bcc atn3
 	lda #<pi2
 	ldy #>pi2
@@ -85,17 +85,17 @@ atn3	pla
 	bpl atn4
 	jmp negop
 atn4	rts
-atncon	.byt @13,@166,@263,@203
-	.byt @275,@323,@171,@36,@364
-	.byt @246,@365,@173,@203,@374
-	.byt @260,@20
-	.byt @174,@14,@37,@147,@312
-	.byt @174,@336,@123,@313,@301
-	.byt @175,@24,@144,@160,@114
-	.byt @175,@267,@352,@121,@172
-	.byt @175,@143,@60,@210,@176
-	.byt @176,@222,@104,@231,@72
-	.byt @176,@114,@314,@221,@307
-	.byt @177,@252,@252,@252,@23
-	.byt @201,0,0,0,0
+atncon	.byt $0b,$76,$b3,$83
+	.byt $bd,$d3,$79,$1e,$f4
+	.byt $a6,$f5,$7b,$83,$fc
+	.byt $b0,$10
+	.byt $7c,$0c,$1f,$67,$ca
+	.byt $7c,$de,$53,$cb,$c1
+	.byt $7d,$14,$64,$70,$4c
+	.byt $7d,$b7,$ea,$51,$7a
+	.byt $7d,$63,$30,$88,$7e
+	.byt $7e,$92,$44,$99,$3a
+	.byt $7e,$4c,$cc,$91,$c7
+	.byt $7f,$aa,$aa,$aa,$13
+	.byt $81,0,0,0,0
 

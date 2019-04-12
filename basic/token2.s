@@ -1,34 +1,34 @@
 	.byt "TAB",$a8
-tabtk	=@243
+tabtk	=$a3
 	.byt "T",$cf
-totk	=@244
+totk	=$a4
 	.byt "F",$ce
-fntk	=@245
+fntk	=$a5
 	.byt "SPC",$a8
-spctk	=@246
+spctk	=$a6
 	.byt "THE",$ce
-thentk	=@247
+thentk	=$a7
 	.byt "NO",$d4
-nottk	=@250
+nottk	=$a8
 	.byt "STE",$d0
-steptk	=@251
+steptk	=$a9
 	.byt $ab
-plustk	=@252
+plustk	=$aa
 	.byt $ad
-minutk	=@253
+minutk	=$ab
 	.byt $aa
 	.byt $af
 	.byt $de
 	.byt "AN",$c4
 	.byt "O",$d2
 	.byt 190
-greatk	=@261
+greatk	=$b1
 	.byt $bd
-equltk	=@262
+equltk	=$b2
 	.byt 188
-lesstk	=@263
+lesstk	=$b3
 	.byt "SG",$ce
-onefun	=@264
+onefun	=$b4
 	.byt "IN",$d4
 	.byt "AB",$d3
 	.byt "US",$d2
@@ -48,12 +48,12 @@ onefun	=@264
 	.byt "VA",$cc
 	.byt "AS",$c3
 	.byt "CHR",$a4
-lasnum	=@307
+lasnum	=$c7
 	.byt "LEFT",$a4
 	.byt "RIGHT",$a4
 	.byt "MID",$a4
 	.byt "G",$cf
-gotk	=@313
+gotk	=$cb
 	.byt 0
 
 err01	.byt "TOO MANY FILE",$d3
@@ -149,7 +149,7 @@ erbrk	=30
 brktxt	.byt $d,$a
 err30	.byt "BREAK",0,$a0 ;shifted space
 
-forsiz	=@22
+forsiz	=$12
 fndfor	tsx
 	inx
 	inx

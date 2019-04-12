@@ -1,6 +1,6 @@
-n0999	.byt @233,@76,@274,@37,@375
-n9999	.byt @236,@156,@153,@47,@375
-nmil	.byt @236,@156,@153,@50,0
+n0999	.byt $9b,$3e,$bc,$1f,$fd
+n9999	.byt $9e,$6e,$6b,$27,$fd
+nmil	.byt $9e,$6e,$6b,$28,$00
 inprt	lda #<intxt
 	ldy #>intxt
 	jsr strou2
@@ -8,7 +8,7 @@ inprt	lda #<intxt
 	ldx curlin
 linprt	sta facho
 	stx facho+1
-	ldx #@220
+	ldx #$90
 	sec
 	jsr floatc
 	jsr foutc
@@ -27,7 +27,7 @@ fout1	sta fbuffr-1,y
 	bne *+5
 	jmp fout19
 	lda #0
-	cpx #@200
+	cpx #$80
 	beq fout37
 	bcs fout7
 fout37	lda #<nmil
@@ -58,7 +58,7 @@ bigges	jsr qint
 	clc
 	adc #addpr2+addprc+7
 	bmi foutpi
-	cmp #addpr2+addprc+@10
+	cmp #addpr2+addprc+$08
 	bcs fout6
 	adc #$ff
 	tax
@@ -81,7 +81,7 @@ fout39	ldy fbufpt
 	sta fbuffr-1,y
 fout16	sty fbufpt
 fout8	ldy #0
-foutim	ldx #@200
+foutim	ldx #$80
 fout2	lda faclo
 	clc
 	adc foutbl+2+addprc,y
@@ -102,9 +102,9 @@ fout2	lda faclo
 fout41	bmi fout2
 fout40	txa
 	bcc foutyp
-	eor #@377
-	adc #@12
-foutyp	adc #@57
+	eor #$ff
+	adc #$0a
+foutyp	adc #$2f
 	iny
 	iny
 	iny
@@ -113,7 +113,7 @@ foutyp	adc #@57
 	ldy fbufpt
 	iny
 	tax
-	and #@177
+	and #$7f
 	sta fbuffr-1,y
 	dec deccnt
 	bne stxbuf
@@ -123,8 +123,8 @@ foutyp	adc #@57
 stxbuf	sty fbufpt
 	ldy fdecpt
 	txa
-	eor #@377
-	and #@200
+	eor #$ff
+	and #$80
 	tax
 	cpy #fdcend-foutbl
 	beq fouldy

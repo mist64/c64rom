@@ -21,7 +21,7 @@ movfm	sta index1
 	dey
 	lda (index1),y
 	sta facsgn
-	ora #@200
+	ora #$80
 	sta facho
 	dey
 	lda (index1),y
@@ -49,7 +49,7 @@ movmf	jsr round
 	sta (index),y
 	dey
 	lda facsgn
-	ora #@177
+	ora #$7f
 	and facho
 	sta (index),y
 	dey
@@ -93,9 +93,9 @@ sgn	jsr sign
 float	sta facho
 	lda #0
 	sta facho+1
-	ldx #@210
+	ldx #$88
 floats	lda facho
-	eor #@377
+	eor #$ff
 	rol a
 floatc	lda #0
 	sta faclo
@@ -119,7 +119,7 @@ fcompn	sty index2+1
 	cpx facexp
 	bne fcompc
 	lda (index2),y
-	ora #@200
+	ora #$80
 	cmp facho
 	bne fcompc
 	iny
@@ -131,13 +131,13 @@ fcompn	sty index2+1
 	cmp facmo
 	bne fcompc
 	iny
-	lda #@177
+	lda #$7f
 	cmp facov
 	lda (index2),y
 	sbc faclo
 	beq qintrt
 fcompc	lda facsgn
 	bcc fcompd
-	eor #@377
+	eor #$ff
 fcompd	jmp fcomps
 

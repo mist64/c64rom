@@ -82,27 +82,27 @@ ptdorl	.byt 100
 	.word dorel-1
 q=128-1
 reslst	.byt "EN",$c4
-endtk	=@200
+endtk	=$80
 	.byt "FO",$d2
-fortk	=@201
+fortk	=$81
 	.byt "NEX",$d4
 	.byt "DAT",$c1
-datatk	=@203
+datatk	=$83
 	.byt "INPUT",$a3
 	.byt "INPU",$d4
 	.byt "DI",$cd
 	.byt "REA",$c4
 	.byt "LE",$d4
 	.byt "GOT",$cf
-gototk	=@211
+gototk	=$89
 	.byt "RU",$ce
 	.byt "I",$c6
 	.byt "RESTOR",$c5
 	.byt "GOSU",$c2
-gosutk	=@215
+gosutk	=$8d
 	.byt "RETUR",$ce
 	.byt "RE",$cd
-remtk	=@217
+remtk	=$8f
 	.byt "STO",$d0
 	.byt "O",$ce
 	.byt "WAI",$d4
@@ -113,7 +113,7 @@ remtk	=@217
 	.byt "POK",$c5
 	.byt "PRINT",$a3
 	.byt "PRIN",$d4
-printk	=@231
+printk	=$99
 	.byt "CON",$d4
 	.byt "LIS",$d4
 	.byt "CL",$d2
@@ -123,5 +123,5 @@ printk	=@231
 	.byt "CLOS",$c5
 	.byt "GE",$d4
 	.byt "NE",$d7
-scratk	=@242
+scratk	=$a2
 

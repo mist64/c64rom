@@ -1,4 +1,4 @@
-bufofs	=@1000
+bufofs	=$200
 crunch	jmp (icrnch)
 ncrnch	ldx txtptr
 	ldy #4
