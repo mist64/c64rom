@@ -36,12 +36,12 @@ eatem	jsr chrget
 	bcc eatem
 	jsr isletc
 	bcs eatem
-nosec	cmp #'$
+nosec	cmp #'$'
 	bne notstr
 	lda #$ff
 	sta valtyp
 	bne turnon
-notstr	cmp #'%
+notstr	cmp #'%'
 	bne strnam
 	lda subflg
 	bne interr
@@ -83,7 +83,7 @@ notit	clc
 	bcc lopfnd
 	inx
 	bne stxfnd
-isletc	cmp #'A
+isletc	cmp #'A'
 	bcc islrts
 	sbc #$5b
 	sec
@@ -99,7 +99,7 @@ ldzr	lda #<zero
 	rts
 notevl	lda varnam
 	ldy varnam+1
-	cmp #'T
+	cmp #'T'
 	bne qstavr
 	cpy #@311
 	beq ldzr
@@ -107,9 +107,9 @@ notevl	lda varnam
 	bne qstavr
 gobadv	jmp snerr
 qstavr
-	cmp #'S
+	cmp #'S'
 	bne varok
-	cpy #'T
+	cpy #'T'
 	beq gobadv
 varok	lda arytab
 	ldy arytab+1

@@ -32,7 +32,7 @@ addon	tya
 	bcc remrts
 	inc txtptr+1
 remrts	rts
-datan	ldx #':
+datan	ldx #':'
 	.byt $2c
 remn	ldx #0
 	stx charac

@@ -81,7 +81,7 @@ tapeh	sta t1
 ;put blanks in tape buffer
 ;
 	ldy #bufsz-1
-	lda #' 
+	lda #' '
 blnk2	sta (tape1),y
 	dey
 	bne blnk2

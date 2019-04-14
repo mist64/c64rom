@@ -17,11 +17,11 @@ strpr2	dex
 outspc
 	lda channl
 	beq crtskp
-	lda #' 
+	lda #' '
 	.byt $2c
 crtskp	lda #29
 	.byt $2c
-outqst	lda #'?
+outqst	lda #'?'
 outdo	jsr outch
 outrts	and #255
 	rts
@@ -48,7 +48,7 @@ doagin	lda #<tryagn
 	sty txtptr+1
 	rts
 get	jsr errdir
-	cmp #'#
+	cmp #'#'
 	bne gettty
 	jsr chrget
 	jsr getbyt

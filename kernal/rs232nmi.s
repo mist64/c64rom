@@ -95,16 +95,16 @@ prend	pla             ;because of missing screen editor
 ; baudo table contains values
 ;  for 14.31818e6/14/baud rate/2 (ntsc)
 ;
-baudo	.wor 10277-cbit ; 50 baud
-	.wor 6818-cbit  ;   75   baud
-	.wor 4649-cbit  ;  110   baud
-	.wor 3800-cbit  ;  134.6 baud
-	.wor 3409-cbit  ;  150   baud
-	.wor 1705-cbit  ;  300   baud
-	.wor 852-cbit   ;  600   baud
-	.wor 426-cbit   ; 1200   baud
-	.wor 284-cbit   ; 1800   baud
-	.wor 213-cbit   ; 2400   baud
+baudo	.word 10277-cbit ; 50 baud
+	.word 6818-cbit  ;   75   baud
+	.word 4649-cbit  ;  110   baud
+	.word 3800-cbit  ;  134.6 baud
+	.word 3409-cbit  ;  150   baud
+	.word 1705-cbit  ;  300   baud
+	.word 852-cbit   ;  600   baud
+	.word 426-cbit   ; 1200   baud
+	.word 284-cbit   ; 1800   baud
+	.word 213-cbit   ; 2400   baud
 ;
 ; cbit - an adjustment to make next t2 hit near center
 ;   of the next bit.

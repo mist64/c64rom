@@ -9,18 +9,18 @@ kloop	lda bufofs,x
 	beq stuffh
 	inx
 	bne kloop
-cmpspc	cmp #' 
+cmpspc	cmp #' '
 	beq stuffh
 	sta endchr
 	cmp #34
 	beq strng
 	bit dores
 	bvs stuffh
-	cmp #'?
+	cmp #'?'
 	bne kloop1
 	lda #printk
 	bne stuffh
-kloop1	cmp #'0
+kloop1	cmp #'0'
 	bcc mustcr
 	cmp #60
 	bcc stuffh
@@ -46,7 +46,7 @@ stuffh	inx
 	lda buf-5,y
 	beq crdone
 	sec
-	sbc #':
+	sbc #':'
 	beq colis
 	cmp #datatk-$3a
 	bne nodatt

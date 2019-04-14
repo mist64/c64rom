@@ -42,7 +42,7 @@ gone2	sbc #endtk
 	pha
 	jmp chrget
 glet	jmp let
-morsts	cmp #':
+morsts	cmp #':'
 	beq gone
 snerr1	jmp snerr
 snerrx	cmp #gotk-endtk

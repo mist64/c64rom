@@ -22,12 +22,12 @@ initat	inc chrget+7
 	bne chdgot
 	inc chrget+8
 chdgot	lda 60000
-	cmp #':
+	cmp #':'
 	bcs chdrts
-	cmp #' 
+	cmp #' '
 	beq initat
 	sec
-	sbc #'0
+	sbc #'0'
 	sec
 	sbc #$d0
 chdrts	rts
@@ -100,7 +100,7 @@ initms	lda txttab
 	jsr strout
 	jmp scrtch
 
-bvtrs	.wor nerror,nmain,ncrnch,nqplop,ngone,neval
+bvtrs	.word nerror,nmain,ncrnch,nqplop,ngone,neval
 ;
 initv	ldx #initv-bvtrs-1 ;init vectors
 initv1	lda bvtrs,x
@@ -110,9 +110,9 @@ initv1	lda bvtrs,x
 	rts
 chke0	.byt $00
 
-words	.byt ' BASIC BYTES FREE',13,0
-fremes	.byt 147,13,'    **** COMMODORE 64 BASIC V2 ****'
-	.byt 13,13,' 64K RAM SYSTEM  ',0
+words	.byt " BASIC BYTES FREE",13,0
+fremes	.byt 147,13,"    **** COMMODORE 64 BASIC V2 ****"
+	.byt 13,13," 64K RAM SYSTEM  ",0
 	.byt 0
 ; ppach - print# patch to coout (save .a)
 ;

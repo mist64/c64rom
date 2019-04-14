@@ -14,15 +14,15 @@ linprt	sta facho
 	jsr foutc
 strou2	jmp strout
 fout	ldy #1
-foutc	lda #' 
+foutc	lda #' '
 	bit facsgn
 	bpl fout1
-	lda #'-
+	lda #'-'
 fout1	sta fbuffr-1,y
 	sta facsgn
 	sty fbufpt
 	iny
-	lda #'0
+	lda #'0'
 	ldx facexp
 	bne *+5
 	jmp fout19
@@ -71,12 +71,12 @@ fout6	sbc #2
 	beq fout39
 	bpl fout8
 fout39	ldy fbufpt
-	lda #'.
+	lda #'.'
 	iny
 	sta fbuffr-1,y
 	txa
 	beq fout16
-	lda #'0
+	lda #'0'
 	iny
 	sta fbuffr-1,y
 fout16	sty fbufpt
@@ -117,7 +117,7 @@ foutyp	adc #@57
 	sta fbuffr-1,y
 	dec deccnt
 	bne stxbuf
-	lda #'.
+	lda #'.'
 	iny
 	sta fbuffr-1,y
 stxbuf	sty fbufpt
@@ -133,12 +133,12 @@ stxbuf	sty fbufpt
 fouldy	ldy fbufpt
 fout11	lda fbuffr-1,y
 	dey
-	cmp #'0
+	cmp #'0'
 	beq fout11
-	cmp #'.
+	cmp #'.'
 	beq fout12
 	iny
-fout12	lda #'+
+fout12	lda #'+'
 	ldx tenexp
 	beq fout17
 	bpl fout14

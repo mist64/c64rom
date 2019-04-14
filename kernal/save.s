@@ -18,7 +18,7 @@ savesp	stx eal
 	sta stah
 ;
 save	jmp (isave)
-nsave	lda fa  ***monitor entry
+nsave	lda fa          ;***monitor entry
 	bne sv20
 ;
 sv10	jmp error9      ;bad device #

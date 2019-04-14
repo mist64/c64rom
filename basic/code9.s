@@ -148,7 +148,7 @@ pival	.byt @202
 	.byt @017
 	.byt @332
 	.byt @241
-qdot	cmp #'.
+qdot	cmp #'.'
 	beq eval1
 	cmp #minutk
 	beq domin

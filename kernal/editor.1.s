@@ -190,7 +190,7 @@ lp22	cmp #$d
 	ldy lnmx
 	sty crsw
 clp5	lda (pnt),y
-	cmp #' 
+	cmp #' '
 	bne clp6
 	dey
 	bne clp5
@@ -276,7 +276,7 @@ nc3	ora #$80
 nvs	ldx insrt
 	beq nvs1
 	dec insrt
-nvs1	ldx color put color on screen
+nvs1	ldx color       ;put color on screen
 	jsr dspp
 	jsr wlogic      ;check for wraparound
 loop2	pla
@@ -366,7 +366,7 @@ prt	pha
 	cmp #$d
 	bne njt1
 	jmp nxt1
-njt1	cmp #' 
+njt1	cmp #' '
 	bcc ntcn
 	cmp #$60        ;lower case?
 	bcc njt8        ;no...
@@ -399,7 +399,7 @@ bk15	iny
 	iny
 	cpy lnmx
 	bne bk15
-bk2	lda #' 
+bk2	lda #' '
 	sta (pnt),y
 	lda color
 	sta (user),y
@@ -472,7 +472,7 @@ up5	ldx  qtsw
 	bne up9
 	ldy lnmx
 	lda (pnt),y
-	cmp #' 
+	cmp #' '
 	bne ins3
 	cpy pntr
 	bne ins1

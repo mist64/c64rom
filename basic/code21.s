@@ -50,27 +50,27 @@ finzlp	sty deccnt,x
 	dex
 	bpl finzlp
 	bcc findgq
-	cmp #'-
+	cmp #'-'
 	bne qplus
 	stx sgnflg
 	beq finc
-qplus	cmp #'+
+qplus	cmp #'+'
 	bne fin1
 finc	jsr chrget
 findgq	bcc findig
-fin1	cmp #'.
+fin1	cmp #'.'
 	beq findp
-	cmp #'E
+	cmp #'E'
 	bne fine
 	jsr chrget
 	bcc fnedg1
 	cmp #minutk
 	beq finec1
-	cmp #'-
+	cmp #'-'
 	beq finec1
 	cmp #plustk
 	beq finec
-	cmp #'+
+	cmp #'+'
 	beq finec
 	bne finec2
 finec1	ror expsgn
@@ -109,7 +109,7 @@ findig	pha
 findg1	jsr mul10
 	pla
 	sec
-	sbc #'0
+	sbc #'0'
 	jsr finlog
 	jmp finc
 finlog	pha
@@ -137,7 +137,7 @@ mlex10	asl a
 	ldy #0
 	adc (txtptr),y
 	sec
-	sbc #'0
+	sbc #'0'
 mlexmi	sta tenexp
 	jmp finec
 

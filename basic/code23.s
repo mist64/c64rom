@@ -1,6 +1,6 @@
-	lda #'-
+	lda #'-'
 fout14	sta fbuffr+1,y
-	lda #'E
+	lda #'E'
 	sta fbuffr,y
 	txa
 	ldx #@57

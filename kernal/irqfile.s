@@ -43,16 +43,16 @@ piokey	lda #$81        ;enable t1 irq's
 ; baudop - baud rate table for pal
 ;   .985248e6/baud-rate/2-100
 ;
-baudop	.wor 9853-cbit ;50 baud
-	.wor 6568-cbit ;75 baud
-	.wor 4478-cbit ;110 baus
-	.wor 3660-cbit ;134.6 baud
-	.wor 3284-cbit ;150 baud
-	.wor 1642-cbit ;300 baud
-	.wor 821-cbit  ;600 baud
-	.wor 411-cbit  ;1200 baud
-	.wor 274-cbit  ;1800 baud
-	.wor 205-cbit  ;2400 baud
+baudop	.word 9853-cbit ;50 baud
+	.word 6568-cbit ;75 baud
+	.word 4478-cbit ;110 baus
+	.word 3660-cbit ;134.6 baud
+	.word 3284-cbit ;150 baud
+	.word 1642-cbit ;300 baud
+	.word 821-cbit  ;600 baud
+	.word 411-cbit  ;1200 baud
+	.word 274-cbit  ;1800 baud
+	.word 205-cbit  ;2400 baud
 
 	*=$e500-32      ;(20-12)
 ; fpatch - tape filename timeout

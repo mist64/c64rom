@@ -42,7 +42,7 @@ jplot	jmp plot        ;read/set x,y coord
 jiobas	jmp iobase      ;return i/o base
 
 	*=$fffa
-	.wor nmi        ;program defineable
-	.wor start      ;initialization code
-	.wor puls       ;interrupt handler
+	.word nmi        ;program defineable
+	.word start      ;initialization code
+	.word puls       ;interrupt handler
 

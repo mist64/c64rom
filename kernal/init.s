@@ -37,7 +37,7 @@ a0in1	lda tbla0r-1,x
 	bne a0in1
 a0in2	rts
 ;
-tbla0r	.byt $c3,$c2,$cd,'80' ;..cbm80..
+tbla0r	.byt $c3,$c2,$cd,"80" ;..cbm80..
 tbla0e
 
 ; restor - set kernal indirects and vectors (system)
@@ -60,12 +60,12 @@ movos2	sta (tmp2),y     ;put in user
 	bpl movos1
 	rts
 ;
-vectss	.wor key,timb,nnmi
-	.wor nopen,nclose,nchkin
-	.wor nckout,nclrch,nbasin
-	.wor nbsout,nstop,ngetin
-	.wor nclall,timb ;goto break on a usrcmd jmp
-	.wor nload,nsave
+vectss	.word key,timb,nnmi
+	.word nopen,nclose,nchkin
+	.word nckout,nclrch,nbasin
+	.word nbsout,nstop,ngetin
+	.word nclall,timb ;goto break on a usrcmd jmp
+	.word nload,nsave
 vectse
 
 ; ramtas - memory size check and set
@@ -120,7 +120,7 @@ size	tya             ;set top of memory
 	sta hibase      ;set base of screen
 	rts
 
-bsit	.wor wrtz,wrtn,key,read ;table of indirects for cassette irq's
+bsit	.word wrtz,wrtn,key,read ;table of indirects for cassette irq's
 
 ; ioinit - initilize io devices
 ;

@@ -37,7 +37,7 @@ list4	ldy #1
 tstdun	bcs grody
 typlin	sty lstpnt
 	jsr linprt
-	lda #' 
+	lda #' '
 prit4	ldy lstpnt
 	and #127
 ploop	jsr outdo

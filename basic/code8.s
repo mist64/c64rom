@@ -11,7 +11,7 @@ datbk1	jsr chrget
 setqut	sta charac
 	cmp #34
 	beq nowget
-	lda #':
+	lda #':'
 	sta charac
 	lda #44
 resetc	clc
@@ -80,10 +80,10 @@ vary0	ldy #0
 	ldy #>exignt
 	jmp strout
 inprts	rts
-exignt	.byt '?EXTRA IGNORED'
+exignt	.byt "?EXTRA IGNORED"
 	.byt $d
 	.byt 0
-tryagn	.byt '?REDO FROM START'
+tryagn	.byt "?REDO FROM START"
 	.byt $d
 	.byt 0
 next	bne getfor
