@@ -21,15 +21,15 @@ lstend	pla
 	sta linnum+1
 list4	ldy #1
 	sty dores
-	lda (lowtr)y
+	lda (lowtr),y
 	beq grody
 	jsr iscntc
 	jsr crdo
 	iny
-	lda (lowtr)y
+	lda (lowtr),y
 	tax
 	iny
-	lda (lowtr)y
+	lda (lowtr),y
 	cmp linnum+1
 	bne tstdun
 	cpx linnum
@@ -48,13 +48,13 @@ ploop	jsr outdo
 	sta dores
 ploop1	iny
 	beq grody
-	lda (lowtr)y
+	lda (lowtr),y
 	bne qplop
 	tay
-	lda (lowtr)y
+	lda (lowtr),y
 	tax
 	iny
-	lda (lowtr)y
+	lda (lowtr),y
 	stx lowtr
 	sta lowtr+1
 	bne list4

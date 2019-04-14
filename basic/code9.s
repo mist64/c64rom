@@ -188,7 +188,7 @@ chkopn	lda #40
 	.byt $2c
 chkcom	lda #44
 synchr	ldy #0
-	cmp (txtptr)y
+	cmp (txtptr),y
 	bne snerr
 	jmp chrget
 snerr	ldx #errsn

@@ -83,35 +83,35 @@ fndlin	lda txttab
 fndlnc	ldy #1
 	sta lowtr
 	stx lowtr+1
-	lda (lowtr)y
+	lda (lowtr),y
 	beq flinrt
 	iny
 	iny
 	lda linnum+1
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bcc flnrts
 	beq fndlo1 
 	dey
 	bne affrts
 fndlo1	lda linnum
 	dey
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bcc flnrts
 	beq flnrts
 affrts	dey
-	lda (lowtr)y
+	lda (lowtr),y
 	tax
 	dey
-	lda (lowtr)y
+	lda (lowtr),y
 	bcs fndlnc
 flinrt	clc
 flnrts	rts
 scrath	bne flnrts
 scrtch	lda #0
 	tay
-	sta (txttab)y
+	sta (txttab),y
 	iny
-	sta (txttab)y
+	sta (txttab),y
 	lda txttab
 	clc
 	adc #2

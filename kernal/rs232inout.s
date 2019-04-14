@@ -62,7 +62,7 @@ bso232	ldy rodbe
 	sty rodbe       ;indicate new start
 	dey
 	lda t1          ;get data...
-	sta (robuf)y    ;store data
+	sta (robuf),y    ;store data
 ;
 ; set up if necessary to output
 ;
@@ -150,7 +150,7 @@ bsi232	lda rsstat      ;get status up to change...
 ;
 	and #$ff-$08    ;clear buffer empty status
 	sta rsstat
-	lda (ribuf)y    ;get last char
+	lda (ribuf),y    ;get last char
 	inc ridbs       ;inc to next pos
 ;
 ; receiver always runs

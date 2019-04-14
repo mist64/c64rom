@@ -7,18 +7,18 @@ newstt	jsr iscntc
 	sta oldtxt
 	sty oldtxt+1
 dircon	ldy #0
-	lda (txtptr)y
+	lda (txtptr),y
 	bne morsts
 	ldy #2
-	lda (txtptr)y
+	lda (txtptr),y
 	clc
 	bne dircn1
 	jmp endcon
 dircn1	iny
-	lda (txtptr)y
+	lda (txtptr),y
 	sta curlin
 	iny
-	lda (txtptr)y
+	lda (txtptr),y
 	sta curlin+1
 	tya
 	adc txtptr

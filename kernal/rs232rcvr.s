@@ -86,7 +86,7 @@ rsr031	cpx #9          ;always 8 bits
 	inx
 	bne rsr031
 ;
-rsr032	sta (ribuf)y    ;data to page buffer
+rsr032	sta (ribuf),y    ;data to page buffer
 ;
 ; parity checking
 ;

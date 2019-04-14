@@ -189,7 +189,7 @@ lp22	cmp #$d
 	bne loop4
 	ldy lnmx
 	sty crsw
-clp5	lda (pnt)y
+clp5	lda (pnt),y
 	cmp #' 
 	bne clp6
 	dey
@@ -221,7 +221,7 @@ loop5	tya
 	lda crsw
 	beq loop3
 lop5	ldy pntr
-	lda (pnt)y
+	lda (pnt),y
 notone
 	sta data
 lop51	and #$3f
@@ -389,20 +389,20 @@ bak1up	jsr chkbak      ;should we dec tblx
 	sty pntr
 bk1	jsr scolor      ;fix color ptrs
 bk15	iny
-	lda (pnt)y
+	lda (pnt),y
 	dey
-	sta (pnt)y
+	sta (pnt),y
 	iny
-	lda (user)y
+	lda (user),y
 	dey
-	sta (user)y
+	sta (user),y
 	iny
 	cpy lnmx
 	bne bk15
 bk2	lda #' 
-	sta (pnt)y 
+	sta (pnt),y
 	lda color
-	sta (user)y
+	sta (user),y
 	bpl jpl3
 ntcn1	ldx qtsw
 	beq nc3w
@@ -471,7 +471,7 @@ up5	ldx  qtsw
 	cmp #$14
 	bne up9
 	ldy lnmx
-	lda (pnt)y
+	lda (pnt),y
 	cmp #' 
 	bne ins3
 	cpy pntr
@@ -482,20 +482,20 @@ ins3	cpy #maxchr-1
 ins1	ldy lnmx
 	jsr scolor
 ins2	dey
-	lda (pnt)y
+	lda (pnt),y
 	iny
-	sta (pnt)y
+	sta (pnt),y
 	dey
-	lda (user)y
+	lda (user),y
 	iny
-	sta (user)y
+	sta (user),y
 	dey
 	cpy pntr
 	bne ins2
 	lda #$20
-	sta (pnt)y
+	sta (pnt),y
 	lda color
-	sta (user)y
+	sta (user),y
 	inc insrt
 insext	jmp loop2
 up9	ldx insrt

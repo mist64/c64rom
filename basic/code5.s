@@ -42,7 +42,7 @@ exchqt	lda endchr
 	ldx charac
 	sta charac
 	stx endchr
-remer	lda (txtptr)y
+remer	lda (txtptr),y
 	beq remrts
 	cmp endchr
 	beq remrts
@@ -129,10 +129,10 @@ qintgr	bpl copflt
 	jsr ayint
 	ldy #0
 	lda facmo
-	sta (forpnt)y
+	sta (forpnt),y
 	iny
 	lda faclo
-	sta (forpnt)y
+	sta (forpnt),y
 	rts
 copflt	jmp movvf
 copstr	pla

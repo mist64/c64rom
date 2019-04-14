@@ -291,7 +291,7 @@ rd70	jsr cmpste      ;check for end of storage area
 	beq rd80        ;...loading
 	ldy #0          ;...just verifying
 	lda ochar
-	cmp (sal)y      ;compare with data in pet
+	cmp (sal),y      ;compare with data in pet
 	beq rd80        ;...good so continue
 	lda #1          ;...bad so flag...
 	sta prp         ;...as an error
@@ -328,7 +328,7 @@ rd58	ldx ptr2        ;have we done all in the table?...
 	beq rd52        ;...loading
 	lda ochar       ;...verifying, so check
 	ldy #0
-	cmp (sal)y
+	cmp (sal),y
 	beq rd90        ;...okay
 	iny             ;make .y= 1
 	sty prp         ;flag it as an error
@@ -344,7 +344,7 @@ rd59	lda verck       ;load or verify?...
 	bne rd90        ;...verify, don't store
 	tay             ;make y zero
 	lda ochar
-	sta (sal)y      ;store character
+	sta (sal),y      ;store character
 rd90	jsr incsal      ;increment addr.
 	bne rd180       ;branch always
 
@@ -375,7 +375,7 @@ rd175	jsr tnif        ;read it all...exit
 ;
 ;compute parity over load
 ;
-vprty	lda (sal)y      ;calc block bcc
+vprty	lda (sal),y      ;calc block bcc
 	eor shcnh
 	sta shcnh
 	jsr incsal      ;increment address

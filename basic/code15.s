@@ -20,17 +20,17 @@ aryva3	cpx strend+1
 aryvgo	sta index1
 	stx index1+1
 	ldy #1-addprc
-	lda (index1)y
+	lda (index1),y
 	tax
 	iny
-	lda (index1)y
+	lda (index1),y
 	php
 	iny
-	lda (index1)y
+	lda (index1),y
 	adc arypnt
 	sta arypnt
 	iny
-	lda (index1)y
+	lda (index1),y
 	adc arypnt+1
 	sta arypnt+1
 	plp
@@ -38,7 +38,7 @@ aryvgo	sta index1
 	txa
 	bmi aryva2
 	iny
-	lda (index1)y
+	lda (index1),y
 	ldy #0
 	asl a
 	adc #5
@@ -53,19 +53,19 @@ arystr	cpx arypnt+1
 	beq aryva3
 gogo	jsr dvar
 	beq arystr
-dvars	lda (index1)y
+dvars	lda (index1),y
 	bmi dvarts
 	iny
-	lda (index1)y
+	lda (index1),y
 	bpl dvarts
 	iny
-dvar	lda (index1)y
+dvar	lda (index1),y
 	beq dvarts
 	iny
-	lda (index1)y
+	lda (index1),y
 	tax
 	iny
-	lda (index1)y
+	lda (index1),y
 	cmp fretop+1
 	bcc dvar2
 	bne dvarts
@@ -101,7 +101,7 @@ grbpas	lda grbpnt+1
 	lsr a
 	tay
 	sta size
-	lda (grbpnt)y
+	lda (grbpnt),y
 	adc lowtr
 	sta hightr
 	lda lowtr+1
@@ -115,12 +115,12 @@ grbpas	lda grbpnt+1
 	ldy size
 	iny
 	lda highds
-	sta (grbpnt)y
+	sta (grbpnt),y
 	tax
 	inc highds+1
 	lda highds+1
 	iny
-	sta (grbpnt)y
+	sta (grbpnt),y
 	jmp fndvar
 cat	lda faclo
 	pha
@@ -133,9 +133,9 @@ cat	lda faclo
 	pla
 	sta strng1+1
 	ldy #0
-	lda (strng1)y
+	lda (strng1),y
 	clc
-	adc (facmo)y
+	adc (facmo),y
 	bcc sizeok
 	ldx #errls
 	jmp error
@@ -151,7 +151,7 @@ sizeok	jsr strini
 	jsr putnew
 	jmp tstop
 movins	ldy #0
-	lda (strng1)y
+	lda (strng1),y
 	pha
 	iny
 

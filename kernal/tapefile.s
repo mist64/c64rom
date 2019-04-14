@@ -16,7 +16,7 @@ fah	lda verck       ;save old verify
 	bcs fah40       ;read terminated
 ;
 	ldy #0
-	lda (tape1)y    ;get header type
+	lda (tape1),y    ;get header type
 ;
 	cmp #eot        ;check end of tape?
 	beq fah40       ;yes...failure
@@ -40,7 +40,7 @@ fah50	tax             ;return file type in .x
 ;output complete file name
 ;
 	ldy #5
-fah55	lda (tape1)y
+fah55	lda (tape1),y
 	jsr bsout
 	iny
 	cpy #21
@@ -82,32 +82,32 @@ tapeh	sta t1
 ;
 	ldy #bufsz-1
 	lda #' 
-blnk2	sta (tape1)y
+blnk2	sta (tape1),y
 	dey
 	bne blnk2
 ;
 ;put block type in header
 ;
 	lda t1
-	sta (tape1)y
+	sta (tape1),y
 ;
 ;put start load address in header
 ;
 	iny
 	lda stal
-	sta (tape1)y
+	sta (tape1),y
 	iny
 	lda stah
-	sta (tape1)y
+	sta (tape1),y
 ;
 ;put end load address in header
 ;
 	iny
 	lda eal
-	sta (tape1)y
+	sta (tape1),y
 	iny
 	lda eah
-	sta (tape1)y
+	sta (tape1),y
 ;
 ;put file name in header
 ;
@@ -118,9 +118,9 @@ blnk2	sta (tape1)y
 th20	ldy t1
 	cpy fnlen
 	beq th30
-	lda (fnadr)y
+	lda (fnadr),y
 	ldy t2
-	sta (tape1)y
+	sta (tape1),y
 	inc t1
 	inc t2
 	bne th20
@@ -186,9 +186,9 @@ faf	jsr fah         ;find any header
 faf20	cpy fnlen       ;compare this many
 	beq faf30       ;done
 ;
-	lda (fnadr)y
+	lda (fnadr),y
 	ldy t2
-	cmp (tape1)y
+	cmp (tape1),y
 	bne faf         ;mismatch--try next header
 	inc t1
 	inc t2

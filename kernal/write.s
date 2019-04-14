@@ -92,7 +92,7 @@ wrt6	jsr cmpste      ;compare start:end
 	bcs wrt3        ;jmp
 ;
 wrt7	ldy #0          ;get next character
-	lda (sal)y
+	lda (sal),y
 	sta ochar       ;store in output character
 	eor data        ;update bcc
 	sta data

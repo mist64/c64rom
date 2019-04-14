@@ -53,8 +53,8 @@ vector	stx tmp2
 	ldy #vectse-vectss-1
 movos1	lda cinv,y      ;get from storage
 	bcs movos2      ;c...want storage to user
-	lda (tmp2)y     ;...want user to storage
-movos2	sta (tmp2)y     ;put in user
+	lda (tmp2),y     ;...want user to storage
+movos2	sta (tmp2),y     ;put in user
 	sta cinv,y      ;put in storage
 	dey
 	bpl movos1
@@ -93,18 +93,18 @@ ramtbt
 	sta tmp0+1
 ;
 ramtz1	inc tmp0+1      ;move index thru memory
-ramtz2	lda (tmp0)y     ;get present data
+ramtz2	lda (tmp0),y     ;get present data
 	tax             ;save in .x
 	lda #$55        ;do a $55,$aa test
-	sta (tmp0)y
-	cmp (tmp0)y
+	sta (tmp0),y
+	cmp (tmp0),y
 	bne size
 	rol a
-	sta (tmp0)y
-	cmp (tmp0)y
+	sta (tmp0),y
+	cmp (tmp0),y
 	bne size
 	txa             ;restore old data
-	sta (tmp0)y
+	sta (tmp0),y
 	iny
 	bne ramtz2
 	beq ramtz1

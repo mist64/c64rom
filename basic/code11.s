@@ -1,4 +1,4 @@
-	cmp (dsctmp+1)y
+	cmp (dsctmp+1),y
 	beq nxtcmp
 	ldx #$ff
 	bcs docmp
@@ -70,11 +70,11 @@ lopfnd	sta lowtr
 	cmp arytab
 	beq notfns
 lopfn	lda varnam
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bne notit
 	lda varnam+1
 	iny
-	cmp (lowtr)y
+	cmp (lowtr),y
 	beq finptr
 	dey
 notit	clc
@@ -133,21 +133,21 @@ noteve	sta highds
 	sty arytab+1
 	ldy #0
 	lda varnam
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
 	lda varnam+1
-	sta (lowtr)y
+	sta (lowtr),y
 	lda #0
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 finptr	lda lowtr
 	clc
 	adc #2

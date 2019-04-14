@@ -47,7 +47,7 @@ sv25	jsr openi
 	jsr ciout
 sv30	jsr cmpste      ;compare start to end
 	bcs sv50        ;have reached end
-	lda (sal)y
+	lda (sal),y
 	jsr ciout
 	jsr stop
 	bne sv40

@@ -10,21 +10,21 @@ movfr	lda resho
 movfm	sta index1
 	sty index1+1
 	ldy #3+addprc
-	lda (index1)y
+	lda (index1),y
 	sta faclo
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta facmo
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta facmoh
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta facsgn
 	ora #@200
 	sta facho
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta facexp
 	sty facov
 	rts   
@@ -40,21 +40,21 @@ movmf	jsr round
 	sty index1+1
 	ldy #3+addprc
 	lda faclo
-	sta (index)y
+	sta (index),y
 	dey
 	lda facmo
-	sta (index)y
+	sta (index),y
 	dey
 	lda facmoh
-	sta (index)y
+	sta (index),y
 	dey
 	lda facsgn
 	ora #@177
 	and facho
-	sta (index)y
+	sta (index),y
 	dey
 	lda facexp
-	sta (index)y
+	sta (index),y
 	sty facov
 	rts
 movfa	lda argsgn
@@ -109,31 +109,31 @@ abs	lsr facsgn
 fcomp	sta index2
 fcompn	sty index2+1
 	ldy #0
-	lda (index2)y
+	lda (index2),y
 	iny
 	tax
 	beq sign
-	lda (index2)y
+	lda (index2),y
 	eor facsgn
 	bmi fcsign
 	cpx facexp
 	bne fcompc
-	lda (index2)y
+	lda (index2),y
 	ora #@200
 	cmp facho
 	bne fcompc
 	iny
-	lda (index2)y
+	lda (index2),y
 	cmp facmoh
 	bne fcompc
 	iny
-	lda (index2)y
+	lda (index2),y
 	cmp facmo
 	bne fcompc
 	iny
 	lda #@177
 	cmp facov
-	lda (index2)y
+	lda (index2),y
 	sbc faclo
 	beq qintrt
 fcompc	lda facsgn

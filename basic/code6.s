@@ -20,19 +20,19 @@ noml6	ldy fbufpt
 	ldy facmoh
 	lda faclo
 	jmp settim
-timnum	lda (index)y
+timnum	lda (index),y
 	jsr qnum
 	bcc gotnum
 fcerr2	jmp fcerr
 gotnum	sbc #$2f
 	jmp finlog
 getspt	ldy #2
-	lda (facmo)y
+	lda (facmo),y
 	cmp fretop+1
 	bcc dntcpy
 	bne qvaria
 	dey
-	lda (facmo)y
+	lda (facmo),y
 	cmp fretop
 	bcc dntcpy
 qvaria	ldy faclo
@@ -46,7 +46,7 @@ dntcpy	lda facmo
 	ldy facmo+1
 	jmp copyc
 copy	ldy #0
-	lda (facmo)y
+	lda (facmo),y
 	jsr strini
 	lda dscpnt
 	ldy dscpnt+1
@@ -59,14 +59,14 @@ copyc	sta dscpnt
 	sty dscpnt+1
 	jsr fretms
 	ldy #0
-	lda (dscpnt)y
-	sta (forpnt)y
+	lda (dscpnt),y
+	sta (forpnt),y
 	iny
-	lda (dscpnt)y
-	sta (forpnt)y
+	lda (dscpnt),y
+	sta (forpnt),y
 	iny
-	lda (dscpnt)y
-	sta (forpnt)y
+	lda (dscpnt),y
+	sta (forpnt),y
 	rts
 printn	jsr cmd
 	jmp iodone

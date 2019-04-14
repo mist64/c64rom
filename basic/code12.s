@@ -65,20 +65,20 @@ lopfda	stx lowtr
 	cpx strend
 	beq notfdd
 lopfdv	ldy #0
-	lda (lowtr)y
+	lda (lowtr),y
 	iny
 	cmp varnam
 	bne nmary1
 	lda varnam+1
-	cmp (lowtr)y
+	cmp (lowtr),y
 	beq gotary
 nmary1	iny
-	lda (lowtr)y
+	lda (lowtr),y
 	clc
 	adc lowtr
 	tax
 	iny
-	lda (lowtr)y
+	lda (lowtr),y
 	adc lowtr+1
 	bcc lopfda
 bserr	ldx #errbs
@@ -91,7 +91,7 @@ gotary	ldx #errdd
 	jsr fmaptr
 	lda count
 	ldy #4
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bne bserr
 	jmp getdef
 notfdd	jsr fmaptr
@@ -100,12 +100,12 @@ notfdd	jsr fmaptr
 	sty curtol+1
 	ldx #5
 	lda varnam
-	sta (lowtr)y
+	sta (lowtr),y
 	bpl notflt
 	dex
 notflt	iny
 	lda varnam+1
-	sta (lowtr)y
+	sta (lowtr),y
 	bpl stomlt
 	dex
 	dex
@@ -114,7 +114,7 @@ stomlt	stx curtol
 	iny
 	iny
 	iny
-	sta (lowtr)y
+	sta (lowtr),y
 loppta	ldx #11
 	lda #0
 	bit dimflg
@@ -126,10 +126,10 @@ loppta	ldx #11
 	pla
 	adc #0
 notdim	iny
-	sta (lowtr)y
+	sta (lowtr),y
 	iny
 	txa
-	sta (lowtr)y
+	sta (lowtr),y
 	jsr umult
 	stx curtol
 	sta curtol+1

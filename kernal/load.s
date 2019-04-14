@@ -86,13 +86,13 @@ ld45	jsr acptr       ;get byte off ieee
 	ldy verck       ;performing verify?
 	beq ld50        ;no...load
 	ldy #0
-	cmp (eal)y      ;verify it
+	cmp (eal),y      ;verify it
 	beq ld60        ;o.k....
 	lda #sperr      ;no good...verify error
 	jsr udst        ;update status
 	.byt $2c        ;skip next store
 ;
-ld50	sta (eal)y
+ld50	sta (eal),y
 ld60	inc eal         ;increment store addr
 	bne ld64
 	inc eah
@@ -142,10 +142,10 @@ ld170	lda status
 	bne ld112       ;no...its something else
 ;
 ld177	ldy #1          ;fixed load...
-	lda (tape1)y    ;...the address in the...
+	lda (tape1),y    ;...the address in the...
 	sta memuss      ;...buffer is the start address
 	iny
-	lda (tape1)y
+	lda (tape1),y
 	sta memuss+1
 	bcs ld179       ;jmp ..carry set by cpx's
 ;
@@ -154,14 +154,14 @@ ld178	lda sa          ;check for monitor load...
 ;
 ld179	ldy #3          ;tapea - tapesta
 ;carry set by cpx's
-	lda (tape1)y
+	lda (tape1),y
 	ldy #1
-	sbc (tape1)y
+	sbc (tape1),y
 	tax             ;low to .x
 	ldy #4
-	lda (tape1)y
+	lda (tape1),y
 	ldy #2
-	sbc (tape1)y
+	sbc (tape1),y
 	tay             ;high to .y
 ;
 	clc             ;ea = sta+(tapea-tapesta)
@@ -206,7 +206,7 @@ luking	lda msgflg      ;supposed to print?
 outfn	ldy fnlen       ;is there a name?
 	beq ld115       ;no...done
 	ldy #0
-ld110	lda (fnadr)y
+ld110	lda (fnadr),y
 	jsr bsout
 	iny
 	cpy fnlen

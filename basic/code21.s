@@ -135,7 +135,7 @@ mlex10	asl a
 	asl a
 	clc
 	ldy #0
-	adc (txtptr)y
+	adc (txtptr),y
 	sec
 	sbc #'0
 mlexmi	sta tenexp

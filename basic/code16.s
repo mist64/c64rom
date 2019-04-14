@@ -1,7 +1,7 @@
-	lda (strng1)y
+	lda (strng1),y
 	tax
 	iny
-	lda (strng1)y
+	lda (strng1),y
 	tay
 	pla
 movstr	stx index
@@ -10,8 +10,8 @@ movdo	tay
 	beq mvdone
 	pha
 movlp	dey
-	lda (index)y
-	sta (frespc)y
+	lda (index),y
+	sta (frespc),y
 	tya
 	bne movlp
 	pla
@@ -29,13 +29,13 @@ fretmp	sta index
 	jsr fretms
 	php
 	ldy #0
-	lda (index)y
+	lda (index),y
 	pha
 	iny
-	lda (index)y
+	lda (index),y
 	tax
 	iny
-	lda (index)y
+	lda (index),y
 	tay
 	pla
 	plp
@@ -70,15 +70,15 @@ chrd	jsr conint
 	jsr strspa
 	pla
 	ldy #0
-	sta (dsctmp+1)y
+	sta (dsctmp+1),y
 	pla
 	pla
 	jmp putnew
 leftd	jsr pream
-	cmp (dscpnt)y
+	cmp (dscpnt),y
 	tya
 rleft	bcc rleft1
-	lda (dscpnt)y
+	lda (dscpnt),y
 	tax
 	tya
 rleft1	pha
@@ -101,7 +101,7 @@ pulmor	tya
 	jmp putnew
 rightd	jsr pream
 	clc
-	sbc (dscpnt)y
+	sbc (dscpnt),y
 	eor #255
 	jmp rleft
 midd	lda #255
@@ -118,7 +118,7 @@ mid2	jsr pream
 	pha
 	clc
 	ldx #0
-	sbc (dscpnt)y
+	sbc (dscpnt),y
 	bcs rleft2
 	eor #255
 	cmp faclo
@@ -155,7 +155,7 @@ len1	jsr frestr
 asc	jsr len1
 	beq gofuc
 	ldy #0
-	lda (index1)y
+	lda (index1),y
 	tay
 	jmp sngflt
 gofuc	jmp fcerr

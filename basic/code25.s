@@ -47,7 +47,7 @@ polyx	sta polypt
 poly	sta polypt
 	sty polypt+1
 poly1	jsr mov2f
-	lda (polypt)y
+	lda (polypt),y
 	sta degree
 	ldy polypt
 	iny
@@ -80,16 +80,16 @@ rnd	jsr sign
 	stx index1
 	sty index1+1
 	ldy #4
-	lda (index1)y
+	lda (index1),y
 	sta facho
 	iny
-	lda (index1)y
+	lda (index1),y
 	sta facmo
 	ldy #8
-	lda (index1)y
+	lda (index1),y
 	sta facmoh
 	iny
-	lda (index1)y
+	lda (index1),y
 	sta faclo
 	jmp strnex
 qsetnr	lda #<rndx

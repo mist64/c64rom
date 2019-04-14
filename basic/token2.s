@@ -202,8 +202,8 @@ blt1	lda highds
 	bcs moren1
 	dec highds+1
 	bcc moren1
-bltlp	lda (hightr)y
-	sta (highds)y
+bltlp	lda (hightr),y
+	sta (highds),y
 moren1	dey
 	bne bltlp
 	lda (hightr),y

@@ -7,7 +7,7 @@ strprt	jsr frefac
 	inx
 strpr2	dex
 	beq prtrts
-	lda (index)y
+	lda (index),y
 	jsr outdo
 	iny
 	cmp #13

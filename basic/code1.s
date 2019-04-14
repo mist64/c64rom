@@ -13,7 +13,7 @@ nerrox	txa
 errcrd	jsr crdo
 	jsr outqst
 	ldy #0
-geterr	lda (index1)y
+geterr	lda (index1),y
 	pha
 	and #127
 	jsr outdo
@@ -53,7 +53,7 @@ main1	jsr linget
 	jsr fndlin
 	bcc nodel
 	ldy #1
-	lda (lowtr)y
+	lda (lowtr),y
 	sta index1+1
 	lda vartab
 	sta index1
@@ -61,7 +61,7 @@ main1	jsr linget
 	sta index2+1
 	lda lowtr
 	dey
-	sbc (lowtr)y 
+	sbc (lowtr),y 
 	clc
 	adc vartab
 	sta vartab
@@ -83,8 +83,8 @@ qdect1	clc
 	bcc mloop
 	dec index1+1
 	clc
-mloop	lda (index1)y
-	sta (index2)y
+mloop	lda (index1),y
+	sta (index2),y
 	iny 
 	bne mloop
 	inc index1+1
@@ -117,7 +117,7 @@ nodelc	sty highds+1
 	ldy count
 	dey
 stolop	lda buf-4,y
-	sta (lowtr)y
+	sta (lowtr),y
 	dey
 	bpl stolop
 fini	jsr runc
@@ -129,22 +129,22 @@ lnkprg	lda txttab
 	sty index+1
 	clc 
 chead	ldy #1
-	lda (index)y
+	lda (index),y
 	beq lnkrts
 	ldy #4
 czloop	iny
-	lda (index)y
+	lda (index),y
 	bne czloop
 	iny
 	tya
 	adc index
 	tax
 	ldy #0
-	sta (index)y
+	sta (index),y
 	lda index+1
 	adc #0
 	iny
-	sta (index)y
+	sta (index),y
 	stx index
 	sta index+1
 	bcc chead

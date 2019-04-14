@@ -46,10 +46,10 @@ strrts	rts
 gooo	bit intflg
 	bpl gooooo
 	ldy #0
-	lda (facmo)y
+	lda (facmo),y
 	tax
 	iny
-	lda (facmo)y
+	lda (facmo),y
 	tay
 	txa
 	jmp givayf
@@ -176,5 +176,5 @@ nxtcmp	iny
 qcomp	bmi docmp
 	clc
 	bcc docmp
-getcmp	lda (argmo)y
+getcmp	lda (argmo),y
 

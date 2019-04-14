@@ -98,7 +98,7 @@ jtget	jsr jtp20       ;buffer pointer wrap?
 	sta bufpt       ;point to begin.
 	beq jtget       ;branch always
 ;
-jtg10	lda (tape1)y    ;get char from buf
+jtg10	lda (tape1),y    ;get char from buf
 	clc             ;good return
 	rts 
 
@@ -175,7 +175,7 @@ casout	sta t1          ;pass data in t1
 ;
 	lda #bdf
 	ldy #0
-	sta (tape1)y
+	sta (tape1),y
 ;
 ;reset buffer pointer
 ;
@@ -183,7 +183,7 @@ casout	sta t1          ;pass data in t1
 	sty bufpt       ;bufpt=1
 ;
 jtp10	lda t1
-	sta (tape1)y    ;data to buffer
+	sta (tape1),y    ;data to buffer
 ;
 ;restore .x and .y
 ;

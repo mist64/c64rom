@@ -77,16 +77,16 @@ multrt	rts
 conupk	sta index1
 	sty index1+1
 	ldy #3+addprc
-	lda (index1)y
+	lda (index1),y
 	sta arglo
 	dey
-	lda (index)y
+	lda (index),y
 	sta argmo
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta argmoh
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta argsgn
 	eor facsgn
 	sta arisgn
@@ -94,7 +94,7 @@ conupk	sta index1
 	ora #@200
 	sta argho
 	dey
-	lda (index1)y
+	lda (index1),y
 	sta argexp
 	lda facexp
 	rts

@@ -105,7 +105,7 @@ op171	lda #bufsz-1    ;assume force read
 ;
 	ldy #0
 	lda #bdf        ;type flag for block
-	sta (tape1)y    ;to begin of buffer
+	sta (tape1),y    ;to begin of buffer
 	tya
 ;
 op172	sta bufpt       ;point to data
@@ -146,7 +146,7 @@ op35	lda fnlen
 ;send file name over serial
 ;
 	ldy #0
-op40	lda (fnadr)y
+op40	lda (fnadr),y
 	jsr ciout
 	iny
 	cpy fnlen
@@ -174,7 +174,7 @@ opn232	jsr cln232      ;set up rs232, .y=0 on return
 opn020	cpy fnlen       ;check if at end of filename
 	beq opn025      ;yes...
 ;
-	lda (fnadr)y    ;move data
+	lda (fnadr),y    ;move data
 	sta m51ctr,y    ;to m51regs
 	iny
 	cpy #4          ;only 4 possible prams

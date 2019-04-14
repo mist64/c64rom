@@ -23,15 +23,15 @@ fndoer	jsr getfnm
 	pla
 	sta defpnt+1
 	ldy #2
-	lda (defpnt)y
+	lda (defpnt),y
 	sta varpnt
 	tax
 	iny
-	lda (defpnt)y
+	lda (defpnt),y
 	beq errguf
 	sta varpnt+1
 	iny
-defstf	lda (varpnt)y
+defstf	lda (varpnt),y
 	pha
 	dey
 	bpl defstf
@@ -41,10 +41,10 @@ defstf	lda (varpnt)y
 	pha
 	lda txtptr
 	pha
-	lda (defpnt)y
+	lda (defpnt),y
 	sta txtptr
 	iny
-	lda (defpnt)y
+	lda (defpnt),y
 	sta txtptr+1
 	lda varpnt+1
 	pha
@@ -64,19 +64,19 @@ defstf	lda (varpnt)y
 	sta txtptr+1
 deffin	ldy #0
 	pla
-	sta (defpnt)y
+	sta (defpnt),y
 	pla
 	iny
-	sta (defpnt)y
+	sta (defpnt),y
 	pla
 	iny
-	sta (defpnt)y
+	sta (defpnt),y
 	pla
 	iny
-	sta (defpnt)y
+	sta (defpnt),y
 	pla
 	iny
-	sta (defpnt)y
+	sta (defpnt),y
 	rts
 strd	jsr chknum
 	ldy #0
@@ -104,7 +104,7 @@ strlt2	sta strng1
 	sty dsctmp+2
 	ldy #255
 strget	iny
-	lda (strng1)y
+	lda (strng1),y
 	beq strfi1
 	cmp charac
 	beq strfin

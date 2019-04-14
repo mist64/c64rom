@@ -1,7 +1,7 @@
 	ldy curtol
 	beq deccur
 zerita	dey
-	sta (arypnt)y
+	sta (arypnt),y
 	bne zerita
 deccur	dec arypnt+1
 	dec curtol+1
@@ -11,15 +11,15 @@ deccur	dec arypnt+1
 	lda strend
 	sbc lowtr
 	ldy #2
-	sta (lowtr)y
+	sta (lowtr),y
 	lda strend+1
 	iny
 	sbc lowtr+1
-	sta (lowtr)y
+	sta (lowtr),y
 	lda dimflg
 	bne dimrts
 	iny
-getdef	lda (lowtr)y
+getdef	lda (lowtr),y
 	sta count
 	lda #0
 	sta curtol
@@ -30,12 +30,12 @@ inlpnm	sta curtol+1
 	sta indice
 	pla
 	sta indice+1
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bcc inlpn2
 	bne bserr7
 	iny
 	txa
-	cmp (lowtr)y
+	cmp (lowtr),y
 	bcc inlpn1
 bserr7	jmp bserr
 omerr1	jmp omerr
@@ -76,10 +76,10 @@ stoml1	stx addend
 	lda varpnt
 dimrts	rts
 umult	sty index
-	lda (lowtr)y
+	lda (lowtr),y
 	sta addend
 	dey
-	lda (lowtr)y
+	lda (lowtr),y
 umultd	sta addend+1
 	lda #16
 	sta deccnt

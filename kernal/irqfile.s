@@ -70,7 +70,7 @@ fpat01	rts
 ;  prevents white character flash...
 cpatch                  ;always clear to current foregnd color
 	lda color
-	sta (user)y
+	sta (user),y
 	rts
 
 	*=$e500-45      ;(38-7)

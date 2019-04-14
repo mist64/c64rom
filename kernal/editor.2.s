@@ -144,10 +144,10 @@ scrlin
 	jsr tofrom      ;color to & from addrs
 	ldy #llen-1
 scd20
-	lda (sal)y
-	sta (pnt)y
-	lda (eal)y
-	sta (user)y
+	lda (sal),y
+	sta (pnt),y
+	lda (eal),y
+	sta (user),y
 	dey
 	bpl scd20
 	rts
@@ -183,7 +183,7 @@ clrln	ldy #llen-1
 	jsr scolor
 clr10	jsr cpatch      ;reversed order from 901227-02
 	lda #$20        ;store a space
-	sta (pnt)y     ;to display
+	sta (pnt),y     ;to display
 	dey
 	bpl clr10
 	rts
@@ -198,9 +198,9 @@ dspp	tay             ;save char
 	jsr scolor      ;set color ptr
 	tya             ;restore color
 dspp2	ldy pntr        ;get column
-	sta (pnt)y      ;char to screen
+	sta (pnt),y      ;char to screen
 	txa
-	sta (user)y     ;color to screen
+	sta (user),y     ;color to screen
 	rts
 
 scolor	lda pnt         ;generate color ptr
@@ -221,13 +221,13 @@ repdo	sta blnct
 	ldy pntr        ;cursor position
 	lsr blnon       ;carry set if original char
 	ldx gdcol       ;get char original color
-	lda (pnt)y      ;get character
+	lda (pnt),y      ;get character
 	bcs key5        ;branch if not needed
 ;
 	inc blnon       ;set to 1
 	sta gdbln       ;save original char
 	jsr scolor
-	lda (user)y     ;get original color
+	lda (user),y     ;get original color
 	sta gdcol       ;save it
 	ldx color       ;blink in this color
 	lda gdbln       ;with original character
@@ -314,7 +314,7 @@ ckit	iny
 ckit1	pla             ;dump column output...all done
 	jmp (keylog)    ;evaluate shift functions
 rekey	ldy sfdx        ;get key index
-	lda (keytab)y   ;get char code
+	lda (keytab),y   ;get char code
 	tax             ;save the char
 	cpy lstx        ;same as prev char index?
 	beq rpt10       ;yes

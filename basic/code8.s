@@ -51,13 +51,13 @@ datlop	jsr datan
 	bne nowlin
 	ldx #errod
 	iny
-	lda (txtptr)y
+	lda (txtptr),y
 	beq errgo5
 	iny
-	lda (txtptr)y
+	lda (txtptr),y
 	sta datlin
 	iny
-	lda (txtptr)y
+	lda (txtptr),y
 	iny
 	sta datlin+1
 nowlin	jsr addon       ;txtptr+.y
@@ -72,7 +72,7 @@ varend	lda inpptr
 	bpl vary0
 	jmp resfin
 vary0	ldy #0
-	lda (inpptr)y
+	lda (inpptr),y
 	beq inprts
 	lda channl
 	bne inprts

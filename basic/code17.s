@@ -22,15 +22,15 @@ val	jsr len1
 	inx
 val2	stx index2+1
 	ldy #0
-	lda (index2)y
+	lda (index2),y
 	pha
 	tya             ;a=0
-	sta (index2)y
+	sta (index2),y
 	jsr chrgot
 	jsr fin
 	pla
 	ldy #0
-	sta (index2)y
+	sta (index2),y
 st2txt	ldx strng2
 	ldy strng2+1
 	stx txtptr
@@ -57,7 +57,7 @@ peek	lda poker+1
 	pha
 	jsr getadr
 	ldy #0
-getcon	lda (poker)y
+getcon	lda (poker),y
 	tay
 dosgfl	pla
 	sta poker
@@ -67,7 +67,7 @@ dosgfl	pla
 poke	jsr getnum
 	txa
 	ldy #0
-	sta (poker)y
+	sta (poker),y
 	rts
 fnwait	jsr getnum
 	stx andmsk
@@ -77,7 +77,7 @@ fnwait	jsr getnum
 	jsr combyt
 stordo	stx eormsk
 	ldy #0
-waiter	lda (poker)y
+waiter	lda (poker),y
 	eor eormsk
 	and andmsk
 	beq waiter

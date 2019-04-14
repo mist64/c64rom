@@ -76,7 +76,7 @@ usedef	stx memsiz
 	sty fretop+1
 	ldy #0
 	tya
-	sta (txttab)y
+	sta (txttab),y
 	inc txttab
 	bne init20
 	inc txttab+1
