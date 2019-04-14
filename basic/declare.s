@@ -9,135 +9,135 @@ clmwid	=10             ;print window 10 chars
 pi	=255
 numlev	=23
 strsiz	=3
-blank0	*=*+3           ;6510 register area
-adray1	*=*+2           ;convert float->integer
-adray2	*=*+2           ;convert integer->float
+blank0	.res 3           ;6510 register area
+adray1	.res 2           ;convert float->integer
+adray2	.res 2           ;convert integer->float
 integr
-charac	*=*+1
-endchr	*=*+1
-trmpos	*=*+1
-verck	*=*+1
-count	*=*+1
-dimflg	*=*+1
-valtyp	*=*+1
-intflg	*=*+1
+charac	.res 1
+endchr	.res 1
+trmpos	.res 1
+verck	.res 1
+count	.res 1
+dimflg	.res 1
+valtyp	.res 1
+intflg	.res 1
 garbfl
-dores	*=*+1
-subflg	*=*+1
-inpflg	*=*+1
+dores	.res 1
+subflg	.res 1
+inpflg	.res 1
 domask
-tansgn	*=*+1
-channl	*=*+1
+tansgn	.res 1
+channl	.res 1
 poker
-linnum	*=*+2
-temppt	*=*+1
-lastpt	*=*+2
-tempst	*=*+9
+linnum	.res 2
+temppt	.res 1
+lastpt	.res 2
+tempst	.res 9
 index
-index1	*=*+2
-index2	*=*+2
-resho	*=*+1
-resmoh	*=*+1
+index1	.res 2
+index2	.res 2
+resho	.res 1
+resmoh	.res 1
 addend
-resmo	*=*+1
-reslo	*=*+1
-	*=*+1
-txttab	*=*+2
-vartab	*=*+2
-arytab	*=*+2
-strend	*=*+2
-fretop	*=*+2
-frespc	*=*+2
-memsiz	*=*+2
-curlin	*=*+2
-oldlin	*=*+2
-oldtxt	*=*+2
-datlin	*=*+2
-datptr	*=*+2
-inpptr	*=*+2
-varnam	*=*+2
+resmo	.res 1
+reslo	.res 1
+	.res 1
+txttab	.res 2
+vartab	.res 2
+arytab	.res 2
+strend	.res 2
+fretop	.res 2
+frespc	.res 2
+memsiz	.res 2
+curlin	.res 2
+oldlin	.res 2
+oldtxt	.res 2
+datlin	.res 2
+datptr	.res 2
+inpptr	.res 2
+varnam	.res 2
 fdecpt	
-varpnt	*=*+2
+varpnt	.res 2
 lstpnt
 andmsk
-forpnt	*=*+2
+forpnt	.res 2
 eormsk	=forpnt+1
 vartxt
-opptr	*=*+2
-opmask	*=*+1
+opptr	.res 2
+opmask	.res 1
 grbpnt
 tempf3
-defpnt	*=*+2
-dscpnt	*=*+2
-	*=*+1
-four6	*=*+1
-jmper	*=*+1
-size	*=*+1
-oldov	*=*+1
-tempf1	*=*+1
+defpnt	.res 2
+dscpnt	.res 2
+	.res 1
+four6	.res 1
+jmper	.res 1
+size	.res 1
+oldov	.res 1
+tempf1	.res 1
 arypnt
-highds	*=*+2
-hightr	*=*+2
+highds	.res 2
+hightr	.res 2
 tempf2
-	*=*+1
+	.res 1
 deccnt
-lowds	*=*+2
+lowds	.res 2
 grbtop
 dptflg
-lowtr	*=*+1
-expsgn	*=*+1
+lowtr	.res 1
+expsgn	.res 1
 tenexp	=lowds+1
 epsgn	=lowtr+1
 dsctmp
 fac
-facexp	*=*+1
-facho	*=*+1
-facmoh	*=*+1
+facexp	.res 1
+facho	.res 1
+facmoh	.res 1
 indice
-facmo	*=*+1
-faclo	*=*+1
-facsgn	*=*+1
+facmo	.res 1
+faclo	.res 1
+facsgn	.res 1
 degree
-sgnflg	*=*+1
-bits	*=*+1
-argexp	*=*+1
-argho	*=*+1
-argmoh	*=*+1
-argmo	*=*+1
-arglo	*=*+1
-argsgn	*=*+1
+sgnflg	.res 1
+bits	.res 1
+argexp	.res 1
+argho	.res 1
+argmoh	.res 1
+argmo	.res 1
+arglo	.res 1
+argsgn	.res 1
 strngi
-arisgn	*=*+1
-facov	*=*+1
+arisgn	.res 1
+facov	.res 1
 bufptr
 strng2
 polypt
 curtol
-fbufpt	*=*+2
-chrget	*=*+6
-chrgot	*=*+1
-txtptr	*=*+6
-qnum	*=*+10
-chrrts	*=*+1
-rndx	*=*+5
-	*=255
-lofbuf	*=*+1
-fbuffr	*=*+1
+fbufpt	.res 2
+chrget	.res 6
+chrgot	.res 1
+txtptr	.res 6
+qnum	.res 10
+chrrts	.res 1
+rndx	.res 5
+	.segment "S00FF" : zeropage
+lofbuf	.res 1
+fbuffr	.res 1
 strng1	=arisgn
 ;
-	*=$0300         ;basic indirects
-ierror	*=*+2           ;indirect error (output error in .x)
-imain	*=*+2           ;indirect main (system direct loop)
-icrnch	*=*+2           ;indirect crunch (tokenization routine)
-iqplop	*=*+2           ;indirect list (char list)
-igone	*=*+2           ;indirect gone (char dispatch)
-ieval	*=*+2           ;indirect eval (symbol evaluation)
+	.segment "S0300b"         ;basic indirects
+ierror	.res 2           ;indirect error (output error in .x)
+imain	.res 2           ;indirect main (system direct loop)
+icrnch	.res 2           ;indirect crunch (tokenization routine)
+iqplop	.res 2           ;indirect list (char list)
+igone	.res 2           ;indirect gone (char dispatch)
+ieval	.res 2           ;indirect eval (symbol evaluation)
 ;temp storage untill system intergration
 ; sys 6502 regs
-sareg	*=*+1           ;.a reg
-sxreg	*=*+1           ;.x reg
-syreg	*=*+1           ;.y reg
-spreg	*=*+1           ;.p reg
-usrpok	*=*+3           ;user function dispatch
-	*=$0300+20      ;system indirects follow
+sareg	.res 1           ;.a reg
+sxreg	.res 1           ;.x reg
+syreg	.res 1           ;.y reg
+spreg	.res 1           ;.p reg
+usrpok	.res 3           ;user function dispatch
+	.segment "S0314b"      ;system indirects follow
 

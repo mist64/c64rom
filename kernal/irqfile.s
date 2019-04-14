@@ -38,7 +38,7 @@ piokey	lda #$81        ;enable t1 irq's
 	ora #%00010001  ;enable timer1
 	sta d1cra
 	jmp clklo       ;release the clock line***901227-03***
-	*=$e500-20
+	.segment "SE4EC"
 ;
 ; baudop - baud rate table for pal
 ;   .985248e6/baud-rate/2-100
@@ -54,7 +54,7 @@ baudop	.word 9853-cbit ;50 baud
 	.word 274-cbit  ;1800 baud
 	.word 205-cbit  ;2400 baud
 
-	*=$e500-32      ;(20-12)
+	.segment "SE4E0"      ;(20-12)
 ; fpatch - tape filename timeout
 ;
 fpatch	adc #2          ;time is (8 to 13 sec of display)
@@ -65,7 +65,7 @@ fpat00	ldy stkey       ;check for key down on last row...
 	bne fpat00
 fpat01	rts
 
-	*=$e500-38      ;(32-6)
+	.segment "SE4DA"      ;(32-6)
 ; cpatch - fix to clear line...modified 901227-03
 ;  prevents white character flash...
 cpatch                  ;always clear to current foregnd color
@@ -73,7 +73,7 @@ cpatch                  ;always clear to current foregnd color
 	sta (user),y
 	rts
 
-	*=$e500-45      ;(38-7)
+	.segment "SE4D3"      ;(38-7)
 ; prtyp - rs232 parity patch...added 901227-03
 ;
 prtyp	sta rinone      ;good receiver start...disable flag

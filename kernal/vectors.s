@@ -1,11 +1,11 @@
-	*=$ff8a-9
+	.segment "SFF81"
 	jmp pcint
 	jmp ioinit
 	jmp ramtas
-	*=$ff8a         ;new vectors for basic
+	.segment "SFF8A";new vectors for basic
 	jmp restor      ;restore vectors to initial system
 	jmp vector      ;change vectors for user
-	* =$ff90
+	.segment "SFF90"
 	jmp setmsg      ;control o.s. messages
 	jmp secnd       ;send sa after listen
 	jmp tksa        ;send sa after talk
@@ -41,7 +41,7 @@ jscrog	jmp scrorg      ;screen org
 jplot	jmp plot        ;read/set x,y coord
 jiobas	jmp iobase      ;return i/o base
 
-	*=$fffa
+	.segment "SFFFA"
 	.word nmi        ;program defineable
 	.word start      ;initialization code
 	.word puls       ;interrupt handler

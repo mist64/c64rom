@@ -1,30 +1,30 @@
-.lib disclaimer
-.lib declare
-	*=$e500         ;start of vic-40 kernal
-.lib editor.1
-;.lib conkat (japan conversion tables)
-.lib editor.2
-.lib editor.3
-.lib serial???
-.lib rs232trans
-.lib rs232rcvr
-.lib rs232inout
-.lib messages
-.lib channelio
-.lib openchannel
-.lib close
-.lib clall
-.lib open
-.lib load
-.lib save
-.lib time
-.lib errorhandler
-.lib tapefile
-.lib tapecontrol
-.lib read
-.lib write
-.lib init
-.lib rs232nmi
-.lib irqfile
-.lib vectors
+.feature labels_without_colons, pc_assignment
+
+.include "declare.s"
+	.segment "SE500"         ;start of vic-40 kernal
+.include "editor.1.s"
+.include "editor.2.s"
+.include "editor.3.s"
+.include "serial4.0.s"
+.include "rs232trans.s"
+.include "rs232rcvr.s"
+.include "rs232inout.s"
+.include "messages.s"
+.include "channelio.s"
+.include "openchannel.s"
+.include "close.s"
+.include "clall.s"
+.include "open.s"
+.include "load.s"
+.include "save.s"
+.include "time.s"
+.include "errorhandler.s"
+.include "tapefile.s"
+.include "tapecontrol.s"
+.include "read.s"
+.include "write.s"
+.include "init.s"
+.include "rs232nmi.s"
+.include "irqfile.s"
+.include "vectors.s"
 

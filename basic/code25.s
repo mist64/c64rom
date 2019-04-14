@@ -1,4 +1,4 @@
-	*=$e000         ;start of vic-40 kernal rom
+	.segment "SE000"         ;start of vic-40 kernal rom
 
 ; continuation of exponent routine
 ;

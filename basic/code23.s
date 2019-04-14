@@ -39,7 +39,7 @@ fdcend	.byt $ff,$df,$0a,$80
 timend
 ;
 cksma0	.byt $00        ;$a000 8k room check sum adj
-patchs	*=*+30          ; patch area
+patchs	.res 30          ; patch area
 ;
 sqr	jsr movaf
 	lda #<fhalf
