@@ -1,3 +1,4 @@
+	.segment "RS232NMI"
 nmi	sei             ;no irq's allowed...
 	jmp (nminv)     ;...could mess up cassettes
 nnmi	pha

@@ -1,7 +1,6 @@
 .feature labels_without_colons, pc_assignment
 
 .include "declare.s"
-	.segment "KERNAL"         ;start of vic-40 kernal
 .include "editor.1.s"
 .include "editor.2.s"
 .include "editor.3.s"

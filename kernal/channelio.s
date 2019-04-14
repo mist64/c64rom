@@ -1,3 +1,4 @@
+	.segment "CHANNEL"
 ;***************************************
 ;* getin -- get character from channel *
 ;*      channel is determined by dfltn.*

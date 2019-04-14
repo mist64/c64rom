@@ -1,3 +1,4 @@
+	.segment "INIT"
 ; start - system reset
 ; will goto rom at $8000...
 ; if locs $8004-$8008

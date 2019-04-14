@@ -1,4 +1,8 @@
 	.segment "KPATCH"
+
+	; unused patch area
+	.res 28, $aa
+
 ; prtyp - rs232 parity patch...added 901227-03
 ;
 prtyp	sta rinone      ;good receiver start...disable flag

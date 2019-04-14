@@ -1,3 +1,4 @@
+	.segment "SERIAL"
 ;command serial bus device to talk
 ;
 talk	ora #$40        ;make a talk adr

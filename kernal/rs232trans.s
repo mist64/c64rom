@@ -1,3 +1,4 @@
+	.segment "RS232"
 ; rstrab - entry for nmi continue routine
 ; rstbgn - entry for start transmitter
 ;

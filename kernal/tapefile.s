@@ -1,3 +1,4 @@
+	.segment "TAPE"
 ;fah -- find any header
 ;
 ;reads tape device until one of following
