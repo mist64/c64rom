@@ -29,7 +29,7 @@ timb	jsr restor      ;restore system indirects
 	jsr cint        ;restore screen for basic
 	jmp ($a002)     ;...no, so basic warm start
 
-; disable nmi's untill ready
+; disable nmi's until ready
 ;  save on stack
 ;
 nnmi20	tya             ;.y saved through restore
@@ -67,7 +67,7 @@ nnmi25	jsr rstrab      ;go calc info (code could be in line)
 	jmp nmirti
 ;
 
-; t2 nmi check - recieve a bit
+; t2 nmi check - receive a bit
 ;
 nnmi30	txa
 	and #$02        ;mask to t2
@@ -76,7 +76,7 @@ nnmi30	txa
 	jsr t2nmi       ;handle interrupt
 	jmp nmirti
 
-; flag nmi handler - recieve a start bit
+; flag nmi handler - receive a start bit
 ;
 nnmi40	txa             ;check for edge
 	and #$10        ;on flag...

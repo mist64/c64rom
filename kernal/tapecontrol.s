@@ -114,7 +114,7 @@ tp40	lda irqtmp+1    ;check for interrupt vector...
 ; 60 hz keyscan ignored
 ;
 	jsr ud60        ; stop key check
-	jmp tp40        ;stay in loop untill tapes are done
+	jmp tp40        ;stay in loop until tapes are done
 
 tstop	jsr stop        ;stop key down?
 	clc             ;assume no stop
@@ -156,7 +156,7 @@ stt2	asl temp        ;multiply corrected value by 4
 	tax
 stt3	lda d1t2l       ;watch out for d1t2h rollover...
 	cmp #22         ;...time for routine...!!!...
-	bcc stt3        ;...too close so wait untill past
+	bcc stt3        ;...too close so wait until past
 	adc temp        ;calculate and...
 	sta d1t1l       ;...store adusted time count
 	txa
@@ -164,7 +164,7 @@ stt3	lda d1t2l       ;watch out for d1t2h rollover...
 	sta d1t1h
 	lda caston      ;enable timers
 	sta d1cra
-	sta stupid      ;non-zero means an t1 irq has not occured yet
+	sta stupid      ;non-zero means an t1 irq has not occurred yet
 	lda d1icr       ;clear old t1 interrupt
 	and #$10        ;check for old-flag irq
 	beq stt4        ;no...normal exit

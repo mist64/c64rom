@@ -20,7 +20,7 @@ cko232	sta dflto       ;set default out
 ;
 cko020	lda enabl
 	and #$02        ;look at ier for t2
-	bne cko020      ;hang untill input done
+	bne cko020      ;hang until input done
 ;
 ; wait for cts to be off as spec reqs
 ;
@@ -167,7 +167,7 @@ bsi010	ora #$08        ;set buffer empty status
 rsp232	pha             ;save .a
 	lda enabl       ;does rs232 have any enables?
 	beq rspok       ;no...
-rspoff	lda enabl       ;wait untill done
+rspoff	lda enabl       ;wait until done
 	and #%00000011  ; with t1 & t2
 	bne rspoff
 	lda #%00010000  ; disable flag (need to renable in user code)

@@ -48,7 +48,7 @@ rsr020	lda inbit       ;get data...
 	adc bitci
 	bne rsrext      ;no..exit
 ;
-; rsrabl - enable to recieve a byte
+; rsrabl - enable to receive a byte
 ;
 rsrabl	lda #$90        ;enable flag for next byte
 	sta d2icr       ;toss bad/old nmi
@@ -59,7 +59,7 @@ rsrabl	lda #$90        ;enable flag for next byte
 rsrsxt	lda #$02        ;disable t2
 	jmp oenabl      ;flip-off enabl***************
 
-; reciever start bit check
+; receiver start bit check
 ;
 rsrtrt	lda inbit       ;check if space
 	bne rsrabl      ;bad...try again
@@ -79,7 +79,7 @@ rsr030	ldy ridbe       ;get end
 	dey
 ;
 	lda ridata      ;get byte buffer up
-	ldx bitnum      ;shift untill full byte
+	ldx bitnum      ;shift until full byte
 rsr031	cpx #9          ;always 8 bits
 	beq rsr032
 	lsr a           ;fill with zeros
@@ -107,7 +107,7 @@ rsr050	bvc rsrext      ;even...okay so exit
 ; errors reported
 	lda #1          ;parity error
 	.byt $2c
-recerr	lda #$4         ;reciever overrun
+recerr	lda #$4         ;receiver overrun
 	.byt $2c
 breake	lda #$80        ;break detected
 	.byt $2c

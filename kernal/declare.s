@@ -145,7 +145,7 @@ rsstat	.res 1           ; rs-232 status register
 bitnum	.res 1           ;number of bits to send (fast response)
 baudof	.res 2           ;baud rate full bit time (created by open)
 ;
-; reciever storage
+; receiver storage
 ;
 ; inbit .res 1 ;input bit storage
 ; bitci .res 1 ;bit count in

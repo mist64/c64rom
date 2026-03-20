@@ -134,7 +134,7 @@ icrnch	.res 2           ;indirect crunch (tokenization routine)
 iqplop	.res 2           ;indirect list (char list)
 igone	.res 2           ;indirect gone (char dispatch)
 ieval	.res 2           ;indirect eval (symbol evaluation)
-;temp storage untill system intergration
+;temp storage until system intergration
 ; sys 6502 regs
 sareg	.res 1           ;.a reg
 sxreg	.res 1           ;.x reg
